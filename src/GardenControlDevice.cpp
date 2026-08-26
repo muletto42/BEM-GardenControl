@@ -23,7 +23,7 @@
 #ifdef S0Inputs
     #include "Input_S0.h"
 #endif
-// #include "KnxHelper.h"
+#// #include "KnxHelper.h"
 #include "LED_Statusanzeige.h"
 #include "SystemFailureHandling.h"
 #include "handleVentilRelais.h"
@@ -71,6 +71,13 @@ GardenControlDevice::GardenControlDevice()
 
 GardenControlDevice::~GardenControlDevice()
 {
+}
+
+void GardenControlDevice::processAfterStartupDelay()
+{
+    // Logic is registered before GardenControl, so its external-KO lookup
+    // is already prepared when the startup status KOs are queued here.
+    sendStartupOutputStates();
 }
 
 // TODO *****************************************************************************************************************************
@@ -223,6 +230,10 @@ void GardenControlDevice::setup()
     setLED_OFF_ALL();
 
     delay(100);
+
+    // Initialize the 5 V relay status without sending. The status is re-sent
+    // after the OpenKNX startup delay, when Logic is ready for local callbacks.
+    knx.getGroupObject(BEM_Ko_Status_5V_relais).valueNoSend(get_5V_Relais_State(false), DPT_Switch);
 
     // set KOs initial Ventil
     for (int i = 0; i < BEM_ChannelCount; i++)
