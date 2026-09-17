@@ -66,6 +66,12 @@
     share="Input_4_20mA.share.xml"
     template="Input_4_20mA.templ.xml"
     ModuleType="50" />  <!-- KoOffset = 81 -> 75 + ADC (4ch*1kO) 6 -->
+  <op:define prefix="BEW" NumChannels="2" KoOffset="200"
+    configTransferName="  Bewaesserung"
+    share="Bewaesserung.share.xml"
+    template="Bewaesserung.templ.xml"
+    ModuleType="80" />  <!-- KoOffset = 81 -> 75 + ADC (4ch*1kO) 6 -->
+
   <!-- <op:define prefix="BIN" NumChannels="4" KoOffset="90"
     share="Input_BIN_S0.share.xml"
     template="Input_BIN_S0.templ.xml"
@@ -90,14 +96,14 @@
   </op:define>
 
   <!-- Needs large module-type! -->
-  <op:define prefix="DFA"
+<!--  <op:define prefix="DFA"
     share="../lib/OFM-DFA/src/DfaModule.share.xml"
     template="../lib/OFM-DFA/src/DfaModule.templ.xml"
     NumChannels="%DFA_NumChannels%"
     KoOffset="720"
     ModuleType="8">
     <op:verify File="../lib/OFM-DFA/library.json" ModuleVersion="0.8" />
-  </op:define>
+  </op:define>-->
 
   <generate>
     <Dynamic>
@@ -108,11 +114,12 @@
         <op:include href="GardenControlRelais.share.xml" xpath="//ApplicationProgram/Dynamic/Channel/*" prefix="REL" />
         <op:include href="InputADC.share.xml" xpath="//ApplicationProgram/Dynamic/Channel/*" prefix="ADC" />
         <op:include href="Input_4_20mA.share.xml" xpath="//ApplicationProgram/Dynamic/Channel/*" prefix="CUR" />
+        <op:include href="Bewaesserung.share.xml" xpath="//ApplicationProgram/Dynamic/Channel/*" prefix="BEW" />
       </Channel>
       <op:include href="../lib/OFM-BinaryInput/src/BinaryInputChannel.share.xml" xpath="//ApplicationProgram/Dynamic/*" prefix="BI" />
       <op:include href="../lib/OFM-Meter/src/MeterModule.share.xml" xpath="//ApplicationProgram/Dynamic/*" prefix="MTR" />
       <op:include href="../lib/OFM-LogicModule/src/Logikmodul.share.xml" xpath="//ApplicationProgram/Dynamic/*" prefix="LOG" />
-      <op:include href="../lib/OFM-DFA/src/DfaModule.share.xml" xpath="//ApplicationProgram/Dynamic/*" prefix="DFA" />
+      <!-- <op:include href="../lib/OFM-DFA/src/DfaModule.share.xml" xpath="//ApplicationProgram/Dynamic/*" prefix="DFA" /> -->
     </Dynamic>
   </generate>
 

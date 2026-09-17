@@ -14,9 +14,9 @@ class GardenControlDevice : public OpenKNX::Module
     // bool processCommand(const std::string cmd, bool debugKo) override;
     void setup();
     void loop();
-    // void readFlash(const uint8_t* iBuffer, const uint16_t iSize) override;
-    // void writeFlash() override;
-    // uint16_t flashSize() override;
+    void readFlash(const uint8_t* iBuffer, const uint16_t iSize) override;
+    void writeFlash() override;
+    uint16_t flashSize() override;
     const std::string name() override;
     const std::string version() override;
 
@@ -25,3 +25,5 @@ class GardenControlDevice : public OpenKNX::Module
     void initialHWinit();
 };
  extern GardenControlDevice openknxGardenControlModule;
+
+ 

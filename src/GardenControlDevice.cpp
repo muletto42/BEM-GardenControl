@@ -6,6 +6,7 @@
 
 #include "Device_setup.h"
 #include "ErrorHandling.h"
+#include "Bewaesserung.h"
 #include "GardenControlDevice.h"
 #include "I2C_IOExpander.h"
 #ifdef ADC_enable
@@ -138,6 +139,14 @@ void GardenControlDevice::processInputKo(GroupObject &iKo)
     {
         set_Ventil_State_single(iKo.value(getDPT(VAL_DPT_5)));
     }
+    else if (iKo.asap() == BEM_Ko_Temperatur_IN) // TODO KO Nummer
+    {
+        process_Temperatur_Wetterstation(iKo.value(getDPT(VAL_DPT_9)));
+    }
+    else if (iKo.asap() == BEM_Ko_WB_Regenmenge_heute)  // TODO KO Nummer
+    {
+        process_Regenmenge_Wetterstation(iKo.value(getDPT(VAL_DPT_9)));
+    }
 
     else
     {
@@ -189,6 +198,8 @@ void GardenControlDevice::processInputKo(GroupObject &iKo)
 
 void GardenControlDevice::setup()
 {
+    Bewaesserung_setup();
+
     // enable Main Relay
     SERIAL_DEBUG.print("enable Main Relay: ");
     SERIAL_DEBUG.println((knx.paramByte(BEM_ext5VRelaisStateBegin) >> BEM_ext5VRelaisStateBeginShift) & 1);
@@ -238,6 +249,7 @@ void GardenControlDevice::setup()
 
 void GardenControlDevice::loop()
 {
+
     processCheck24VAC();
     process_5V_Relais();
     process_ventil_states();
@@ -261,6 +273,8 @@ void GardenControlDevice::loop()
     else if (get_HW_Init_Flag())
     {
 
+
+        Bewaesserung_loop();
         processErrorHandling(); // PRIO 1
         processSysFailure();    // PRIO 1
 
@@ -446,4 +460,20 @@ void GardenControlDevice::loop()
         }
 #endif
     }
+}
+
+// Hier werden Temperaturen und Regenmengen weggespeichert, damit diese auch nach dem Stromausfall wieder verfügbar sind. 
+void GardenControlDevice::readFlash(const uint8_t* iBuffer, const uint16_t iSize)
+{
+    Bewaesserung_readFlash(iBuffer, iSize);
+}
+
+void GardenControlDevice::writeFlash()
+{
+    Bewaesserung_writeFlash();
+}
+
+uint16_t GardenControlDevice::flashSize()
+{
+    return Bewaesserung_flashSize();
 }

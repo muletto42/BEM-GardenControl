@@ -64,8 +64,7 @@
             "label": "Generate Dependencies.txt",
             "type": "shell",
             "command": "lib/OGM-Common/scripts/setup/reusable/Build-Dependencies.ps1",
-            "args": [
-            ],
+            "args": [],
             "problemMatcher": [],
             "group": "test"
         },
@@ -88,6 +87,58 @@
             ],
             "problemMatcher": [],
             "group": "test"
+        },
+        {
+            "label": "Debug-XML in Navigator kopieren",
+            "type": "shell",
+            "command": "Copy-Item -Path '${workspaceFolder}/src/GardenControl.knxprod' -Destination '${workspaceFolder}/../OpenKNX-XML-Navigator/data/GardenControl.knxprod' -Force",
+            "problemMatcher": []
+        },
+        {
+            "label": "OpenKNXproducer GardenControl bauen + im Navigator anzeigen",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "OpenKNXproducer",
+                "Debug-XML in Navigator kopieren"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "OpenKNX XML Navigator starten",
+            "type": "shell",
+            "command": "npm start",
+            "options": {
+                "cwd": "${workspaceFolder}/../OpenKNX-XML-Navigator",
+                "env": {
+                    "OPENKNX_XML_NAVIGATOR_DEFAULT_SOURCE": "data/GardenControl.knxprod"
+                }
+            },
+            "isBackground": true,
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "^unmatchable^"
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": ".*",
+                    "endsPattern": "(listening|4173|running)"
+                }
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "clear": true
+            }
+        },
+        {
+            "label": "OpenKNX XML Navigator (mit Browser)",
+            "dependsOn": [
+                "OpenKNX XML Navigator starten"
+            ],
+            "dependsOrder": "sequence",
+            "type": "shell",
+            "command": "Start-Sleep -Seconds 2; Start-Process 'http://localhost:4173'",
+            "problemMatcher": []
         }
     ]
 }

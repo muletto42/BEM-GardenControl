@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-model href="../../Organization/knxprod-support/knx_project_20/knx-editor.xsd" type="application/xml" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<KNX xmlns="http://knx.org/xml/project/20" xmlns:op="http://github.com/OpenKNX/OpenKNXproducer">
+  <ManufacturerData>
+    <Manufacturer RefId="M-00FA">
+      <ApplicationPrograms>
+        <ApplicationProgram Id="%AID%" ApplicationNumber="0" ApplicationVersion="0"
+          ProgramType="ApplicationProgram" MaskVersion="MV-07B0" Name="Bewaesserung"
+          LoadProcedureStyle="MergedProcedure" PeiType="0" DefaultLanguage="de"
+          DynamicTableManagement="false" Linkable="true" MinEtsVersion="4.0">
+          <Static>
+            <ParameterTypes>
+              <ParameterType Id="%AID%_PT-WBYesNo" Name="WBYesNo">
+                <TypeRestriction Base="Value" SizeInBit="1">
+                  <Enumeration Text="Nein" Value="0" Id="%ENID%" />
+                  <Enumeration Text="Ja, über KO" Value="1" Id="%ENID%" />
+                </TypeRestriction>
+              </ParameterType>
+              <!-- Niederschlagsrate [mm/h], gespeichert als *10 (0.1 mm/h Auflösung) -->
+              <ParameterType Id="%AID%_PT-WBNiederschlagsrate" Name="WBNiederschlagsrate">
+                <TypeNumber SizeInBit="16" Type="unsignedInt" minInclusive="0" maxInclusive="500" />
+              </ParameterType>
+              <!-- Schwellwert [%], direkt 0..100 -->
+              <ParameterType Id="%AID%_PT-WBSchwellwert" Name="WBSchwellwert">
+                <TypeNumber SizeInBit="8" Type="unsignedInt" minInclusive="0" maxInclusive="100" />
+              </ParameterType>
+              <!-- nFK [mm], gespeichert als *10 (0.1 mm Auflösung) -->
+              <ParameterType Id="%AID%_PT-WBnFK" Name="WBnFK">
+                <TypeNumber SizeInBit="16" Type="unsignedInt" minInclusive="0" maxInclusive="1000" />
+              </ParameterType>
+              <!-- Kc-Faktor [dimensionslos], gespeichert als *100 (0.01 Auflösung) -->
+              <ParameterType Id="%AID%_PT-WBKc" Name="WBKc">
+                <TypeNumber SizeInBit="16" Type="unsignedInt" minInclusive="0" maxInclusive="200" />
+              </ParameterType>
+            </ParameterTypes>
+            <Parameters>
+            </Parameters>
+            <ParameterRefs>
+            </ParameterRefs>
+            <ComObjectTable>
+            </ComObjectTable>
+            <ComObjectRefs>
+            </ComObjectRefs>
+          </Static>
+          <Dynamic>
+            <Channel Id="%AID%_CH-5" Name="Standard" Number="5" Text="Bewässerungszone">
+              <ParameterBlock Id="%AID%_PB-nnn" Name="Zone" Text="Bewässerungszone {{0:...}}"
+                Icon="water-percent" HelpContext="Empty" ShowInComObjectTree="true">
+                <op:include href="Bewaesserung.templ.xml" xpath="//Dynamic/ChannelIndependentBlock/*"
+                  type="template" prefix="BEW" IsInner="true" />
+              </ParameterBlock>
+            </Channel>
+          </Dynamic>
+        </ApplicationProgram>
+      </ApplicationPrograms>
+    </Manufacturer>
+  </ManufacturerData>
+</KNX>
