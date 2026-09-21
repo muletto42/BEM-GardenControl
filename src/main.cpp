@@ -10,6 +10,7 @@
 #include "GpioBinaryInputModule.h"
 #include "Logic.h"
 #include "MeterModule.h"
+#include "IrrigationModule.h"
 
 #ifdef ARDUINO_ARCH_RP2040
     #pragma message "Pico Core Version: " ARDUINO_PICO_VERSION_STR
@@ -29,6 +30,7 @@ void setup()
     openknx.addModule(1, openknxLogic);
     openknx.addModule(3, openknxDfaModule);
     openknx.addModule(2, openknxGardenControlModule);
+    openknx.addModule(4, openknxIrrigationModule);
 #if defined(OPENKNX_BI_GPIO_PINS) && OPENKNX_BI_GPIO_COUNT > 0 && BI_ChannelCount > 0
     openknx.addModule(6, openknxGpioBinaryInputModule);
 #endif

@@ -11,9 +11,11 @@
   <op:config name="%LOG_NumChannelsDefault%" value="5" />
   <op:config name="%MTR_NumChannelsDefault%" value="5" />
 
-  <op:config name="%LOG_NumChannels%" value="99" /><!-- Required for DFA! -->
+  <op:config name="%LOG_NumChannels%" value="10" /><!-- Required for DFA! -->
   <op:config name="%DFA_NumChannels%" value="4" />
   <op:config name="%DFA_NumChannelsDefault%" value="2" />
+  <op:config name="%IRR_NumChannels%" value="2" />
+  <op:config name="%IRR_NumChannelsDefault%"  value="2" />
 
   <op:ETS OpenKnxId="0xA2"
     ApplicationNumber="0x10"
@@ -90,13 +92,22 @@
   </op:define>
 
   <!-- Needs large module-type! -->
-  <op:define prefix="DFA"
+<!--  <op:define prefix="DFA"
     share="../lib/OFM-DFA/src/DfaModule.share.xml"
     template="../lib/OFM-DFA/src/DfaModule.templ.xml"
     NumChannels="%DFA_NumChannels%"
     KoOffset="720"
-    ModuleType="8">
+    ModuleType="80">
     <op:verify File="../lib/OFM-DFA/library.json" ModuleVersion="0.8" />
+  </op:define>-->
+
+  <op:define prefix="IRR"
+    share="../lib/OFM-Irrigation/src/Irrigation.share.xml"
+    template="../lib/OFM-Irrigation/src/Irrigation.templ.xml"
+    NumChannels="%IRR_NumChannels%"
+    KoOffset="200"
+    ModuleType="90">
+    
   </op:define>
 
   <generate>
@@ -112,7 +123,8 @@
       <op:include href="../lib/OFM-BinaryInput/src/BinaryInputChannel.share.xml" xpath="//ApplicationProgram/Dynamic/*" prefix="BI" />
       <op:include href="../lib/OFM-Meter/src/MeterModule.share.xml" xpath="//ApplicationProgram/Dynamic/*" prefix="MTR" />
       <op:include href="../lib/OFM-LogicModule/src/Logikmodul.share.xml" xpath="//ApplicationProgram/Dynamic/*" prefix="LOG" />
-      <op:include href="../lib/OFM-DFA/src/DfaModule.share.xml" xpath="//ApplicationProgram/Dynamic/*" prefix="DFA" />
+      <!--<op:include href="../lib/OFM-DFA/src/DfaModule.share.xml" xpath="//ApplicationProgram/Dynamic/*" prefix="DFA" />-->
+      <op:include href="../lib/OFM-Irrigation/src/Irrigation.share.xml" xpath="//ApplicationProgram/Dynamic/*" prefix="IRR" />
     </Dynamic>
   </generate>
 
