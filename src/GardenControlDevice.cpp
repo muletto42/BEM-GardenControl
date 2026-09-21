@@ -139,11 +139,11 @@ void GardenControlDevice::processInputKo(GroupObject &iKo)
     {
         set_Ventil_State_single(iKo.value(getDPT(VAL_DPT_5)));
     }
-    else if (iKo.asap() == BEM_Ko_Temperatur_IN) // TODO KO Nummer
+    else if (iKo.asap() == KoBEW_Temperatur_Wetterstation) 
     {
         process_Temperatur_Wetterstation(iKo.value(getDPT(VAL_DPT_9)));
     }
-    else if (iKo.asap() == BEM_Ko_WB_Regenmenge_heute)  // TODO KO Nummer
+    else if (iKo.asap() == KoBEW_Regenmenge_Wetterstation)  
     {
         process_Regenmenge_Wetterstation(iKo.value(getDPT(VAL_DPT_9)));
     }

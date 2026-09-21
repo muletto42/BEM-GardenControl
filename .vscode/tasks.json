@@ -4,6 +4,22 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "OpenKNXproducer Documentation GardenControl",
+            "type": "shell",
+            "command": "~/bin/OpenKNXproducer.exe",
+            "args": [
+                "baggages",
+                "--DocFileName",
+                "doc/Applikationsbeschreibung-Bewaesserung.md",
+                "--BaggagesDir",
+                "src/Baggages/Help_de",
+                "--Prefix",
+                "BEW"
+            ],
+            "problemMatcher": [],
+            "group": "test"
+        },
+        {
             "label": "Build PlatformIO",
             "type": "shell",
             "command": "scripts/OpenKNX-Build.ps1",
@@ -95,7 +111,7 @@
             "problemMatcher": []
         },
         {
-            "label": "OpenKNXproducer GardenControl bauen + im Navigator anzeigen",
+            "label": "OpenKNXproducer GardenControl bauen + für Navigator kopieren",
             "dependsOrder": "sequence",
             "dependsOn": [
                 "OpenKNXproducer",
@@ -110,7 +126,7 @@
             "options": {
                 "cwd": "${workspaceFolder}/../OpenKNX-XML-Navigator",
                 "env": {
-                    "OPENKNX_XML_NAVIGATOR_DEFAULT_SOURCE": "data/GardenControl.knxprod"
+                    "XXX_OPENKNX_XML_NAVIGATOR_DEFAULT_SOURCE": "data/GardenControl.knxprod"
                 }
             },
             "isBackground": true,

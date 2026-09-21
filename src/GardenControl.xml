@@ -66,7 +66,7 @@
     share="Input_4_20mA.share.xml"
     template="Input_4_20mA.templ.xml"
     ModuleType="50" />  <!-- KoOffset = 81 -> 75 + ADC (4ch*1kO) 6 -->
-  <op:define prefix="BEW" NumChannels="2" KoOffset="200"
+  <op:define prefix="BEW" NumChannels="6" KoOffset="1020"
     configTransferName="  Bewaesserung"
     share="Bewaesserung.share.xml"
     template="Bewaesserung.templ.xml"
@@ -101,7 +101,7 @@
     template="../lib/OFM-DFA/src/DfaModule.templ.xml"
     NumChannels="%DFA_NumChannels%"
     KoOffset="720"
-    ModuleType="8">
+    ModuleType="90">
     <op:verify File="../lib/OFM-DFA/library.json" ModuleVersion="0.8" />
   </op:define>-->
 
@@ -119,7 +119,7 @@
       <op:include href="../lib/OFM-BinaryInput/src/BinaryInputChannel.share.xml" xpath="//ApplicationProgram/Dynamic/*" prefix="BI" />
       <op:include href="../lib/OFM-Meter/src/MeterModule.share.xml" xpath="//ApplicationProgram/Dynamic/*" prefix="MTR" />
       <op:include href="../lib/OFM-LogicModule/src/Logikmodul.share.xml" xpath="//ApplicationProgram/Dynamic/*" prefix="LOG" />
-      <!-- <op:include href="../lib/OFM-DFA/src/DfaModule.share.xml" xpath="//ApplicationProgram/Dynamic/*" prefix="DFA" /> -->
+      <!--op:include href="../lib/OFM-DFA/src/DfaModule.share.xml" xpath="//ApplicationProgram/Dynamic/*" prefix="DFA" /> -->
     </Dynamic>
   </generate>
 

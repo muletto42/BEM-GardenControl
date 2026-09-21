@@ -52,7 +52,7 @@
 // ---- Rasenzone-Konstanten (aus Referenz-Dokument, bis ETS-Parameter existieren) ----
 namespace
 {
-    constexpr float RASEN_KC = 0.8f;                 // TODO: als ETS-Parameter/GA, saisonal veränderlich
+    constexpr float RASEN_KC = 0.8f;                 // als ETS-Parameter/GA veränderlich
     constexpr float RASEN_NFK_MM = 25.0f;             // nutzbare Feldkapazität [mm]
     constexpr float RASEN_SCHWELLWERT_P = 0.5f;       // 50 %
     constexpr float RASEN_NIEDERSCHLAGSRATE = 10.0f;  // mm/h (MP-Rotator)
@@ -83,18 +83,19 @@ float LastDelta = 0.0f;
 float LastOmegaS = 0.0f;
 float LastRaMm = 0.0f;
 int16_t LastDayOfYear = -1;
+float ET0_gestern = 0;
 
-    // Wasserbilanz Rasenzone - MUSS über Neustarts hinweg erhalten bleiben,
+    // Wasserbilanz Bewaesserungszone - MUSS über Neustarts hinweg erhalten bleiben,
     // sonst geht der Kontostand bei jedem Reset verloren.
-    float RasenzoneKonto = RASEN_NFK_MM; // Start optimistisch: Konto voll
+    float BewaesserungszoneKonto = RASEN_NFK_MM; // Start optimistisch: Konto voll
 
     // Ergebnis der letzten Tagesberechnung, wird von der Zeitsteuerung genutzt
-    bool RasenzoneBedarf = false;
-    float RasenzoneGeplanteLaufzeitSek = 0.0f;
+    bool BewaesserungszoneBedarf = false;
+    float BewaesserungszoneGeplanteLaufzeitSek = 0.0f;
 
     // Zustand der laufenden Bewässerung (falls Ventil gerade offen ist)
-    bool RasenzoneVentilOffen = false;
-    uint32_t RasenzoneVentilStartMillis = 0;
+    bool BewaesserungszoneVentilOffen = false;
+    uint32_t BewaesserungszoneVentilStartMillis = 0;
 
 // Phi aus dem Standort-Parameter ableiten
 float get_Geographische_Breite_Radiant()
@@ -180,6 +181,7 @@ float calc_Schwellwert (float p, float nFK)
 {
     // Schwellwert [mm]
     float_t schwellwert = p * nFK;
+    return schwellwert;
 }
 // ============================================================
 // 6. Bewässerungsbedarf
@@ -208,6 +210,7 @@ float calc_laufzeit_sek (float fehlmenge_mm, float niederschlagsrate_mm_h)
     // Niederschlagsrate [mm/h]
     // Laufzeit [Sekunden]
     float_t laufzeit_sek = (fehlmenge_mm / niederschlagsrate_mm_h) * 3600.0;
+    return laufzeit_sek;
 }
 // ============================================================
 // 10. Rückbuchung der Bewässerung
@@ -216,6 +219,7 @@ float calc_Zugefuehrte_Wassermenge (float laufzeit_sek, float niederschlagsrate_
 {
     // Zugeführte Wassermenge [mm]
     float_t bewaesserung_mm = (laufzeit_sek / 3600.0) * niederschlagsrate_mm_h;
+    return bewaesserung_mm;
 }
 
 
@@ -226,6 +230,7 @@ float calc_Bodenwasserkonto_final(float Bodenwasserkonto_neu, float bewaesserung
 
     // Sicherheitshalber wieder auf 0 ... nFK begrenzen
     Bodenwasserkonto_final = MAX(0.0, MIN(Bodenwasserkonto_final, nFK));
+    return Bodenwasserkonto_final;
 }
 // ============================================================
 // 11. Nutzbare Feldkapazität
@@ -233,7 +238,8 @@ float calc_Bodenwasserkonto_final(float Bodenwasserkonto_neu, float bewaesserung
 float calc_NutzbareFeldkapazität_nFK (float FK, float PWP)
 {
     // nFK = FK - PWP
-    double nFK = FK - PWP;
+    float nFK = FK - PWP;
+    return nFK;
 }
 
 uint16_t getYearDay(void)
@@ -256,10 +262,10 @@ void calculateEt0ForYesterday(uint16_t TagdesJahres)
     RaResult RaErgebnis;
     RaErgebnis = calc_Ra(TagdesJahres);
 
-    float ET0_gestern = calc_ET0(Temperatur_Durchschnitt_gestern, Temperatur_max_gestern, Temperatur_min_gestern, RaErgebnis.ra_mm);
+    ET0_gestern = calc_ET0(Temperatur_Durchschnitt_gestern, Temperatur_max_gestern, Temperatur_min_gestern, RaErgebnis.ra_mm);
 
     // ---- KO-Ausgabe ----
-    // knx.getGroupObject(BEM_Ko_ET0_Aktuell).value(sLastEt0, getDPT(VAL_DPT_9));
+     KoBEW_Berechnung_ET0.value(ET0_gestern, DPT_Value_Temp);
 }
 
 // ---- Tageswechsel: gestern einfrieren, ET0 rechnen, heute zurücksetzen --
@@ -286,6 +292,11 @@ void Tageswechsel_Werte_speichern(uint16_t gestern)
     gueltigeWerte_heute = false;
 
     letzteRegenmengeHeute = 0.0f; // Annahme: Regenmesser resettet ebenfalls täglich
+
+    // min max Durchschnitswerte heute senden
+    KoBEW_TDurchschnittGestern.value(Temperatur_Durchschnitt_gestern, DPT_Value_Temp);
+    KoBEW_TMaxGestern.value(Temperatur_max_gestern, DPT_Value_Temp);
+    KoBEW_TMinGestern.value(Temperatur_min_gestern, DPT_Value_Temp);
 }
 
 // ============================================================================
@@ -303,22 +314,24 @@ void Bewaesserung_loop()
     process_Bewaesserungsberechnung();
 
     // ---- Ventil-Timer: läuft die Bewässerung gerade, ist sie fertig? ----
-    if (RasenzoneVentilOffen)
+    if (BewaesserungszoneVentilOffen)
     {
-        uint32_t laufSek = (millis() - RasenzoneVentilStartMillis) / 1000;
-        if ((float)laufSek >= RasenzoneGeplanteLaufzeitSek)
+        uint32_t laufSek = (millis() - BewaesserungszoneVentilStartMillis) / 1000;
+        if ((float)laufSek >= BewaesserungszoneGeplanteLaufzeitSek)
         {
             set_Ventil_State(RASENZONE_VENTIL_INDEX, false);
-            RasenzoneVentilOffen = false;
+            BewaesserungszoneVentilOffen = false;
 
             // ---- Rückbuchung ----
-            float bewaessertMm = calc_Zugefuehrte_Wassermenge(RasenzoneGeplanteLaufzeitSek, RASEN_NIEDERSCHLAGSRATE);
-            RasenzoneKonto = calc_Bodenwasserkonto_final(RasenzoneKonto, bewaessertMm, RASEN_NFK_MM);
-            RasenzoneGeplanteLaufzeitSek = 0.0f;
+            float bewaessert_mm = calc_Zugefuehrte_Wassermenge(BewaesserungszoneGeplanteLaufzeitSek, RASEN_NIEDERSCHLAGSRATE);
+            BewaesserungszoneKonto = calc_Bodenwasserkonto_final(BewaesserungszoneKonto, bewaessert_mm, RASEN_NFK_MM);
+            BewaesserungszoneGeplanteLaufzeitSek = 0.0f;
 
             SERIAL_DEBUG.print("WB Rasenzone: Bewässerung beendet, Konto final=");
-            SERIAL_DEBUG.println(RasenzoneKonto);
-            knx.getGroupObject(BEM_Ko_WB_Rasenzone_Konto).value(RasenzoneKonto, getDPT(VAL_DPT_9));
+            SERIAL_DEBUG.println(BewaesserungszoneKonto);
+                // ---- KO-Ausgabe ----
+            KoBEW__Wasserbilanzkonto.value(BewaesserungszoneKonto, DPT_Value_Temp);
+         
         }
     }
 
@@ -326,7 +339,7 @@ void Bewaesserung_loop()
 }
 
 
-void process_Temperaturevalue_Weather(float aktuelleTemperatur)
+void process_Temperatur_Wetterstation (float aktuelleTemperatur)
 {
 
     // Sinnvolle Plausigrenzen für Außentemperatur (Sensorfehler abfangen)
@@ -353,9 +366,14 @@ void process_Temperaturevalue_Weather(float aktuelleTemperatur)
 
     // Mittelwert bilden.
     Temperatur_Durchschnitt_heute = (aktuelleTemperatur + Temperatur_Durchschnitt_heute) / 2;
+
+    // min max Durchschnitswerte heute senden
+    KoBEW_TDurchschnittHeute.value(Temperatur_Durchschnitt_heute, DPT_Value_Temp);
+    KoBEW_TMaxHeute.value(Temperatur_max_heute, DPT_Value_Temp);
+    KoBEW_TMinHeute.value(Temperatur_min_heute, DPT_Value_Temp);
 }
 
-void process_Regenmenge(uint16_t iKoNumber, float regenmengeHeuteMm)
+void process_Regenmenge_Wetterstation (uint16_t iKoNumber, float regenmengeHeuteMm)
 {
     if (regenmengeHeuteMm < 0.0f)
     {
@@ -390,11 +408,11 @@ bool ET0_processCommand(const std::string cmd, bool debugKo)
         SERIAL_DEBUG.print(" / ");
         SERIAL_DEBUG.println(LastRaMm);
         SERIAL_DEBUG.print("  Rasenzone Konto/Bedarf/Laufzeit: ");
-        SERIAL_DEBUG.print(RasenzoneKonto);
+        SERIAL_DEBUG.print(BewaesserungszoneKonto);
         SERIAL_DEBUG.print(" / ");
-        SERIAL_DEBUG.print(RasenzoneBedarf);
+        SERIAL_DEBUG.print(BewaesserungszoneBedarf);
         SERIAL_DEBUG.print(" / ");
-        SERIAL_DEBUG.println(RasenzoneGeplanteLaufzeitSek);
+        SERIAL_DEBUG.println(BewaesserungszoneGeplanteLaufzeitSek);
         return true;
     }
     return false;
@@ -429,7 +447,7 @@ void Bewaesserung_writeFlash()
     openknx.flash.writeFloat(Temperatur_min_gestern);
     openknx.flash.writeFloat(Temperatur_Durchschnitt_gestern);
     openknx.flash.writeFloat(Regenmenge_gestern);
-    openknx.flash.writeFloat(RasenzoneKonto); // MUSS über Neustart erhalten bleiben!
+    openknx.flash.writeFloat(BewaesserungszoneKonto); // MUSS über Neustart erhalten bleiben!
 }
 
 
@@ -458,7 +476,7 @@ void Bewaesserung_readFlash(const uint8_t* buffer, const uint16_t size)
     Temperatur_Durchschnitt_gestern = tmeanYesterday;
 
     Regenmenge_gestern = regenGestern;
-    RasenzoneKonto = konto; // <- der wichtige Teil: Kontostand übersteht den Neustart
+    BewaesserungszoneKonto = konto; // <- der wichtige Teil: Kontostand übersteht den Neustart
 
     // heutige gespeicherte Werte nur übernehmen, wenn sie tatsächlich von HEUTE sind
     if (openknx.time.isValid() && (uint32_t)getYearDay() == magicYday)
@@ -503,16 +521,17 @@ void process_Bewaesserungsberechnung(void)
             Tageswechsel_Werte_speichern((uint16_t)letzterBekannterTag);
             letzterBekannterTag = heute;
         }
-    }
-        // ---- Bewässerungsstart-Trigger (einmal pro Tag) ----
-    if (RasenzoneBedarf && !RasenzoneVentilOffen && letzterBewaesserungsTag != heute &&
-        tmNow.tm_hour == BEWAESSERUNG_START_STUNDE && tmNow.tm_min == 0)
-    {
-        set_Ventil_State(RASENZONE_VENTIL_INDEX, true);
-        RasenzoneVentilOffen = true;
-        RasenzoneVentilStartMillis = millis();
-        letzterBewaesserungsTag = heute;
-        SERIAL_DEBUG.print("WB Rasenzone: Bewässerung gestartet, Laufzeit[s]=");
-        SERIAL_DEBUG.println(RasenzoneGeplanteLaufzeitSek);
+    
+            // ---- Bewässerungsstart-Trigger (einmal pro Tag) ----
+        if (BewaesserungszoneBedarf && !BewaesserungszoneVentilOffen && letzterBewaesserungsTag != heute &&
+            tmNow.tm_hour == BEWAESSERUNG_START_STUNDE && tmNow.tm_min == 0)
+        {
+            set_Ventil_State(RASENZONE_VENTIL_INDEX, true);
+            BewaesserungszoneVentilOffen = true;
+            BewaesserungszoneVentilStartMillis = millis();
+            letzterBewaesserungsTag = heute;
+            SERIAL_DEBUG.print("WB Rasenzone: Bewässerung gestartet, Laufzeit[s]=");
+            SERIAL_DEBUG.println(BewaesserungszoneGeplanteLaufzeitSek);
+        }
     }
 }
