@@ -1,4 +1,4 @@
-#include "KnxHelper.h"
+// #include "KnxHelper.h"
 #include "OpenKNX.h"
 #include <Arduino.h>
 #include <Wire.h>
@@ -221,7 +221,7 @@ uint8_t processErrorHandling()
 
     if (error_old != error && delayCheck(delayTimer_DiagKO, DelayTime_DiagKO))
     {
-        knx.getGroupObject(BEM_Ko_Diagnose_KO_PWR).value(error, getDPT(VAL_DPT_5));
+        knx.getGroupObject(BEM_Ko_Diagnose_KO_PWR).value(error, DPT_Scaling);
         error_old = error;
         delayTimer_DiagKO = millis();
     }

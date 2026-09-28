@@ -23,7 +23,7 @@
 #ifdef S0Inputs
     #include "Input_S0.h"
 #endif
-#include "KnxHelper.h"
+// #include "KnxHelper.h"
 #include "LED_Statusanzeige.h"
 #include "SystemFailureHandling.h"
 #include "handleVentilRelais.h"
@@ -132,11 +132,11 @@ void GardenControlDevice::processInputKo(GroupObject &iKo)
 
     if (iKo.asap() == BEM_Ko_Set_5V_relais)
     {
-        set_5V_Relais_State(iKo.value(getDPT(VAL_DPT_1)));
+        set_5V_Relais_State(iKo.value(DPT_Switch));
     }
     else if (iKo.asap() == BEM_Ko_Set_Magnetventil_Nr)
     {
-        set_Ventil_State_single(iKo.value(getDPT(VAL_DPT_5)));
+        set_Ventil_State_single(iKo.value(DPT_Scaling));
     }
 
     else
@@ -151,15 +151,15 @@ void GardenControlDevice::processInputKo(GroupObject &iKo)
                 SERIAL_DEBUG.print("KO_Ventil_");
                 SERIAL_DEBUG.print(ventil_Nr + 1);
                 SERIAL_DEBUG.print(": ");
-                SERIAL_DEBUG.println((bool)iKo.value(getDPT(VAL_DPT_1)));
+                SERIAL_DEBUG.println((bool)iKo.value(DPT_Switch));
 #endif
-                set_Ventil_State(ventil_Nr, iKo.value(getDPT(VAL_DPT_1)));
+                set_Ventil_State(ventil_Nr, iKo.value(DPT_Switch));
                 callLogic = false;
             }
             else if (iKo.asap() == BEM_KoOffset + (BEM_Ko_Sperr_ventil + (koIndex * BEM_KoBlockSize))) // KO Abfrage für Sperrobjekte Ventile
             {
                 uint8_t ventil_Nr = ((iKo.asap() - BEM_KoOffset) / BEM_KoBlockSize);
-                set_Ventil_Sperrobjekt(ventil_Nr, iKo.value(getDPT(VAL_DPT_1)));
+                set_Ventil_Sperrobjekt(ventil_Nr, iKo.value(DPT_Switch));
                 callLogic = false;
             }
         }
@@ -172,15 +172,15 @@ void GardenControlDevice::processInputKo(GroupObject &iKo)
                 SERIAL_DEBUG.print("KO_Relais_");
                 SERIAL_DEBUG.print(relais_Nr + 1);
                 SERIAL_DEBUG.print(": ");
-                SERIAL_DEBUG.println((bool)iKo.value(getDPT(VAL_DPT_1)));
+                SERIAL_DEBUG.println((bool)iKo.value(DPT_Switch));
 #endif
-                set_Relais_State(relais_Nr, iKo.value(getDPT(VAL_DPT_1)));
+                set_Relais_State(relais_Nr, iKo.value(DPT_Switch));
                 callLogic = false;
             }
             else if (iKo.asap() == REL_KoOffset + (REL_Ko_Sperr_relais + (koIndex * REL_KoBlockSize))) // KO Abfrage für Sperrobjekte Relais
             {
                 uint8_t relais_Nr = ((iKo.asap() - REL_KoOffset) / REL_KoBlockSize);
-                set_Relais_Sperrobjekt(relais_Nr, iKo.value(getDPT(VAL_DPT_1)));
+                set_Relais_Sperrobjekt(relais_Nr, iKo.value(DPT_Switch));
                 callLogic = false;
             }
         }
@@ -227,12 +227,12 @@ void GardenControlDevice::setup()
     // set KOs initial Ventil
     for (int i = 0; i < BEM_ChannelCount; i++)
     {
-        knx.getGroupObject(BEM_KoOffset + (i * BEM_KoBlockSize + BEM_Ko_Status_ventil)).valueNoSend(false, getDPT(VAL_DPT_1));
+        knx.getGroupObject(BEM_KoOffset + (i * BEM_KoBlockSize + BEM_Ko_Status_ventil)).valueNoSend(false, DPT_Switch);
     }
     // set KOs initial Relays
     for (int i = 0; i < REL_ChannelCount; i++)
     {
-        knx.getGroupObject(REL_KoOffset + (i * REL_KoBlockSize + REL_Ko_Status_relais)).valueNoSend(false, getDPT(VAL_DPT_1));
+        knx.getGroupObject(REL_KoOffset + (i * REL_KoBlockSize + REL_Ko_Status_relais)).valueNoSend(false, DPT_Switch);
     }
 }
 

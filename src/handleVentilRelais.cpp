@@ -1,7 +1,7 @@
 #include "handleVentilRelais.h"
 #include "HelperFunc.h"
 #include "I2C_IOExpander.h"
-#include "KnxHelper.h"
+// #include "KnxHelper.h"
 #include "OpenKNX.h"
 #include <stdint.h>
 
@@ -56,7 +56,7 @@ void processVentil()
                 SERIAL_PORT.print(ch + 1);
                 SERIAL_PORT.print(": ");
                 SERIAL_PORT.println(ventil_State[ch]);
-                knx.getGroupObject(BEM_KoOffset + (ch * BEM_KoBlockSize + BEM_Ko_Status_ventil)).value(ventil_State[ch], getDPT(VAL_DPT_1));
+                knx.getGroupObject(BEM_KoOffset + (ch * BEM_KoBlockSize + BEM_Ko_Status_ventil)).value(ventil_State[ch], DPT_Switch);
                 ventil_State_old[ch] = ventil_State[ch];
                 return;
             }
@@ -74,7 +74,7 @@ void process_ventil_states()
         {
             if (ventil_State[ch])
             {
-                knx.getGroupObject(BEM_KoOffset + (ch * BEM_KoBlockSize + BEM_Ko_Status_ventil)).value(false, getDPT(VAL_DPT_1));
+                knx.getGroupObject(BEM_KoOffset + (ch * BEM_KoBlockSize + BEM_Ko_Status_ventil)).value(false, DPT_Switch);
             }
             ventil_State_old[ch] = 0;
             ventil_State[ch] = 0;
@@ -180,7 +180,7 @@ void processRelais()
                 SERIAL_PORT.print(ch + 1);
                 SERIAL_PORT.print(": ");
                 SERIAL_PORT.println(relais_State[ch]);
-                knx.getGroupObject(REL_KoOffset + (ch * REL_KoBlockSize + REL_Ko_Status_relais)).value(relais_State[ch], getDPT(VAL_DPT_1));
+                knx.getGroupObject(REL_KoOffset + (ch * REL_KoBlockSize + REL_Ko_Status_relais)).value(relais_State[ch], DPT_Switch);
                 relais_State_old[ch] = relais_State[ch];
                 return;
             }
@@ -198,7 +198,7 @@ void process_relais_states()
         {
             if (relais_State[ch])
             {
-                knx.getGroupObject(REL_KoOffset + (ch * REL_KoBlockSize + REL_Ko_Status_relais)).value(false, getDPT(VAL_DPT_1));
+                knx.getGroupObject(REL_KoOffset + (ch * REL_KoBlockSize + REL_Ko_Status_relais)).value(false, DPT_Switch);
             }
             relais_State_old[ch] = 0;
             relais_State[ch] = 0;
@@ -280,7 +280,7 @@ void process_5V_Relais()
     {
         if ((knx.paramByte(BEM_ext5VRelaisStartState) >> BEM_ext5VRelaisStartStateShift) & 1) // Senden bei Startup "AN"
         {
-            knx.getGroupObject(BEM_Ko_Status_5V_relais).value(relais_5V_State, getDPT(VAL_DPT_1));
+            knx.getGroupObject(BEM_Ko_Status_5V_relais).value(relais_5V_State, DPT_Switch);
         }
         relais_5V_startup_flag = false;
     }
@@ -288,7 +288,7 @@ void process_5V_Relais()
     if (relais_5V_State_old != relais_5V_State)
     {
         control_5V_Relais(relais_5V_State);
-        knx.getGroupObject(BEM_Ko_Status_5V_relais).value(relais_5V_State, getDPT(VAL_DPT_1));
+        knx.getGroupObject(BEM_Ko_Status_5V_relais).value(relais_5V_State, DPT_Switch);
         relais_5V_State_old = relais_5V_State;
     }
 }

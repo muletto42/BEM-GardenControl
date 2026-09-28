@@ -4,7 +4,7 @@
 #include "ErrorHandling.h"
 #include "HelperFunc.h"
 #include "Input_4_20mA.h"
-#include "KnxHelper.h"
+// #include "KnxHelper.h"
 #include "OpenKNX.h"
 #include "ReadADC.h"
 
@@ -207,7 +207,7 @@ void processInput_4_20mA(bool readyFlag)
                         SERIAL_PORT.println(value2.ladcValue);
     #endif
                         // we always store the new value in KO, even it it is not sent (to satisfy potential read request)
-                        knx.getGroupObject(getComCUR(CUR_KoCUR_BASE__1, channel2)).valueNoSend(value2.ladcValue * 2.55, getDPT(VAL_DPT_5));
+                        knx.getGroupObject(getComCUR(CUR_KoCUR_BASE__1, channel2)).valueNoSend(value2.ladcValue * 2.55, DPT_Scaling);
                         break;
 
                     case SensorType_litre:
@@ -216,7 +216,7 @@ void processInput_4_20mA(bool readyFlag)
                         SERIAL_PORT.println(value2.ladcValue);
     #endif
                         // we always store the new value in KO, even it it is not sent (to satisfy potential read request)
-                        knx.getGroupObject(getComCUR(CUR_KoCUR_BASE__1, channel2)).valueNoSend(value2.ladcValue, getDPT(VAL_DPT_12));
+                        knx.getGroupObject(getComCUR(CUR_KoCUR_BASE__1, channel2)).valueNoSend(value2.ladcValue, DPT_Value_4_Ucount);
                         break;
 
                     case SensorType_volume:
@@ -225,7 +225,7 @@ void processInput_4_20mA(bool readyFlag)
                         SERIAL_PORT.println(value2.ladcValue);
     #endif
                         // we always store the new value in KO, even it it is not sent (to satisfy potential read request)
-                        knx.getGroupObject(getComCUR(CUR_KoCUR_BASE__1, channel2)).valueNoSend(value2.ladcValue, getDPT(VAL_DPT_12));
+                        knx.getGroupObject(getComCUR(CUR_KoCUR_BASE__1, channel2)).valueNoSend(value2.ladcValue, DPT_Value_4_Ucount);
                         break;
 
                     default:
@@ -236,7 +236,7 @@ void processInput_4_20mA(bool readyFlag)
                         SERIAL_PORT.println(value2.ladcValue);
     #endif
                         // we always store the new value in KO, even it it is not sent (to satisfy potential read request)
-                        knx.getGroupObject(getComCUR(CUR_KoCUR_BASE__1, channel2)).valueNoSend(value2.ladcValue, getDPT(VAL_DPT_9));
+                        knx.getGroupObject(getComCUR(CUR_KoCUR_BASE__1, channel2)).valueNoSend(value2.ladcValue, DPT_Value_Curr);
                         break;
                 }
 

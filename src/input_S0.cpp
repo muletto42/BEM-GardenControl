@@ -5,7 +5,7 @@
 #include "OpenKNX.h"
 // #include "Helper.h"
 #include "HelperFunc.h"
-#include "KnxHelper.h"
+// #include "KnxHelper.h"
 
 #define BIN_Input_S0 2
 

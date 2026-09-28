@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
 #include "HelperFunc.h"
-#include "KnxHelper.h"
+// #include "KnxHelper.h"
 #include "OpenKNX.h"
 #include "ReadBinary.h"
 #include <Wire.h>

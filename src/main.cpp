@@ -6,7 +6,7 @@
 #ifdef ARDUINO_ARCH_RP2040
     #include "FileTransferModule.h"
 #endif
-#include "DfaModule.h"
+//#include "DfaModule.h"
 #include "GpioBinaryInputModule.h"
 #include "Logic.h"
 #include "MeterModule.h"
@@ -28,7 +28,7 @@ void setup()
     const uint8_t firmwareRevision = 0;
     openknx.init(firmwareRevision);
     openknx.addModule(1, openknxLogic);
-    openknx.addModule(3, openknxDfaModule);
+    //openknx.addModule(3, openknxDfaModule);
     openknx.addModule(2, openknxGardenControlModule);
     openknx.addModule(4, openknxIrrigationModule);
 #if defined(OPENKNX_BI_GPIO_PINS) && OPENKNX_BI_GPIO_COUNT > 0 && BI_ChannelCount > 0

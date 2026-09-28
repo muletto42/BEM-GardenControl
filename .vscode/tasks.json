@@ -4,6 +4,22 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "OpenKNXproducer Documentation GardenControl",
+            "type": "shell",
+            "command": "~/bin/OpenKNXproducer.exe",
+            "args": [
+                "baggages",
+                "--DocFileName",
+                "doc/Applikationsbeschreibung-Bewaesserung.md",
+                "--BaggagesDir",
+                "src/Baggages/Help_de",
+                "--Prefix",
+                "BEW"
+            ],
+            "problemMatcher": [],
+            "group": "test"
+        },
+        {
             "label": "Build PlatformIO",
             "type": "shell",
             "command": "scripts/OpenKNX-Build.ps1",
@@ -61,13 +77,38 @@
             "group": "test"
         },
         {
-            "label": "Generate Dependencies.txt",
+            "label": "Restore Dependencies Branch",
             "type": "shell",
-            "command": "lib/OGM-Common/scripts/setup/reusable/Build-Dependencies.ps1",
+            "command": "${workspaceFolder}/restore/Restore-Dependencies-Branch.ps1",
             "args": [
             ],
+            "options": {
+                "cwd": "${workspaceFolder}/restore/"
+            },
             "problemMatcher": [],
-            "group": "test"
+            "group": "test",
+            "dependsOn": ["Pull"]
+        },
+                {
+            "label": "Restore Dependencies",
+            "type": "shell",
+            "command": "${workspaceFolder}/restore/Restore-Dependencies.ps1",
+            "args": [
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/restore/"
+            },
+            "problemMatcher": [],
+            "group": "test",
+            "dependsOn": ["Pull"]
+        },
+        {
+            "label": "Create Dependencies",
+            "type": "shell",
+            "command": "lib/OGM-Common/scripts/setup/reusable/Build-Dependencies.ps1",
+            "args": [],
+            "problemMatcher": [],
+            "group": "build"
         },
         {
             "label": "Build-Release",
@@ -88,6 +129,58 @@
             ],
             "problemMatcher": [],
             "group": "test"
+        },
+        {
+            "label": "Debug-XML in Navigator kopieren",
+            "type": "shell",
+            "command": "Copy-Item -Path '${workspaceFolder}/src/GardenControl.knxprod' -Destination '${workspaceFolder}/../OpenKNX-XML-Navigator/data/GardenControl.knxprod' -Force",
+            "problemMatcher": []
+        },
+        {
+            "label": "OpenKNXproducer GardenControl bauen + für Navigator kopieren",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "OpenKNXproducer",
+                "Debug-XML in Navigator kopieren"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "OpenKNX XML Navigator starten",
+            "type": "shell",
+            "command": "npm start",
+            "options": {
+                "cwd": "${workspaceFolder}/../OpenKNX-XML-Navigator",
+                "env": {
+                    "XXX_OPENKNX_XML_NAVIGATOR_DEFAULT_SOURCE": "data/GardenControl.knxprod"
+                }
+            },
+            "isBackground": true,
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "^unmatchable^"
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": ".*",
+                    "endsPattern": "(listening|4173|running)"
+                }
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "clear": true
+            }
+        },
+        {
+            "label": "OpenKNX XML Navigator (mit Browser)",
+            "dependsOn": [
+                "OpenKNX XML Navigator starten"
+            ],
+            "dependsOrder": "sequence",
+            "type": "shell",
+            "command": "Start-Sleep -Seconds 2; Start-Process 'http://localhost:4173'",
+            "problemMatcher": []
         }
     ]
 }
