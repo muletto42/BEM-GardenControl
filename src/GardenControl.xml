@@ -92,7 +92,7 @@
   </op:define>
 
   <!-- Needs large module-type! -->
-<!--  <op:define prefix="DFA"
+ <!--<op:define prefix="DFA"
     share="../lib/OFM-DFA/src/DfaModule.share.xml"
     template="../lib/OFM-DFA/src/DfaModule.templ.xml"
     NumChannels="%DFA_NumChannels%"

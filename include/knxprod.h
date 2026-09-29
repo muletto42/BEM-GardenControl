@@ -234,9 +234,9 @@
 #define BEM_Diag_KO_PWT_enable                  114      // 1 Bit, Bit 4
 #define     BEM_Diag_KO_PWT_enableMask 0x10
 #define     BEM_Diag_KO_PWT_enableShift 4
-#define BEM_KOsStateSendStartup                 114      // 1 Bit, Bit 4
-#define     BEM_KOsStateSendStartupMask 0x10
-#define     BEM_KOsStateSendStartupShift 4
+#define BEM_KOsStateSendStartup                 114      // 1 Bit, Bit 3
+#define     BEM_KOsStateSendStartupMask 0x08
+#define     BEM_KOsStateSendStartupShift 3
 
 // externes +5V Relais vorhanden?
 #define ParamBEM_ext5VRelais                         ((bool)(knx.paramByte(BEM_ext5VRelais) & BEM_ext5VRelaisMask))
