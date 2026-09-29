@@ -18,13 +18,14 @@
 #define ETS_ModuleId_BI 7
 #define ETS_ModuleId_MTR 8
 #define ETS_ModuleId_LOG 9
-#define ETS_ModuleId_IRR 10
+#define ETS_ModuleId_DFA 10
+#define ETS_ModuleId_IRR 11
 #define MAIN_FirmwareName "GardenControl"
-#define MAIN_OpenKnxId 0xA2
+#define MAIN_OpenKnxId 0xAF
 #define MAIN_ApplicationNumber 16
 #define MAIN_ApplicationVersion 19
 #define MAIN_ApplicationEncoding iso-8859-15
-#define MAIN_ParameterSize 12833
+#define MAIN_ParameterSize 15995
 #define MAIN_MaxKoNumber 1009
 #define MAIN_OrderNumber "SmartMF-GardenControl"
 #define BASE_ModuleVersion 25
@@ -32,6 +33,7 @@
 #define BI_ModuleVersion 4
 #define MTR_ModuleVersion 16
 #define LOG_ModuleVersion 68
+#define DFA_ModuleVersion 8
 // Parameter with single occurrence
 
 
@@ -119,9 +121,12 @@
 #define BASE_ModuleEnabled_LOG                   111      // 1 Bit, Bit 7
 #define     BASE_ModuleEnabled_LOGMask 0x80
 #define     BASE_ModuleEnabled_LOGShift 7
-#define BASE_ModuleEnabled_IRR                   111      // 1 Bit, Bit 6
-#define     BASE_ModuleEnabled_IRRMask 0x40
-#define     BASE_ModuleEnabled_IRRShift 6
+#define BASE_ModuleEnabled_DFA                   111      // 1 Bit, Bit 6
+#define     BASE_ModuleEnabled_DFAMask 0x40
+#define     BASE_ModuleEnabled_DFAShift 6
+#define BASE_ModuleEnabled_IRR                   111      // 1 Bit, Bit 5
+#define     BASE_ModuleEnabled_IRRMask 0x20
+#define     BASE_ModuleEnabled_IRRShift 5
 
 // Zeitbasis
 #define ParamBASE_StartupDelayBase                    ((knx.paramByte(BASE_StartupDelayBase) & BASE_StartupDelayBaseMask) >> BASE_StartupDelayBaseShift)
@@ -194,6 +199,8 @@
 #define ParamBASE_ModuleEnabled_MTR                   ((bool)(knx.paramByte(BASE_ModuleEnabled_MTR) & BASE_ModuleEnabled_MTRMask))
 // LOG
 #define ParamBASE_ModuleEnabled_LOG                   ((bool)(knx.paramByte(BASE_ModuleEnabled_LOG) & BASE_ModuleEnabled_LOGMask))
+// DFA
+#define ParamBASE_ModuleEnabled_DFA                   ((bool)(knx.paramByte(BASE_ModuleEnabled_DFA) & BASE_ModuleEnabled_DFAMask))
 // IRR
 #define ParamBASE_ModuleEnabled_IRR                   ((bool)(knx.paramByte(BASE_ModuleEnabled_IRR) & BASE_ModuleEnabled_IRRMask))
 
@@ -3036,54 +3043,4137 @@
 // Ausgang
 #define KoLOG_KOfO                                (knx.getGroupObject(LOG_KoCalcNumber(LOG_KoKOfO)))
 
-#define IRR_VisibleChannels                     12795      // uint8_t
-#define IRR_KompatibelZone1Zone2                12795      // 1 Bit, Bit 7
+#define DFA_VisibleChannels                     12795      // uint8_t
+#define DFA_DiagnoseAccess                      12796      // 1 Bit, Bit 7
+#define     DFA_DiagnoseAccessMask 0x80
+#define     DFA_DiagnoseAccessShift 7
+
+// Verfügbare Kanäle
+#define ParamDFA_VisibleChannels                     (knx.paramByte(DFA_VisibleChannels))
+// Zugriff über Diagnose-Objekt
+#define ParamDFA_DiagnoseAccess                      ((bool)(knx.paramByte(DFA_DiagnoseAccess) & DFA_DiagnoseAccessMask))
+
+#define DFA_ChannelCount 4
+
+// Parameter per channel
+#define DFA_ParamBlockOffset 12797
+#define DFA_ParamBlockSize 790
+#define DFA_ParamCalcIndex(index) (index + DFA_ParamBlockOffset + _channelIndex * DFA_ParamBlockSize)
+
+#define DFA_aActive                              0      // 2 Bits, Bit 7-6
+#define     DFA_aActiveMask 0xC0
+#define     DFA_aActiveShift 6
+#define DFA_aStartPause                          0      // 2 Bits, Bit 5-4
+#define     DFA_aStartPauseMask 0x30
+#define     DFA_aStartPauseShift 4
+#define DFA_aStateRestore                        0      // 2 Bits, Bit 3-2
+#define     DFA_aStateRestoreMask 0x0C
+#define     DFA_aStateRestoreShift 2
+#define DFA_aStateSetting                        1      // 2 Bits, Bit 7-6
+#define     DFA_aStateSettingMask 0xC0
+#define     DFA_aStateSettingShift 6
+#define DFA_aStateSettingSame                    1      // 2 Bits, Bit 5-4
+#define     DFA_aStateSettingSameMask 0x30
+#define     DFA_aStateSettingSameShift 4
+#define DFA_aSymbolPairAB                        1      // 1 Bit, Bit 3
+#define     DFA_aSymbolPairABMask 0x08
+#define     DFA_aSymbolPairABShift 3
+#define DFA_aSymbolPairCD                        1      // 1 Bit, Bit 2
+#define     DFA_aSymbolPairCDMask 0x04
+#define     DFA_aSymbolPairCDShift 2
+#define DFA_aSymbolPairEF                        1      // 1 Bit, Bit 1
+#define     DFA_aSymbolPairEFMask 0x02
+#define     DFA_aSymbolPairEFShift 1
+#define DFA_aSymbolPairGH                        1      // 1 Bit, Bit 0
+#define     DFA_aSymbolPairGHMask 0x01
+#define     DFA_aSymbolPairGHShift 0
+#define DFA_az0                                  2      // 8 Bits, Bit 7-0
+#define DFA_az0Fallback                          3      // uint8_t
+#define DFA_aStartupDelayBase                    4      // 2 Bits, Bit 7-6
+#define     DFA_aStartupDelayBaseMask 0xC0
+#define     DFA_aStartupDelayBaseShift 6
+#define DFA_aStartupDelayTime                    4      // 14 Bits, Bit 13-0
+#define     DFA_aStartupDelayTimeMask 0x3FFF
+#define     DFA_aStartupDelayTimeShift 0
+#define DFA_aOutput1Dpt                          6      // 8 Bits, Bit 7-0
+#define DFA_aOutput1IntervalBase                 7      // 2 Bits, Bit 7-6
+#define     DFA_aOutput1IntervalBaseMask 0xC0
+#define     DFA_aOutput1IntervalBaseShift 6
+#define DFA_aOutput1IntervalTime                 7      // 14 Bits, Bit 13-0
+#define     DFA_aOutput1IntervalTimeMask 0x3FFF
+#define     DFA_aOutput1IntervalTimeShift 0
+#define DFA_aOutput2Dpt                          9      // 8 Bits, Bit 7-0
+#define DFA_aOutput2IntervalBase                10      // 2 Bits, Bit 7-6
+#define     DFA_aOutput2IntervalBaseMask 0xC0
+#define     DFA_aOutput2IntervalBaseShift 6
+#define DFA_aOutput2IntervalTime                10      // 14 Bits, Bit 13-0
+#define     DFA_aOutput2IntervalTimeMask 0x3FFF
+#define     DFA_aOutput2IntervalTimeShift 0
+#define DFA_aOutput3Dpt                         12      // 8 Bits, Bit 7-0
+#define DFA_aOutput3IntervalBase                13      // 2 Bits, Bit 7-6
+#define     DFA_aOutput3IntervalBaseMask 0xC0
+#define     DFA_aOutput3IntervalBaseShift 6
+#define DFA_aOutput3IntervalTime                13      // 14 Bits, Bit 13-0
+#define     DFA_aOutput3IntervalTimeMask 0x3FFF
+#define     DFA_aOutput3IntervalTimeShift 0
+#define DFA_aOutput4Dpt                         15      // 8 Bits, Bit 7-0
+#define DFA_aOutput4IntervalBase                16      // 2 Bits, Bit 7-6
+#define     DFA_aOutput4IntervalBaseMask 0xC0
+#define     DFA_aOutput4IntervalBaseShift 6
+#define DFA_aOutput4IntervalTime                16      // 14 Bits, Bit 13-0
+#define     DFA_aOutput4IntervalTimeMask 0x3FFF
+#define     DFA_aOutput4IntervalTimeShift 0
+#define DFA_aSymbolAInput                       18      // 2 Bits, Bit 7-6
+#define     DFA_aSymbolAInputMask 0xC0
+#define     DFA_aSymbolAInputShift 6
+#define DFA_aSymbolAKoNumber                    19      // 15 Bits, Bit 15-1
+#define     DFA_aSymbolAKoNumberMask 0xFFFE
+#define     DFA_aSymbolAKoNumberShift 1
+#define DFA_aSymbolALogicNumber                 19      // uint8_t
+#define DFA_aSymbolATrigger                     21      // 2 Bits, Bit 7-6
+#define     DFA_aSymbolATriggerMask 0xC0
+#define     DFA_aSymbolATriggerShift 6
+#define DFA_aSymbolBInput                       22      // 2 Bits, Bit 7-6
+#define     DFA_aSymbolBInputMask 0xC0
+#define     DFA_aSymbolBInputShift 6
+#define DFA_aSymbolBKoNumber                    23      // 15 Bits, Bit 15-1
+#define     DFA_aSymbolBKoNumberMask 0xFFFE
+#define     DFA_aSymbolBKoNumberShift 1
+#define DFA_aSymbolBLogicNumber                 23      // uint8_t
+#define DFA_aSymbolBTrigger                     25      // 2 Bits, Bit 7-6
+#define     DFA_aSymbolBTriggerMask 0xC0
+#define     DFA_aSymbolBTriggerShift 6
+#define DFA_aSymbolCInput                       26      // 2 Bits, Bit 7-6
+#define     DFA_aSymbolCInputMask 0xC0
+#define     DFA_aSymbolCInputShift 6
+#define DFA_aSymbolCKoNumber                    27      // 15 Bits, Bit 15-1
+#define     DFA_aSymbolCKoNumberMask 0xFFFE
+#define     DFA_aSymbolCKoNumberShift 1
+#define DFA_aSymbolCLogicNumber                 27      // uint8_t
+#define DFA_aSymbolCTrigger                     29      // 2 Bits, Bit 7-6
+#define     DFA_aSymbolCTriggerMask 0xC0
+#define     DFA_aSymbolCTriggerShift 6
+#define DFA_aSymbolDInput                       30      // 2 Bits, Bit 7-6
+#define     DFA_aSymbolDInputMask 0xC0
+#define     DFA_aSymbolDInputShift 6
+#define DFA_aSymbolDKoNumber                    31      // 15 Bits, Bit 15-1
+#define     DFA_aSymbolDKoNumberMask 0xFFFE
+#define     DFA_aSymbolDKoNumberShift 1
+#define DFA_aSymbolDLogicNumber                 31      // uint8_t
+#define DFA_aSymbolDTrigger                     33      // 2 Bits, Bit 7-6
+#define     DFA_aSymbolDTriggerMask 0xC0
+#define     DFA_aSymbolDTriggerShift 6
+#define DFA_aSymbolEInput                       34      // 2 Bits, Bit 7-6
+#define     DFA_aSymbolEInputMask 0xC0
+#define     DFA_aSymbolEInputShift 6
+#define DFA_aSymbolEKoNumber                    35      // 15 Bits, Bit 15-1
+#define     DFA_aSymbolEKoNumberMask 0xFFFE
+#define     DFA_aSymbolEKoNumberShift 1
+#define DFA_aSymbolELogicNumber                 35      // uint8_t
+#define DFA_aSymbolETrigger                     37      // 2 Bits, Bit 7-6
+#define     DFA_aSymbolETriggerMask 0xC0
+#define     DFA_aSymbolETriggerShift 6
+#define DFA_aSymbolFInput                       38      // 2 Bits, Bit 7-6
+#define     DFA_aSymbolFInputMask 0xC0
+#define     DFA_aSymbolFInputShift 6
+#define DFA_aSymbolFKoNumber                    39      // 15 Bits, Bit 15-1
+#define     DFA_aSymbolFKoNumberMask 0xFFFE
+#define     DFA_aSymbolFKoNumberShift 1
+#define DFA_aSymbolFLogicNumber                 39      // uint8_t
+#define DFA_aSymbolFTrigger                     41      // 2 Bits, Bit 7-6
+#define     DFA_aSymbolFTriggerMask 0xC0
+#define     DFA_aSymbolFTriggerShift 6
+#define DFA_aSymbolGInput                       42      // 2 Bits, Bit 7-6
+#define     DFA_aSymbolGInputMask 0xC0
+#define     DFA_aSymbolGInputShift 6
+#define DFA_aSymbolGKoNumber                    43      // 15 Bits, Bit 15-1
+#define     DFA_aSymbolGKoNumberMask 0xFFFE
+#define     DFA_aSymbolGKoNumberShift 1
+#define DFA_aSymbolGLogicNumber                 43      // uint8_t
+#define DFA_aSymbolGTrigger                     45      // 2 Bits, Bit 7-6
+#define     DFA_aSymbolGTriggerMask 0xC0
+#define     DFA_aSymbolGTriggerShift 6
+#define DFA_aSymbolHInput                       46      // 2 Bits, Bit 7-6
+#define     DFA_aSymbolHInputMask 0xC0
+#define     DFA_aSymbolHInputShift 6
+#define DFA_aSymbolHKoNumber                    47      // 15 Bits, Bit 15-1
+#define     DFA_aSymbolHKoNumberMask 0xFFFE
+#define     DFA_aSymbolHKoNumberShift 1
+#define DFA_aSymbolHLogicNumber                 47      // uint8_t
+#define DFA_aSymbolHTrigger                     49      // 2 Bits, Bit 7-6
+#define     DFA_aSymbolHTriggerMask 0xC0
+#define     DFA_aSymbolHTriggerShift 6
+#define DFA_aSymbolTInput                       50      // 2 Bits, Bit 7-6
+#define     DFA_aSymbolTInputMask 0xC0
+#define     DFA_aSymbolTInputShift 6
+#define DFA_aSymbolTKoNumber                    51      // 15 Bits, Bit 15-1
+#define     DFA_aSymbolTKoNumberMask 0xFFFE
+#define     DFA_aSymbolTKoNumberShift 1
+#define DFA_aSymbolTLogicNumber                 51      // uint8_t
+#define DFA_aSymbolTTrigger                     53      // 2 Bits, Bit 7-6
+#define     DFA_aSymbolTTriggerMask 0xC0
+#define     DFA_aSymbolTTriggerShift 6
+#define DFA_aCaLOG                              54      // uint8_t
+#define DFA_aCaT                                55      // 8 Bits, Bit 7-0
+#define DFA_aCaF                                56      // 8 Bits, Bit 7-0
+#define DFA_aCaU                                57      // 8 Bits, Bit 7-0
+#define DFA_aCbLOG                              58      // uint8_t
+#define DFA_aCbT                                59      // 8 Bits, Bit 7-0
+#define DFA_aCbF                                60      // 8 Bits, Bit 7-0
+#define DFA_aCbU                                61      // 8 Bits, Bit 7-0
+#define DFA_aCcLOG                              62      // uint8_t
+#define DFA_aCcT                                63      // 8 Bits, Bit 7-0
+#define DFA_aCcF                                64      // 8 Bits, Bit 7-0
+#define DFA_aCcU                                65      // 8 Bits, Bit 7-0
+#define DFA_aCdLOG                              66      // uint8_t
+#define DFA_aCdT                                67      // 8 Bits, Bit 7-0
+#define DFA_aCdF                                68      // 8 Bits, Bit 7-0
+#define DFA_aCdU                                69      // 8 Bits, Bit 7-0
+#define DFA_aCeLOG                              70      // uint8_t
+#define DFA_aCeT                                71      // 8 Bits, Bit 7-0
+#define DFA_aCeF                                72      // 8 Bits, Bit 7-0
+#define DFA_aCeU                                73      // 8 Bits, Bit 7-0
+#define DFA_aCfLOG                              74      // uint8_t
+#define DFA_aCfT                                75      // 8 Bits, Bit 7-0
+#define DFA_aCfF                                76      // 8 Bits, Bit 7-0
+#define DFA_aCfU                                77      // 8 Bits, Bit 7-0
+#define DFA_aCgLOG                              78      // uint8_t
+#define DFA_aCgT                                79      // 8 Bits, Bit 7-0
+#define DFA_aCgF                                80      // 8 Bits, Bit 7-0
+#define DFA_aCgU                                81      // 8 Bits, Bit 7-0
+#define DFA_aChLOG                              82      // uint8_t
+#define DFA_aChT                                83      // 8 Bits, Bit 7-0
+#define DFA_aChF                                84      // 8 Bits, Bit 7-0
+#define DFA_aChU                                85      // 8 Bits, Bit 7-0
+#define DFA_aCiLOG                              86      // uint8_t
+#define DFA_aCiT                                87      // 8 Bits, Bit 7-0
+#define DFA_aCiF                                88      // 8 Bits, Bit 7-0
+#define DFA_aCiU                                89      // 8 Bits, Bit 7-0
+#define DFA_aCjLOG                              90      // uint8_t
+#define DFA_aCjT                                91      // 8 Bits, Bit 7-0
+#define DFA_aCjF                                92      // 8 Bits, Bit 7-0
+#define DFA_aCjU                                93      // 8 Bits, Bit 7-0
+#define DFA_aCkLOG                              94      // uint8_t
+#define DFA_aCkT                                95      // 8 Bits, Bit 7-0
+#define DFA_aCkF                                96      // 8 Bits, Bit 7-0
+#define DFA_aCkU                                97      // 8 Bits, Bit 7-0
+#define DFA_aClLOG                              98      // uint8_t
+#define DFA_aClT                                99      // 8 Bits, Bit 7-0
+#define DFA_aClF                                100      // 8 Bits, Bit 7-0
+#define DFA_aClU                                101      // 8 Bits, Bit 7-0
+#define DFA_aCmLOG                              102      // uint8_t
+#define DFA_aCmT                                103      // 8 Bits, Bit 7-0
+#define DFA_aCmF                                104      // 8 Bits, Bit 7-0
+#define DFA_aCmU                                105      // 8 Bits, Bit 7-0
+#define DFA_aCnLOG                              106      // uint8_t
+#define DFA_aCnT                                107      // 8 Bits, Bit 7-0
+#define DFA_aCnF                                108      // 8 Bits, Bit 7-0
+#define DFA_aCnU                                109      // 8 Bits, Bit 7-0
+#define DFA_aCoLOG                              110      // uint8_t
+#define DFA_aCoT                                111      // 8 Bits, Bit 7-0
+#define DFA_aCoF                                112      // 8 Bits, Bit 7-0
+#define DFA_aCoU                                113      // 8 Bits, Bit 7-0
+#define DFA_aCpLOG                              114      // uint8_t
+#define DFA_aCpT                                115      // 8 Bits, Bit 7-0
+#define DFA_aCpF                                116      // 8 Bits, Bit 7-0
+#define DFA_aCpU                                117      // 8 Bits, Bit 7-0
+#define DFA_ad01A                               119      // 8 Bits, Bit 7-0
+#define DFA_ad01B                               120      // 8 Bits, Bit 7-0
+#define DFA_ad01C                               121      // 8 Bits, Bit 7-0
+#define DFA_ad01D                               122      // 8 Bits, Bit 7-0
+#define DFA_ad01E                               123      // 8 Bits, Bit 7-0
+#define DFA_ad01F                               124      // 8 Bits, Bit 7-0
+#define DFA_ad01G                               125      // 8 Bits, Bit 7-0
+#define DFA_ad01H                               126      // 8 Bits, Bit 7-0
+#define DFA_ad01T                               127      // 8 Bits, Bit 7-0
+#define DFA_ad01TBase                           128      // 2 Bits, Bit 7-6
+#define     DFA_ad01TBaseMask 0xC0
+#define     DFA_ad01TBaseShift 6
+#define DFA_ad01TTime                           128      // 14 Bits, Bit 13-0
+#define     DFA_ad01TTimeMask 0x3FFF
+#define     DFA_ad01TTimeShift 0
+#define DFA_az01o1Send                          130      // 8 Bits, Bit 7-0
+#define DFA_az01o1Dpt1                          131      // 8 Bits, Bit 7-0
+#define DFA_az01o1Dpt2                          131      // 8 Bits, Bit 7-0
+#define DFA_az01o1Dpt5                          131      // uint8_t
+#define DFA_az01o1Dpt5001                       131      // uint8_t
+#define DFA_az01o1Dpt6                          131      // int8_t
+#define DFA_az01o1Dpt7                          131      // uint16_t
+#define DFA_az01o1Dpt8                          131      // int16_t
+#define DFA_az01o1Dpt9                          131      // float (2 Byte)
+#define DFA_az01o1Dpt12                         131      // uint32_t
+#define DFA_az01o1Dpt13                         131      // int32_t
+#define DFA_az01o1Dpt14                         131      // float (4 Byte)
+#define DFA_az01o1Dpt17                         131      // 8 Bits, Bit 7-0
+#define DFA_az01o1Dpt232                        131      // 24 Bits, Bit 31-8
+#define     DFA_az01o1Dpt232Mask 0xFFFFFF00
+#define     DFA_az01o1Dpt232Shift 8
+#define DFA_az01o2Send                          135      // 8 Bits, Bit 7-0
+#define DFA_az01o2Dpt1                          136      // 8 Bits, Bit 7-0
+#define DFA_az01o2Dpt2                          136      // 8 Bits, Bit 7-0
+#define DFA_az01o2Dpt5                          136      // uint8_t
+#define DFA_az01o2Dpt5001                       136      // uint8_t
+#define DFA_az01o2Dpt6                          136      // int8_t
+#define DFA_az01o2Dpt7                          136      // uint16_t
+#define DFA_az01o2Dpt8                          136      // int16_t
+#define DFA_az01o2Dpt9                          136      // float (2 Byte)
+#define DFA_az01o2Dpt12                         136      // uint32_t
+#define DFA_az01o2Dpt13                         136      // int32_t
+#define DFA_az01o2Dpt14                         136      // float (4 Byte)
+#define DFA_az01o2Dpt17                         136      // 8 Bits, Bit 7-0
+#define DFA_az01o2Dpt232                        136      // 24 Bits, Bit 31-8
+#define     DFA_az01o2Dpt232Mask 0xFFFFFF00
+#define     DFA_az01o2Dpt232Shift 8
+#define DFA_az01o3Send                          140      // 8 Bits, Bit 7-0
+#define DFA_az01o3Dpt1                          141      // 8 Bits, Bit 7-0
+#define DFA_az01o3Dpt2                          141      // 8 Bits, Bit 7-0
+#define DFA_az01o3Dpt5                          141      // uint8_t
+#define DFA_az01o3Dpt5001                       141      // uint8_t
+#define DFA_az01o3Dpt6                          141      // int8_t
+#define DFA_az01o3Dpt7                          141      // uint16_t
+#define DFA_az01o3Dpt8                          141      // int16_t
+#define DFA_az01o3Dpt9                          141      // float (2 Byte)
+#define DFA_az01o3Dpt12                         141      // uint32_t
+#define DFA_az01o3Dpt13                         141      // int32_t
+#define DFA_az01o3Dpt14                         141      // float (4 Byte)
+#define DFA_az01o3Dpt17                         141      // 8 Bits, Bit 7-0
+#define DFA_az01o3Dpt232                        141      // 24 Bits, Bit 31-8
+#define     DFA_az01o3Dpt232Mask 0xFFFFFF00
+#define     DFA_az01o3Dpt232Shift 8
+#define DFA_az01o4Send                          145      // 8 Bits, Bit 7-0
+#define DFA_az01o4Dpt1                          146      // 8 Bits, Bit 7-0
+#define DFA_az01o4Dpt2                          146      // 8 Bits, Bit 7-0
+#define DFA_az01o4Dpt5                          146      // uint8_t
+#define DFA_az01o4Dpt5001                       146      // uint8_t
+#define DFA_az01o4Dpt6                          146      // int8_t
+#define DFA_az01o4Dpt7                          146      // uint16_t
+#define DFA_az01o4Dpt8                          146      // int16_t
+#define DFA_az01o4Dpt9                          146      // float (2 Byte)
+#define DFA_az01o4Dpt12                         146      // uint32_t
+#define DFA_az01o4Dpt13                         146      // int32_t
+#define DFA_az01o4Dpt14                         146      // float (4 Byte)
+#define DFA_az01o4Dpt16                         146      // char*, 14 Byte
+#define     DFA_az01o4Dpt16Length 14
+#define DFA_az01o4Dpt17                         146      // 8 Bits, Bit 7-0
+#define DFA_az01o4Dpt232                        146      // 24 Bits, Bit 31-8
+#define     DFA_az01o4Dpt232Mask 0xFFFFFF00
+#define     DFA_az01o4Dpt232Shift 8
+#define DFA_ad02A                               161      // 8 Bits, Bit 7-0
+#define DFA_ad02B                               162      // 8 Bits, Bit 7-0
+#define DFA_ad02C                               163      // 8 Bits, Bit 7-0
+#define DFA_ad02D                               164      // 8 Bits, Bit 7-0
+#define DFA_ad02E                               165      // 8 Bits, Bit 7-0
+#define DFA_ad02F                               166      // 8 Bits, Bit 7-0
+#define DFA_ad02G                               167      // 8 Bits, Bit 7-0
+#define DFA_ad02H                               168      // 8 Bits, Bit 7-0
+#define DFA_ad02T                               169      // 8 Bits, Bit 7-0
+#define DFA_ad02TBase                           170      // 2 Bits, Bit 7-6
+#define     DFA_ad02TBaseMask 0xC0
+#define     DFA_ad02TBaseShift 6
+#define DFA_ad02TTime                           170      // 14 Bits, Bit 13-0
+#define     DFA_ad02TTimeMask 0x3FFF
+#define     DFA_ad02TTimeShift 0
+#define DFA_az02o1Send                          172      // 8 Bits, Bit 7-0
+#define DFA_az02o1Dpt1                          173      // 8 Bits, Bit 7-0
+#define DFA_az02o1Dpt2                          173      // 8 Bits, Bit 7-0
+#define DFA_az02o1Dpt5                          173      // uint8_t
+#define DFA_az02o1Dpt5001                       173      // uint8_t
+#define DFA_az02o1Dpt6                          173      // int8_t
+#define DFA_az02o1Dpt7                          173      // uint16_t
+#define DFA_az02o1Dpt8                          173      // int16_t
+#define DFA_az02o1Dpt9                          173      // float (2 Byte)
+#define DFA_az02o1Dpt12                         173      // uint32_t
+#define DFA_az02o1Dpt13                         173      // int32_t
+#define DFA_az02o1Dpt14                         173      // float (4 Byte)
+#define DFA_az02o1Dpt17                         173      // 8 Bits, Bit 7-0
+#define DFA_az02o1Dpt232                        173      // 24 Bits, Bit 31-8
+#define     DFA_az02o1Dpt232Mask 0xFFFFFF00
+#define     DFA_az02o1Dpt232Shift 8
+#define DFA_az02o2Send                          177      // 8 Bits, Bit 7-0
+#define DFA_az02o2Dpt1                          178      // 8 Bits, Bit 7-0
+#define DFA_az02o2Dpt2                          178      // 8 Bits, Bit 7-0
+#define DFA_az02o2Dpt5                          178      // uint8_t
+#define DFA_az02o2Dpt5001                       178      // uint8_t
+#define DFA_az02o2Dpt6                          178      // int8_t
+#define DFA_az02o2Dpt7                          178      // uint16_t
+#define DFA_az02o2Dpt8                          178      // int16_t
+#define DFA_az02o2Dpt9                          178      // float (2 Byte)
+#define DFA_az02o2Dpt12                         178      // uint32_t
+#define DFA_az02o2Dpt13                         178      // int32_t
+#define DFA_az02o2Dpt14                         178      // float (4 Byte)
+#define DFA_az02o2Dpt17                         178      // 8 Bits, Bit 7-0
+#define DFA_az02o2Dpt232                        178      // 24 Bits, Bit 31-8
+#define     DFA_az02o2Dpt232Mask 0xFFFFFF00
+#define     DFA_az02o2Dpt232Shift 8
+#define DFA_az02o3Send                          182      // 8 Bits, Bit 7-0
+#define DFA_az02o3Dpt1                          183      // 8 Bits, Bit 7-0
+#define DFA_az02o3Dpt2                          183      // 8 Bits, Bit 7-0
+#define DFA_az02o3Dpt5                          183      // uint8_t
+#define DFA_az02o3Dpt5001                       183      // uint8_t
+#define DFA_az02o3Dpt6                          183      // int8_t
+#define DFA_az02o3Dpt7                          183      // uint16_t
+#define DFA_az02o3Dpt8                          183      // int16_t
+#define DFA_az02o3Dpt9                          183      // float (2 Byte)
+#define DFA_az02o3Dpt12                         183      // uint32_t
+#define DFA_az02o3Dpt13                         183      // int32_t
+#define DFA_az02o3Dpt14                         183      // float (4 Byte)
+#define DFA_az02o3Dpt17                         183      // 8 Bits, Bit 7-0
+#define DFA_az02o3Dpt232                        183      // 24 Bits, Bit 31-8
+#define     DFA_az02o3Dpt232Mask 0xFFFFFF00
+#define     DFA_az02o3Dpt232Shift 8
+#define DFA_az02o4Send                          187      // 8 Bits, Bit 7-0
+#define DFA_az02o4Dpt1                          188      // 8 Bits, Bit 7-0
+#define DFA_az02o4Dpt2                          188      // 8 Bits, Bit 7-0
+#define DFA_az02o4Dpt5                          188      // uint8_t
+#define DFA_az02o4Dpt5001                       188      // uint8_t
+#define DFA_az02o4Dpt6                          188      // int8_t
+#define DFA_az02o4Dpt7                          188      // uint16_t
+#define DFA_az02o4Dpt8                          188      // int16_t
+#define DFA_az02o4Dpt9                          188      // float (2 Byte)
+#define DFA_az02o4Dpt12                         188      // uint32_t
+#define DFA_az02o4Dpt13                         188      // int32_t
+#define DFA_az02o4Dpt14                         188      // float (4 Byte)
+#define DFA_az02o4Dpt16                         188      // char*, 14 Byte
+#define     DFA_az02o4Dpt16Length 14
+#define DFA_az02o4Dpt17                         188      // 8 Bits, Bit 7-0
+#define DFA_az02o4Dpt232                        188      // 24 Bits, Bit 31-8
+#define     DFA_az02o4Dpt232Mask 0xFFFFFF00
+#define     DFA_az02o4Dpt232Shift 8
+#define DFA_ad03A                               203      // 8 Bits, Bit 7-0
+#define DFA_ad03B                               204      // 8 Bits, Bit 7-0
+#define DFA_ad03C                               205      // 8 Bits, Bit 7-0
+#define DFA_ad03D                               206      // 8 Bits, Bit 7-0
+#define DFA_ad03E                               207      // 8 Bits, Bit 7-0
+#define DFA_ad03F                               208      // 8 Bits, Bit 7-0
+#define DFA_ad03G                               209      // 8 Bits, Bit 7-0
+#define DFA_ad03H                               210      // 8 Bits, Bit 7-0
+#define DFA_ad03T                               211      // 8 Bits, Bit 7-0
+#define DFA_ad03TBase                           212      // 2 Bits, Bit 7-6
+#define     DFA_ad03TBaseMask 0xC0
+#define     DFA_ad03TBaseShift 6
+#define DFA_ad03TTime                           212      // 14 Bits, Bit 13-0
+#define     DFA_ad03TTimeMask 0x3FFF
+#define     DFA_ad03TTimeShift 0
+#define DFA_az03o1Send                          214      // 8 Bits, Bit 7-0
+#define DFA_az03o1Dpt1                          215      // 8 Bits, Bit 7-0
+#define DFA_az03o1Dpt2                          215      // 8 Bits, Bit 7-0
+#define DFA_az03o1Dpt5                          215      // uint8_t
+#define DFA_az03o1Dpt5001                       215      // uint8_t
+#define DFA_az03o1Dpt6                          215      // int8_t
+#define DFA_az03o1Dpt7                          215      // uint16_t
+#define DFA_az03o1Dpt8                          215      // int16_t
+#define DFA_az03o1Dpt9                          215      // float (2 Byte)
+#define DFA_az03o1Dpt12                         215      // uint32_t
+#define DFA_az03o1Dpt13                         215      // int32_t
+#define DFA_az03o1Dpt14                         215      // float (4 Byte)
+#define DFA_az03o1Dpt17                         215      // 8 Bits, Bit 7-0
+#define DFA_az03o1Dpt232                        215      // 24 Bits, Bit 31-8
+#define     DFA_az03o1Dpt232Mask 0xFFFFFF00
+#define     DFA_az03o1Dpt232Shift 8
+#define DFA_az03o2Send                          219      // 8 Bits, Bit 7-0
+#define DFA_az03o2Dpt1                          220      // 8 Bits, Bit 7-0
+#define DFA_az03o2Dpt2                          220      // 8 Bits, Bit 7-0
+#define DFA_az03o2Dpt5                          220      // uint8_t
+#define DFA_az03o2Dpt5001                       220      // uint8_t
+#define DFA_az03o2Dpt6                          220      // int8_t
+#define DFA_az03o2Dpt7                          220      // uint16_t
+#define DFA_az03o2Dpt8                          220      // int16_t
+#define DFA_az03o2Dpt9                          220      // float (2 Byte)
+#define DFA_az03o2Dpt12                         220      // uint32_t
+#define DFA_az03o2Dpt13                         220      // int32_t
+#define DFA_az03o2Dpt14                         220      // float (4 Byte)
+#define DFA_az03o2Dpt17                         220      // 8 Bits, Bit 7-0
+#define DFA_az03o2Dpt232                        220      // 24 Bits, Bit 31-8
+#define     DFA_az03o2Dpt232Mask 0xFFFFFF00
+#define     DFA_az03o2Dpt232Shift 8
+#define DFA_az03o3Send                          224      // 8 Bits, Bit 7-0
+#define DFA_az03o3Dpt1                          225      // 8 Bits, Bit 7-0
+#define DFA_az03o3Dpt2                          225      // 8 Bits, Bit 7-0
+#define DFA_az03o3Dpt5                          225      // uint8_t
+#define DFA_az03o3Dpt5001                       225      // uint8_t
+#define DFA_az03o3Dpt6                          225      // int8_t
+#define DFA_az03o3Dpt7                          225      // uint16_t
+#define DFA_az03o3Dpt8                          225      // int16_t
+#define DFA_az03o3Dpt9                          225      // float (2 Byte)
+#define DFA_az03o3Dpt12                         225      // uint32_t
+#define DFA_az03o3Dpt13                         225      // int32_t
+#define DFA_az03o3Dpt14                         225      // float (4 Byte)
+#define DFA_az03o3Dpt17                         225      // 8 Bits, Bit 7-0
+#define DFA_az03o3Dpt232                        225      // 24 Bits, Bit 31-8
+#define     DFA_az03o3Dpt232Mask 0xFFFFFF00
+#define     DFA_az03o3Dpt232Shift 8
+#define DFA_az03o4Send                          229      // 8 Bits, Bit 7-0
+#define DFA_az03o4Dpt1                          230      // 8 Bits, Bit 7-0
+#define DFA_az03o4Dpt2                          230      // 8 Bits, Bit 7-0
+#define DFA_az03o4Dpt5                          230      // uint8_t
+#define DFA_az03o4Dpt5001                       230      // uint8_t
+#define DFA_az03o4Dpt6                          230      // int8_t
+#define DFA_az03o4Dpt7                          230      // uint16_t
+#define DFA_az03o4Dpt8                          230      // int16_t
+#define DFA_az03o4Dpt9                          230      // float (2 Byte)
+#define DFA_az03o4Dpt12                         230      // uint32_t
+#define DFA_az03o4Dpt13                         230      // int32_t
+#define DFA_az03o4Dpt14                         230      // float (4 Byte)
+#define DFA_az03o4Dpt16                         230      // char*, 14 Byte
+#define     DFA_az03o4Dpt16Length 14
+#define DFA_az03o4Dpt17                         230      // 8 Bits, Bit 7-0
+#define DFA_az03o4Dpt232                        230      // 24 Bits, Bit 31-8
+#define     DFA_az03o4Dpt232Mask 0xFFFFFF00
+#define     DFA_az03o4Dpt232Shift 8
+#define DFA_ad04A                               245      // 8 Bits, Bit 7-0
+#define DFA_ad04B                               246      // 8 Bits, Bit 7-0
+#define DFA_ad04C                               247      // 8 Bits, Bit 7-0
+#define DFA_ad04D                               248      // 8 Bits, Bit 7-0
+#define DFA_ad04E                               249      // 8 Bits, Bit 7-0
+#define DFA_ad04F                               250      // 8 Bits, Bit 7-0
+#define DFA_ad04G                               251      // 8 Bits, Bit 7-0
+#define DFA_ad04H                               252      // 8 Bits, Bit 7-0
+#define DFA_ad04T                               253      // 8 Bits, Bit 7-0
+#define DFA_ad04TBase                           254      // 2 Bits, Bit 7-6
+#define     DFA_ad04TBaseMask 0xC0
+#define     DFA_ad04TBaseShift 6
+#define DFA_ad04TTime                           254      // 14 Bits, Bit 13-0
+#define     DFA_ad04TTimeMask 0x3FFF
+#define     DFA_ad04TTimeShift 0
+#define DFA_az04o1Send                          256      // 8 Bits, Bit 7-0
+#define DFA_az04o1Dpt1                          257      // 8 Bits, Bit 7-0
+#define DFA_az04o1Dpt2                          257      // 8 Bits, Bit 7-0
+#define DFA_az04o1Dpt5                          257      // uint8_t
+#define DFA_az04o1Dpt5001                       257      // uint8_t
+#define DFA_az04o1Dpt6                          257      // int8_t
+#define DFA_az04o1Dpt7                          257      // uint16_t
+#define DFA_az04o1Dpt8                          257      // int16_t
+#define DFA_az04o1Dpt9                          257      // float (2 Byte)
+#define DFA_az04o1Dpt12                         257      // uint32_t
+#define DFA_az04o1Dpt13                         257      // int32_t
+#define DFA_az04o1Dpt14                         257      // float (4 Byte)
+#define DFA_az04o1Dpt17                         257      // 8 Bits, Bit 7-0
+#define DFA_az04o1Dpt232                        257      // 24 Bits, Bit 31-8
+#define     DFA_az04o1Dpt232Mask 0xFFFFFF00
+#define     DFA_az04o1Dpt232Shift 8
+#define DFA_az04o2Send                          261      // 8 Bits, Bit 7-0
+#define DFA_az04o2Dpt1                          262      // 8 Bits, Bit 7-0
+#define DFA_az04o2Dpt2                          262      // 8 Bits, Bit 7-0
+#define DFA_az04o2Dpt5                          262      // uint8_t
+#define DFA_az04o2Dpt5001                       262      // uint8_t
+#define DFA_az04o2Dpt6                          262      // int8_t
+#define DFA_az04o2Dpt7                          262      // uint16_t
+#define DFA_az04o2Dpt8                          262      // int16_t
+#define DFA_az04o2Dpt9                          262      // float (2 Byte)
+#define DFA_az04o2Dpt12                         262      // uint32_t
+#define DFA_az04o2Dpt13                         262      // int32_t
+#define DFA_az04o2Dpt14                         262      // float (4 Byte)
+#define DFA_az04o2Dpt17                         262      // 8 Bits, Bit 7-0
+#define DFA_az04o2Dpt232                        262      // 24 Bits, Bit 31-8
+#define     DFA_az04o2Dpt232Mask 0xFFFFFF00
+#define     DFA_az04o2Dpt232Shift 8
+#define DFA_az04o3Send                          266      // 8 Bits, Bit 7-0
+#define DFA_az04o3Dpt1                          267      // 8 Bits, Bit 7-0
+#define DFA_az04o3Dpt2                          267      // 8 Bits, Bit 7-0
+#define DFA_az04o3Dpt5                          267      // uint8_t
+#define DFA_az04o3Dpt5001                       267      // uint8_t
+#define DFA_az04o3Dpt6                          267      // int8_t
+#define DFA_az04o3Dpt7                          267      // uint16_t
+#define DFA_az04o3Dpt8                          267      // int16_t
+#define DFA_az04o3Dpt9                          267      // float (2 Byte)
+#define DFA_az04o3Dpt12                         267      // uint32_t
+#define DFA_az04o3Dpt13                         267      // int32_t
+#define DFA_az04o3Dpt14                         267      // float (4 Byte)
+#define DFA_az04o3Dpt17                         267      // 8 Bits, Bit 7-0
+#define DFA_az04o3Dpt232                        267      // 24 Bits, Bit 31-8
+#define     DFA_az04o3Dpt232Mask 0xFFFFFF00
+#define     DFA_az04o3Dpt232Shift 8
+#define DFA_az04o4Send                          271      // 8 Bits, Bit 7-0
+#define DFA_az04o4Dpt1                          272      // 8 Bits, Bit 7-0
+#define DFA_az04o4Dpt2                          272      // 8 Bits, Bit 7-0
+#define DFA_az04o4Dpt5                          272      // uint8_t
+#define DFA_az04o4Dpt5001                       272      // uint8_t
+#define DFA_az04o4Dpt6                          272      // int8_t
+#define DFA_az04o4Dpt7                          272      // uint16_t
+#define DFA_az04o4Dpt8                          272      // int16_t
+#define DFA_az04o4Dpt9                          272      // float (2 Byte)
+#define DFA_az04o4Dpt12                         272      // uint32_t
+#define DFA_az04o4Dpt13                         272      // int32_t
+#define DFA_az04o4Dpt14                         272      // float (4 Byte)
+#define DFA_az04o4Dpt16                         272      // char*, 14 Byte
+#define     DFA_az04o4Dpt16Length 14
+#define DFA_az04o4Dpt17                         272      // 8 Bits, Bit 7-0
+#define DFA_az04o4Dpt232                        272      // 24 Bits, Bit 31-8
+#define     DFA_az04o4Dpt232Mask 0xFFFFFF00
+#define     DFA_az04o4Dpt232Shift 8
+#define DFA_ad05A                               287      // 8 Bits, Bit 7-0
+#define DFA_ad05B                               288      // 8 Bits, Bit 7-0
+#define DFA_ad05C                               289      // 8 Bits, Bit 7-0
+#define DFA_ad05D                               290      // 8 Bits, Bit 7-0
+#define DFA_ad05E                               291      // 8 Bits, Bit 7-0
+#define DFA_ad05F                               292      // 8 Bits, Bit 7-0
+#define DFA_ad05G                               293      // 8 Bits, Bit 7-0
+#define DFA_ad05H                               294      // 8 Bits, Bit 7-0
+#define DFA_ad05T                               295      // 8 Bits, Bit 7-0
+#define DFA_ad05TBase                           296      // 2 Bits, Bit 7-6
+#define     DFA_ad05TBaseMask 0xC0
+#define     DFA_ad05TBaseShift 6
+#define DFA_ad05TTime                           296      // 14 Bits, Bit 13-0
+#define     DFA_ad05TTimeMask 0x3FFF
+#define     DFA_ad05TTimeShift 0
+#define DFA_az05o1Send                          298      // 8 Bits, Bit 7-0
+#define DFA_az05o1Dpt1                          299      // 8 Bits, Bit 7-0
+#define DFA_az05o1Dpt2                          299      // 8 Bits, Bit 7-0
+#define DFA_az05o1Dpt5                          299      // uint8_t
+#define DFA_az05o1Dpt5001                       299      // uint8_t
+#define DFA_az05o1Dpt6                          299      // int8_t
+#define DFA_az05o1Dpt7                          299      // uint16_t
+#define DFA_az05o1Dpt8                          299      // int16_t
+#define DFA_az05o1Dpt9                          299      // float (2 Byte)
+#define DFA_az05o1Dpt12                         299      // uint32_t
+#define DFA_az05o1Dpt13                         299      // int32_t
+#define DFA_az05o1Dpt14                         299      // float (4 Byte)
+#define DFA_az05o1Dpt17                         299      // 8 Bits, Bit 7-0
+#define DFA_az05o1Dpt232                        299      // 24 Bits, Bit 31-8
+#define     DFA_az05o1Dpt232Mask 0xFFFFFF00
+#define     DFA_az05o1Dpt232Shift 8
+#define DFA_az05o2Send                          303      // 8 Bits, Bit 7-0
+#define DFA_az05o2Dpt1                          304      // 8 Bits, Bit 7-0
+#define DFA_az05o2Dpt2                          304      // 8 Bits, Bit 7-0
+#define DFA_az05o2Dpt5                          304      // uint8_t
+#define DFA_az05o2Dpt5001                       304      // uint8_t
+#define DFA_az05o2Dpt6                          304      // int8_t
+#define DFA_az05o2Dpt7                          304      // uint16_t
+#define DFA_az05o2Dpt8                          304      // int16_t
+#define DFA_az05o2Dpt9                          304      // float (2 Byte)
+#define DFA_az05o2Dpt12                         304      // uint32_t
+#define DFA_az05o2Dpt13                         304      // int32_t
+#define DFA_az05o2Dpt14                         304      // float (4 Byte)
+#define DFA_az05o2Dpt17                         304      // 8 Bits, Bit 7-0
+#define DFA_az05o2Dpt232                        304      // 24 Bits, Bit 31-8
+#define     DFA_az05o2Dpt232Mask 0xFFFFFF00
+#define     DFA_az05o2Dpt232Shift 8
+#define DFA_az05o3Send                          308      // 8 Bits, Bit 7-0
+#define DFA_az05o3Dpt1                          309      // 8 Bits, Bit 7-0
+#define DFA_az05o3Dpt2                          309      // 8 Bits, Bit 7-0
+#define DFA_az05o3Dpt5                          309      // uint8_t
+#define DFA_az05o3Dpt5001                       309      // uint8_t
+#define DFA_az05o3Dpt6                          309      // int8_t
+#define DFA_az05o3Dpt7                          309      // uint16_t
+#define DFA_az05o3Dpt8                          309      // int16_t
+#define DFA_az05o3Dpt9                          309      // float (2 Byte)
+#define DFA_az05o3Dpt12                         309      // uint32_t
+#define DFA_az05o3Dpt13                         309      // int32_t
+#define DFA_az05o3Dpt14                         309      // float (4 Byte)
+#define DFA_az05o3Dpt17                         309      // 8 Bits, Bit 7-0
+#define DFA_az05o3Dpt232                        309      // 24 Bits, Bit 31-8
+#define     DFA_az05o3Dpt232Mask 0xFFFFFF00
+#define     DFA_az05o3Dpt232Shift 8
+#define DFA_az05o4Send                          313      // 8 Bits, Bit 7-0
+#define DFA_az05o4Dpt1                          314      // 8 Bits, Bit 7-0
+#define DFA_az05o4Dpt2                          314      // 8 Bits, Bit 7-0
+#define DFA_az05o4Dpt5                          314      // uint8_t
+#define DFA_az05o4Dpt5001                       314      // uint8_t
+#define DFA_az05o4Dpt6                          314      // int8_t
+#define DFA_az05o4Dpt7                          314      // uint16_t
+#define DFA_az05o4Dpt8                          314      // int16_t
+#define DFA_az05o4Dpt9                          314      // float (2 Byte)
+#define DFA_az05o4Dpt12                         314      // uint32_t
+#define DFA_az05o4Dpt13                         314      // int32_t
+#define DFA_az05o4Dpt14                         314      // float (4 Byte)
+#define DFA_az05o4Dpt16                         314      // char*, 14 Byte
+#define     DFA_az05o4Dpt16Length 14
+#define DFA_az05o4Dpt17                         314      // 8 Bits, Bit 7-0
+#define DFA_az05o4Dpt232                        314      // 24 Bits, Bit 31-8
+#define     DFA_az05o4Dpt232Mask 0xFFFFFF00
+#define     DFA_az05o4Dpt232Shift 8
+#define DFA_ad06A                               329      // 8 Bits, Bit 7-0
+#define DFA_ad06B                               330      // 8 Bits, Bit 7-0
+#define DFA_ad06C                               331      // 8 Bits, Bit 7-0
+#define DFA_ad06D                               332      // 8 Bits, Bit 7-0
+#define DFA_ad06E                               333      // 8 Bits, Bit 7-0
+#define DFA_ad06F                               334      // 8 Bits, Bit 7-0
+#define DFA_ad06G                               335      // 8 Bits, Bit 7-0
+#define DFA_ad06H                               336      // 8 Bits, Bit 7-0
+#define DFA_ad06T                               337      // 8 Bits, Bit 7-0
+#define DFA_ad06TBase                           338      // 2 Bits, Bit 7-6
+#define     DFA_ad06TBaseMask 0xC0
+#define     DFA_ad06TBaseShift 6
+#define DFA_ad06TTime                           338      // 14 Bits, Bit 13-0
+#define     DFA_ad06TTimeMask 0x3FFF
+#define     DFA_ad06TTimeShift 0
+#define DFA_az06o1Send                          340      // 8 Bits, Bit 7-0
+#define DFA_az06o1Dpt1                          341      // 8 Bits, Bit 7-0
+#define DFA_az06o1Dpt2                          341      // 8 Bits, Bit 7-0
+#define DFA_az06o1Dpt5                          341      // uint8_t
+#define DFA_az06o1Dpt5001                       341      // uint8_t
+#define DFA_az06o1Dpt6                          341      // int8_t
+#define DFA_az06o1Dpt7                          341      // uint16_t
+#define DFA_az06o1Dpt8                          341      // int16_t
+#define DFA_az06o1Dpt9                          341      // float (2 Byte)
+#define DFA_az06o1Dpt12                         341      // uint32_t
+#define DFA_az06o1Dpt13                         341      // int32_t
+#define DFA_az06o1Dpt14                         341      // float (4 Byte)
+#define DFA_az06o1Dpt17                         341      // 8 Bits, Bit 7-0
+#define DFA_az06o1Dpt232                        341      // 24 Bits, Bit 31-8
+#define     DFA_az06o1Dpt232Mask 0xFFFFFF00
+#define     DFA_az06o1Dpt232Shift 8
+#define DFA_az06o2Send                          345      // 8 Bits, Bit 7-0
+#define DFA_az06o2Dpt1                          346      // 8 Bits, Bit 7-0
+#define DFA_az06o2Dpt2                          346      // 8 Bits, Bit 7-0
+#define DFA_az06o2Dpt5                          346      // uint8_t
+#define DFA_az06o2Dpt5001                       346      // uint8_t
+#define DFA_az06o2Dpt6                          346      // int8_t
+#define DFA_az06o2Dpt7                          346      // uint16_t
+#define DFA_az06o2Dpt8                          346      // int16_t
+#define DFA_az06o2Dpt9                          346      // float (2 Byte)
+#define DFA_az06o2Dpt12                         346      // uint32_t
+#define DFA_az06o2Dpt13                         346      // int32_t
+#define DFA_az06o2Dpt14                         346      // float (4 Byte)
+#define DFA_az06o2Dpt17                         346      // 8 Bits, Bit 7-0
+#define DFA_az06o2Dpt232                        346      // 24 Bits, Bit 31-8
+#define     DFA_az06o2Dpt232Mask 0xFFFFFF00
+#define     DFA_az06o2Dpt232Shift 8
+#define DFA_az06o3Send                          350      // 8 Bits, Bit 7-0
+#define DFA_az06o3Dpt1                          351      // 8 Bits, Bit 7-0
+#define DFA_az06o3Dpt2                          351      // 8 Bits, Bit 7-0
+#define DFA_az06o3Dpt5                          351      // uint8_t
+#define DFA_az06o3Dpt5001                       351      // uint8_t
+#define DFA_az06o3Dpt6                          351      // int8_t
+#define DFA_az06o3Dpt7                          351      // uint16_t
+#define DFA_az06o3Dpt8                          351      // int16_t
+#define DFA_az06o3Dpt9                          351      // float (2 Byte)
+#define DFA_az06o3Dpt12                         351      // uint32_t
+#define DFA_az06o3Dpt13                         351      // int32_t
+#define DFA_az06o3Dpt14                         351      // float (4 Byte)
+#define DFA_az06o3Dpt17                         351      // 8 Bits, Bit 7-0
+#define DFA_az06o3Dpt232                        351      // 24 Bits, Bit 31-8
+#define     DFA_az06o3Dpt232Mask 0xFFFFFF00
+#define     DFA_az06o3Dpt232Shift 8
+#define DFA_az06o4Send                          355      // 8 Bits, Bit 7-0
+#define DFA_az06o4Dpt1                          356      // 8 Bits, Bit 7-0
+#define DFA_az06o4Dpt2                          356      // 8 Bits, Bit 7-0
+#define DFA_az06o4Dpt5                          356      // uint8_t
+#define DFA_az06o4Dpt5001                       356      // uint8_t
+#define DFA_az06o4Dpt6                          356      // int8_t
+#define DFA_az06o4Dpt7                          356      // uint16_t
+#define DFA_az06o4Dpt8                          356      // int16_t
+#define DFA_az06o4Dpt9                          356      // float (2 Byte)
+#define DFA_az06o4Dpt12                         356      // uint32_t
+#define DFA_az06o4Dpt13                         356      // int32_t
+#define DFA_az06o4Dpt14                         356      // float (4 Byte)
+#define DFA_az06o4Dpt16                         356      // char*, 14 Byte
+#define     DFA_az06o4Dpt16Length 14
+#define DFA_az06o4Dpt17                         356      // 8 Bits, Bit 7-0
+#define DFA_az06o4Dpt232                        356      // 24 Bits, Bit 31-8
+#define     DFA_az06o4Dpt232Mask 0xFFFFFF00
+#define     DFA_az06o4Dpt232Shift 8
+#define DFA_ad07A                               371      // 8 Bits, Bit 7-0
+#define DFA_ad07B                               372      // 8 Bits, Bit 7-0
+#define DFA_ad07C                               373      // 8 Bits, Bit 7-0
+#define DFA_ad07D                               374      // 8 Bits, Bit 7-0
+#define DFA_ad07E                               375      // 8 Bits, Bit 7-0
+#define DFA_ad07F                               376      // 8 Bits, Bit 7-0
+#define DFA_ad07G                               377      // 8 Bits, Bit 7-0
+#define DFA_ad07H                               378      // 8 Bits, Bit 7-0
+#define DFA_ad07T                               379      // 8 Bits, Bit 7-0
+#define DFA_ad07TBase                           380      // 2 Bits, Bit 7-6
+#define     DFA_ad07TBaseMask 0xC0
+#define     DFA_ad07TBaseShift 6
+#define DFA_ad07TTime                           380      // 14 Bits, Bit 13-0
+#define     DFA_ad07TTimeMask 0x3FFF
+#define     DFA_ad07TTimeShift 0
+#define DFA_az07o1Send                          382      // 8 Bits, Bit 7-0
+#define DFA_az07o1Dpt1                          383      // 8 Bits, Bit 7-0
+#define DFA_az07o1Dpt2                          383      // 8 Bits, Bit 7-0
+#define DFA_az07o1Dpt5                          383      // uint8_t
+#define DFA_az07o1Dpt5001                       383      // uint8_t
+#define DFA_az07o1Dpt6                          383      // int8_t
+#define DFA_az07o1Dpt7                          383      // uint16_t
+#define DFA_az07o1Dpt8                          383      // int16_t
+#define DFA_az07o1Dpt9                          383      // float (2 Byte)
+#define DFA_az07o1Dpt12                         383      // uint32_t
+#define DFA_az07o1Dpt13                         383      // int32_t
+#define DFA_az07o1Dpt14                         383      // float (4 Byte)
+#define DFA_az07o1Dpt17                         383      // 8 Bits, Bit 7-0
+#define DFA_az07o1Dpt232                        383      // 24 Bits, Bit 31-8
+#define     DFA_az07o1Dpt232Mask 0xFFFFFF00
+#define     DFA_az07o1Dpt232Shift 8
+#define DFA_az07o2Send                          387      // 8 Bits, Bit 7-0
+#define DFA_az07o2Dpt1                          388      // 8 Bits, Bit 7-0
+#define DFA_az07o2Dpt2                          388      // 8 Bits, Bit 7-0
+#define DFA_az07o2Dpt5                          388      // uint8_t
+#define DFA_az07o2Dpt5001                       388      // uint8_t
+#define DFA_az07o2Dpt6                          388      // int8_t
+#define DFA_az07o2Dpt7                          388      // uint16_t
+#define DFA_az07o2Dpt8                          388      // int16_t
+#define DFA_az07o2Dpt9                          388      // float (2 Byte)
+#define DFA_az07o2Dpt12                         388      // uint32_t
+#define DFA_az07o2Dpt13                         388      // int32_t
+#define DFA_az07o2Dpt14                         388      // float (4 Byte)
+#define DFA_az07o2Dpt17                         388      // 8 Bits, Bit 7-0
+#define DFA_az07o2Dpt232                        388      // 24 Bits, Bit 31-8
+#define     DFA_az07o2Dpt232Mask 0xFFFFFF00
+#define     DFA_az07o2Dpt232Shift 8
+#define DFA_az07o3Send                          392      // 8 Bits, Bit 7-0
+#define DFA_az07o3Dpt1                          393      // 8 Bits, Bit 7-0
+#define DFA_az07o3Dpt2                          393      // 8 Bits, Bit 7-0
+#define DFA_az07o3Dpt5                          393      // uint8_t
+#define DFA_az07o3Dpt5001                       393      // uint8_t
+#define DFA_az07o3Dpt6                          393      // int8_t
+#define DFA_az07o3Dpt7                          393      // uint16_t
+#define DFA_az07o3Dpt8                          393      // int16_t
+#define DFA_az07o3Dpt9                          393      // float (2 Byte)
+#define DFA_az07o3Dpt12                         393      // uint32_t
+#define DFA_az07o3Dpt13                         393      // int32_t
+#define DFA_az07o3Dpt14                         393      // float (4 Byte)
+#define DFA_az07o3Dpt17                         393      // 8 Bits, Bit 7-0
+#define DFA_az07o3Dpt232                        393      // 24 Bits, Bit 31-8
+#define     DFA_az07o3Dpt232Mask 0xFFFFFF00
+#define     DFA_az07o3Dpt232Shift 8
+#define DFA_az07o4Send                          397      // 8 Bits, Bit 7-0
+#define DFA_az07o4Dpt1                          398      // 8 Bits, Bit 7-0
+#define DFA_az07o4Dpt2                          398      // 8 Bits, Bit 7-0
+#define DFA_az07o4Dpt5                          398      // uint8_t
+#define DFA_az07o4Dpt5001                       398      // uint8_t
+#define DFA_az07o4Dpt6                          398      // int8_t
+#define DFA_az07o4Dpt7                          398      // uint16_t
+#define DFA_az07o4Dpt8                          398      // int16_t
+#define DFA_az07o4Dpt9                          398      // float (2 Byte)
+#define DFA_az07o4Dpt12                         398      // uint32_t
+#define DFA_az07o4Dpt13                         398      // int32_t
+#define DFA_az07o4Dpt14                         398      // float (4 Byte)
+#define DFA_az07o4Dpt16                         398      // char*, 14 Byte
+#define     DFA_az07o4Dpt16Length 14
+#define DFA_az07o4Dpt17                         398      // 8 Bits, Bit 7-0
+#define DFA_az07o4Dpt232                        398      // 24 Bits, Bit 31-8
+#define     DFA_az07o4Dpt232Mask 0xFFFFFF00
+#define     DFA_az07o4Dpt232Shift 8
+#define DFA_ad08A                               413      // 8 Bits, Bit 7-0
+#define DFA_ad08B                               414      // 8 Bits, Bit 7-0
+#define DFA_ad08C                               415      // 8 Bits, Bit 7-0
+#define DFA_ad08D                               416      // 8 Bits, Bit 7-0
+#define DFA_ad08E                               417      // 8 Bits, Bit 7-0
+#define DFA_ad08F                               418      // 8 Bits, Bit 7-0
+#define DFA_ad08G                               419      // 8 Bits, Bit 7-0
+#define DFA_ad08H                               420      // 8 Bits, Bit 7-0
+#define DFA_ad08T                               421      // 8 Bits, Bit 7-0
+#define DFA_ad08TBase                           422      // 2 Bits, Bit 7-6
+#define     DFA_ad08TBaseMask 0xC0
+#define     DFA_ad08TBaseShift 6
+#define DFA_ad08TTime                           422      // 14 Bits, Bit 13-0
+#define     DFA_ad08TTimeMask 0x3FFF
+#define     DFA_ad08TTimeShift 0
+#define DFA_az08o1Send                          424      // 8 Bits, Bit 7-0
+#define DFA_az08o1Dpt1                          425      // 8 Bits, Bit 7-0
+#define DFA_az08o1Dpt2                          425      // 8 Bits, Bit 7-0
+#define DFA_az08o1Dpt5                          425      // uint8_t
+#define DFA_az08o1Dpt5001                       425      // uint8_t
+#define DFA_az08o1Dpt6                          425      // int8_t
+#define DFA_az08o1Dpt7                          425      // uint16_t
+#define DFA_az08o1Dpt8                          425      // int16_t
+#define DFA_az08o1Dpt9                          425      // float (2 Byte)
+#define DFA_az08o1Dpt12                         425      // uint32_t
+#define DFA_az08o1Dpt13                         425      // int32_t
+#define DFA_az08o1Dpt14                         425      // float (4 Byte)
+#define DFA_az08o1Dpt17                         425      // 8 Bits, Bit 7-0
+#define DFA_az08o1Dpt232                        425      // 24 Bits, Bit 31-8
+#define     DFA_az08o1Dpt232Mask 0xFFFFFF00
+#define     DFA_az08o1Dpt232Shift 8
+#define DFA_az08o2Send                          429      // 8 Bits, Bit 7-0
+#define DFA_az08o2Dpt1                          430      // 8 Bits, Bit 7-0
+#define DFA_az08o2Dpt2                          430      // 8 Bits, Bit 7-0
+#define DFA_az08o2Dpt5                          430      // uint8_t
+#define DFA_az08o2Dpt5001                       430      // uint8_t
+#define DFA_az08o2Dpt6                          430      // int8_t
+#define DFA_az08o2Dpt7                          430      // uint16_t
+#define DFA_az08o2Dpt8                          430      // int16_t
+#define DFA_az08o2Dpt9                          430      // float (2 Byte)
+#define DFA_az08o2Dpt12                         430      // uint32_t
+#define DFA_az08o2Dpt13                         430      // int32_t
+#define DFA_az08o2Dpt14                         430      // float (4 Byte)
+#define DFA_az08o2Dpt17                         430      // 8 Bits, Bit 7-0
+#define DFA_az08o2Dpt232                        430      // 24 Bits, Bit 31-8
+#define     DFA_az08o2Dpt232Mask 0xFFFFFF00
+#define     DFA_az08o2Dpt232Shift 8
+#define DFA_az08o3Send                          434      // 8 Bits, Bit 7-0
+#define DFA_az08o3Dpt1                          435      // 8 Bits, Bit 7-0
+#define DFA_az08o3Dpt2                          435      // 8 Bits, Bit 7-0
+#define DFA_az08o3Dpt5                          435      // uint8_t
+#define DFA_az08o3Dpt5001                       435      // uint8_t
+#define DFA_az08o3Dpt6                          435      // int8_t
+#define DFA_az08o3Dpt7                          435      // uint16_t
+#define DFA_az08o3Dpt8                          435      // int16_t
+#define DFA_az08o3Dpt9                          435      // float (2 Byte)
+#define DFA_az08o3Dpt12                         435      // uint32_t
+#define DFA_az08o3Dpt13                         435      // int32_t
+#define DFA_az08o3Dpt14                         435      // float (4 Byte)
+#define DFA_az08o3Dpt17                         435      // 8 Bits, Bit 7-0
+#define DFA_az08o3Dpt232                        435      // 24 Bits, Bit 31-8
+#define     DFA_az08o3Dpt232Mask 0xFFFFFF00
+#define     DFA_az08o3Dpt232Shift 8
+#define DFA_az08o4Send                          439      // 8 Bits, Bit 7-0
+#define DFA_az08o4Dpt1                          440      // 8 Bits, Bit 7-0
+#define DFA_az08o4Dpt2                          440      // 8 Bits, Bit 7-0
+#define DFA_az08o4Dpt5                          440      // uint8_t
+#define DFA_az08o4Dpt5001                       440      // uint8_t
+#define DFA_az08o4Dpt6                          440      // int8_t
+#define DFA_az08o4Dpt7                          440      // uint16_t
+#define DFA_az08o4Dpt8                          440      // int16_t
+#define DFA_az08o4Dpt9                          440      // float (2 Byte)
+#define DFA_az08o4Dpt12                         440      // uint32_t
+#define DFA_az08o4Dpt13                         440      // int32_t
+#define DFA_az08o4Dpt14                         440      // float (4 Byte)
+#define DFA_az08o4Dpt16                         440      // char*, 14 Byte
+#define     DFA_az08o4Dpt16Length 14
+#define DFA_az08o4Dpt17                         440      // 8 Bits, Bit 7-0
+#define DFA_az08o4Dpt232                        440      // 24 Bits, Bit 31-8
+#define     DFA_az08o4Dpt232Mask 0xFFFFFF00
+#define     DFA_az08o4Dpt232Shift 8
+#define DFA_ad09A                               455      // 8 Bits, Bit 7-0
+#define DFA_ad09B                               456      // 8 Bits, Bit 7-0
+#define DFA_ad09C                               457      // 8 Bits, Bit 7-0
+#define DFA_ad09D                               458      // 8 Bits, Bit 7-0
+#define DFA_ad09E                               459      // 8 Bits, Bit 7-0
+#define DFA_ad09F                               460      // 8 Bits, Bit 7-0
+#define DFA_ad09G                               461      // 8 Bits, Bit 7-0
+#define DFA_ad09H                               462      // 8 Bits, Bit 7-0
+#define DFA_ad09T                               463      // 8 Bits, Bit 7-0
+#define DFA_ad09TBase                           464      // 2 Bits, Bit 7-6
+#define     DFA_ad09TBaseMask 0xC0
+#define     DFA_ad09TBaseShift 6
+#define DFA_ad09TTime                           464      // 14 Bits, Bit 13-0
+#define     DFA_ad09TTimeMask 0x3FFF
+#define     DFA_ad09TTimeShift 0
+#define DFA_az09o1Send                          466      // 8 Bits, Bit 7-0
+#define DFA_az09o1Dpt1                          467      // 8 Bits, Bit 7-0
+#define DFA_az09o1Dpt2                          467      // 8 Bits, Bit 7-0
+#define DFA_az09o1Dpt5                          467      // uint8_t
+#define DFA_az09o1Dpt5001                       467      // uint8_t
+#define DFA_az09o1Dpt6                          467      // int8_t
+#define DFA_az09o1Dpt7                          467      // uint16_t
+#define DFA_az09o1Dpt8                          467      // int16_t
+#define DFA_az09o1Dpt9                          467      // float (2 Byte)
+#define DFA_az09o1Dpt12                         467      // uint32_t
+#define DFA_az09o1Dpt13                         467      // int32_t
+#define DFA_az09o1Dpt14                         467      // float (4 Byte)
+#define DFA_az09o1Dpt17                         467      // 8 Bits, Bit 7-0
+#define DFA_az09o1Dpt232                        467      // 24 Bits, Bit 31-8
+#define     DFA_az09o1Dpt232Mask 0xFFFFFF00
+#define     DFA_az09o1Dpt232Shift 8
+#define DFA_az09o2Send                          471      // 8 Bits, Bit 7-0
+#define DFA_az09o2Dpt1                          472      // 8 Bits, Bit 7-0
+#define DFA_az09o2Dpt2                          472      // 8 Bits, Bit 7-0
+#define DFA_az09o2Dpt5                          472      // uint8_t
+#define DFA_az09o2Dpt5001                       472      // uint8_t
+#define DFA_az09o2Dpt6                          472      // int8_t
+#define DFA_az09o2Dpt7                          472      // uint16_t
+#define DFA_az09o2Dpt8                          472      // int16_t
+#define DFA_az09o2Dpt9                          472      // float (2 Byte)
+#define DFA_az09o2Dpt12                         472      // uint32_t
+#define DFA_az09o2Dpt13                         472      // int32_t
+#define DFA_az09o2Dpt14                         472      // float (4 Byte)
+#define DFA_az09o2Dpt17                         472      // 8 Bits, Bit 7-0
+#define DFA_az09o2Dpt232                        472      // 24 Bits, Bit 31-8
+#define     DFA_az09o2Dpt232Mask 0xFFFFFF00
+#define     DFA_az09o2Dpt232Shift 8
+#define DFA_az09o3Send                          476      // 8 Bits, Bit 7-0
+#define DFA_az09o3Dpt1                          477      // 8 Bits, Bit 7-0
+#define DFA_az09o3Dpt2                          477      // 8 Bits, Bit 7-0
+#define DFA_az09o3Dpt5                          477      // uint8_t
+#define DFA_az09o3Dpt5001                       477      // uint8_t
+#define DFA_az09o3Dpt6                          477      // int8_t
+#define DFA_az09o3Dpt7                          477      // uint16_t
+#define DFA_az09o3Dpt8                          477      // int16_t
+#define DFA_az09o3Dpt9                          477      // float (2 Byte)
+#define DFA_az09o3Dpt12                         477      // uint32_t
+#define DFA_az09o3Dpt13                         477      // int32_t
+#define DFA_az09o3Dpt14                         477      // float (4 Byte)
+#define DFA_az09o3Dpt17                         477      // 8 Bits, Bit 7-0
+#define DFA_az09o3Dpt232                        477      // 24 Bits, Bit 31-8
+#define     DFA_az09o3Dpt232Mask 0xFFFFFF00
+#define     DFA_az09o3Dpt232Shift 8
+#define DFA_az09o4Send                          481      // 8 Bits, Bit 7-0
+#define DFA_az09o4Dpt1                          482      // 8 Bits, Bit 7-0
+#define DFA_az09o4Dpt2                          482      // 8 Bits, Bit 7-0
+#define DFA_az09o4Dpt5                          482      // uint8_t
+#define DFA_az09o4Dpt5001                       482      // uint8_t
+#define DFA_az09o4Dpt6                          482      // int8_t
+#define DFA_az09o4Dpt7                          482      // uint16_t
+#define DFA_az09o4Dpt8                          482      // int16_t
+#define DFA_az09o4Dpt9                          482      // float (2 Byte)
+#define DFA_az09o4Dpt12                         482      // uint32_t
+#define DFA_az09o4Dpt13                         482      // int32_t
+#define DFA_az09o4Dpt14                         482      // float (4 Byte)
+#define DFA_az09o4Dpt16                         482      // char*, 14 Byte
+#define     DFA_az09o4Dpt16Length 14
+#define DFA_az09o4Dpt17                         482      // 8 Bits, Bit 7-0
+#define DFA_az09o4Dpt232                        482      // 24 Bits, Bit 31-8
+#define     DFA_az09o4Dpt232Mask 0xFFFFFF00
+#define     DFA_az09o4Dpt232Shift 8
+#define DFA_ad10A                               497      // 8 Bits, Bit 7-0
+#define DFA_ad10B                               498      // 8 Bits, Bit 7-0
+#define DFA_ad10C                               499      // 8 Bits, Bit 7-0
+#define DFA_ad10D                               500      // 8 Bits, Bit 7-0
+#define DFA_ad10E                               501      // 8 Bits, Bit 7-0
+#define DFA_ad10F                               502      // 8 Bits, Bit 7-0
+#define DFA_ad10G                               503      // 8 Bits, Bit 7-0
+#define DFA_ad10H                               504      // 8 Bits, Bit 7-0
+#define DFA_ad10T                               505      // 8 Bits, Bit 7-0
+#define DFA_ad10TBase                           506      // 2 Bits, Bit 7-6
+#define     DFA_ad10TBaseMask 0xC0
+#define     DFA_ad10TBaseShift 6
+#define DFA_ad10TTime                           506      // 14 Bits, Bit 13-0
+#define     DFA_ad10TTimeMask 0x3FFF
+#define     DFA_ad10TTimeShift 0
+#define DFA_az10o1Send                          508      // 8 Bits, Bit 7-0
+#define DFA_az10o1Dpt1                          509      // 8 Bits, Bit 7-0
+#define DFA_az10o1Dpt2                          509      // 8 Bits, Bit 7-0
+#define DFA_az10o1Dpt5                          509      // uint8_t
+#define DFA_az10o1Dpt5001                       509      // uint8_t
+#define DFA_az10o1Dpt6                          509      // int8_t
+#define DFA_az10o1Dpt7                          509      // uint16_t
+#define DFA_az10o1Dpt8                          509      // int16_t
+#define DFA_az10o1Dpt9                          509      // float (2 Byte)
+#define DFA_az10o1Dpt12                         509      // uint32_t
+#define DFA_az10o1Dpt13                         509      // int32_t
+#define DFA_az10o1Dpt14                         509      // float (4 Byte)
+#define DFA_az10o1Dpt17                         509      // 8 Bits, Bit 7-0
+#define DFA_az10o1Dpt232                        509      // 24 Bits, Bit 31-8
+#define     DFA_az10o1Dpt232Mask 0xFFFFFF00
+#define     DFA_az10o1Dpt232Shift 8
+#define DFA_az10o2Send                          513      // 8 Bits, Bit 7-0
+#define DFA_az10o2Dpt1                          514      // 8 Bits, Bit 7-0
+#define DFA_az10o2Dpt2                          514      // 8 Bits, Bit 7-0
+#define DFA_az10o2Dpt5                          514      // uint8_t
+#define DFA_az10o2Dpt5001                       514      // uint8_t
+#define DFA_az10o2Dpt6                          514      // int8_t
+#define DFA_az10o2Dpt7                          514      // uint16_t
+#define DFA_az10o2Dpt8                          514      // int16_t
+#define DFA_az10o2Dpt9                          514      // float (2 Byte)
+#define DFA_az10o2Dpt12                         514      // uint32_t
+#define DFA_az10o2Dpt13                         514      // int32_t
+#define DFA_az10o2Dpt14                         514      // float (4 Byte)
+#define DFA_az10o2Dpt17                         514      // 8 Bits, Bit 7-0
+#define DFA_az10o2Dpt232                        514      // 24 Bits, Bit 31-8
+#define     DFA_az10o2Dpt232Mask 0xFFFFFF00
+#define     DFA_az10o2Dpt232Shift 8
+#define DFA_az10o3Send                          518      // 8 Bits, Bit 7-0
+#define DFA_az10o3Dpt1                          519      // 8 Bits, Bit 7-0
+#define DFA_az10o3Dpt2                          519      // 8 Bits, Bit 7-0
+#define DFA_az10o3Dpt5                          519      // uint8_t
+#define DFA_az10o3Dpt5001                       519      // uint8_t
+#define DFA_az10o3Dpt6                          519      // int8_t
+#define DFA_az10o3Dpt7                          519      // uint16_t
+#define DFA_az10o3Dpt8                          519      // int16_t
+#define DFA_az10o3Dpt9                          519      // float (2 Byte)
+#define DFA_az10o3Dpt12                         519      // uint32_t
+#define DFA_az10o3Dpt13                         519      // int32_t
+#define DFA_az10o3Dpt14                         519      // float (4 Byte)
+#define DFA_az10o3Dpt17                         519      // 8 Bits, Bit 7-0
+#define DFA_az10o3Dpt232                        519      // 24 Bits, Bit 31-8
+#define     DFA_az10o3Dpt232Mask 0xFFFFFF00
+#define     DFA_az10o3Dpt232Shift 8
+#define DFA_az10o4Send                          523      // 8 Bits, Bit 7-0
+#define DFA_az10o4Dpt1                          524      // 8 Bits, Bit 7-0
+#define DFA_az10o4Dpt2                          524      // 8 Bits, Bit 7-0
+#define DFA_az10o4Dpt5                          524      // uint8_t
+#define DFA_az10o4Dpt5001                       524      // uint8_t
+#define DFA_az10o4Dpt6                          524      // int8_t
+#define DFA_az10o4Dpt7                          524      // uint16_t
+#define DFA_az10o4Dpt8                          524      // int16_t
+#define DFA_az10o4Dpt9                          524      // float (2 Byte)
+#define DFA_az10o4Dpt12                         524      // uint32_t
+#define DFA_az10o4Dpt13                         524      // int32_t
+#define DFA_az10o4Dpt14                         524      // float (4 Byte)
+#define DFA_az10o4Dpt16                         524      // char*, 14 Byte
+#define     DFA_az10o4Dpt16Length 14
+#define DFA_az10o4Dpt17                         524      // 8 Bits, Bit 7-0
+#define DFA_az10o4Dpt232                        524      // 24 Bits, Bit 31-8
+#define     DFA_az10o4Dpt232Mask 0xFFFFFF00
+#define     DFA_az10o4Dpt232Shift 8
+#define DFA_ad11A                               539      // 8 Bits, Bit 7-0
+#define DFA_ad11B                               540      // 8 Bits, Bit 7-0
+#define DFA_ad11C                               541      // 8 Bits, Bit 7-0
+#define DFA_ad11D                               542      // 8 Bits, Bit 7-0
+#define DFA_ad11E                               543      // 8 Bits, Bit 7-0
+#define DFA_ad11F                               544      // 8 Bits, Bit 7-0
+#define DFA_ad11G                               545      // 8 Bits, Bit 7-0
+#define DFA_ad11H                               546      // 8 Bits, Bit 7-0
+#define DFA_ad11T                               547      // 8 Bits, Bit 7-0
+#define DFA_ad11TBase                           548      // 2 Bits, Bit 7-6
+#define     DFA_ad11TBaseMask 0xC0
+#define     DFA_ad11TBaseShift 6
+#define DFA_ad11TTime                           548      // 14 Bits, Bit 13-0
+#define     DFA_ad11TTimeMask 0x3FFF
+#define     DFA_ad11TTimeShift 0
+#define DFA_az11o1Send                          550      // 8 Bits, Bit 7-0
+#define DFA_az11o1Dpt1                          551      // 8 Bits, Bit 7-0
+#define DFA_az11o1Dpt2                          551      // 8 Bits, Bit 7-0
+#define DFA_az11o1Dpt5                          551      // uint8_t
+#define DFA_az11o1Dpt5001                       551      // uint8_t
+#define DFA_az11o1Dpt6                          551      // int8_t
+#define DFA_az11o1Dpt7                          551      // uint16_t
+#define DFA_az11o1Dpt8                          551      // int16_t
+#define DFA_az11o1Dpt9                          551      // float (2 Byte)
+#define DFA_az11o1Dpt12                         551      // uint32_t
+#define DFA_az11o1Dpt13                         551      // int32_t
+#define DFA_az11o1Dpt14                         551      // float (4 Byte)
+#define DFA_az11o1Dpt17                         551      // 8 Bits, Bit 7-0
+#define DFA_az11o1Dpt232                        551      // 24 Bits, Bit 31-8
+#define     DFA_az11o1Dpt232Mask 0xFFFFFF00
+#define     DFA_az11o1Dpt232Shift 8
+#define DFA_az11o2Send                          555      // 8 Bits, Bit 7-0
+#define DFA_az11o2Dpt1                          556      // 8 Bits, Bit 7-0
+#define DFA_az11o2Dpt2                          556      // 8 Bits, Bit 7-0
+#define DFA_az11o2Dpt5                          556      // uint8_t
+#define DFA_az11o2Dpt5001                       556      // uint8_t
+#define DFA_az11o2Dpt6                          556      // int8_t
+#define DFA_az11o2Dpt7                          556      // uint16_t
+#define DFA_az11o2Dpt8                          556      // int16_t
+#define DFA_az11o2Dpt9                          556      // float (2 Byte)
+#define DFA_az11o2Dpt12                         556      // uint32_t
+#define DFA_az11o2Dpt13                         556      // int32_t
+#define DFA_az11o2Dpt14                         556      // float (4 Byte)
+#define DFA_az11o2Dpt17                         556      // 8 Bits, Bit 7-0
+#define DFA_az11o2Dpt232                        556      // 24 Bits, Bit 31-8
+#define     DFA_az11o2Dpt232Mask 0xFFFFFF00
+#define     DFA_az11o2Dpt232Shift 8
+#define DFA_az11o3Send                          560      // 8 Bits, Bit 7-0
+#define DFA_az11o3Dpt1                          561      // 8 Bits, Bit 7-0
+#define DFA_az11o3Dpt2                          561      // 8 Bits, Bit 7-0
+#define DFA_az11o3Dpt5                          561      // uint8_t
+#define DFA_az11o3Dpt5001                       561      // uint8_t
+#define DFA_az11o3Dpt6                          561      // int8_t
+#define DFA_az11o3Dpt7                          561      // uint16_t
+#define DFA_az11o3Dpt8                          561      // int16_t
+#define DFA_az11o3Dpt9                          561      // float (2 Byte)
+#define DFA_az11o3Dpt12                         561      // uint32_t
+#define DFA_az11o3Dpt13                         561      // int32_t
+#define DFA_az11o3Dpt14                         561      // float (4 Byte)
+#define DFA_az11o3Dpt17                         561      // 8 Bits, Bit 7-0
+#define DFA_az11o3Dpt232                        561      // 24 Bits, Bit 31-8
+#define     DFA_az11o3Dpt232Mask 0xFFFFFF00
+#define     DFA_az11o3Dpt232Shift 8
+#define DFA_az11o4Send                          565      // 8 Bits, Bit 7-0
+#define DFA_az11o4Dpt1                          566      // 8 Bits, Bit 7-0
+#define DFA_az11o4Dpt2                          566      // 8 Bits, Bit 7-0
+#define DFA_az11o4Dpt5                          566      // uint8_t
+#define DFA_az11o4Dpt5001                       566      // uint8_t
+#define DFA_az11o4Dpt6                          566      // int8_t
+#define DFA_az11o4Dpt7                          566      // uint16_t
+#define DFA_az11o4Dpt8                          566      // int16_t
+#define DFA_az11o4Dpt9                          566      // float (2 Byte)
+#define DFA_az11o4Dpt12                         566      // uint32_t
+#define DFA_az11o4Dpt13                         566      // int32_t
+#define DFA_az11o4Dpt14                         566      // float (4 Byte)
+#define DFA_az11o4Dpt16                         566      // char*, 14 Byte
+#define     DFA_az11o4Dpt16Length 14
+#define DFA_az11o4Dpt17                         566      // 8 Bits, Bit 7-0
+#define DFA_az11o4Dpt232                        566      // 24 Bits, Bit 31-8
+#define     DFA_az11o4Dpt232Mask 0xFFFFFF00
+#define     DFA_az11o4Dpt232Shift 8
+#define DFA_ad12A                               581      // 8 Bits, Bit 7-0
+#define DFA_ad12B                               582      // 8 Bits, Bit 7-0
+#define DFA_ad12C                               583      // 8 Bits, Bit 7-0
+#define DFA_ad12D                               584      // 8 Bits, Bit 7-0
+#define DFA_ad12E                               585      // 8 Bits, Bit 7-0
+#define DFA_ad12F                               586      // 8 Bits, Bit 7-0
+#define DFA_ad12G                               587      // 8 Bits, Bit 7-0
+#define DFA_ad12H                               588      // 8 Bits, Bit 7-0
+#define DFA_ad12T                               589      // 8 Bits, Bit 7-0
+#define DFA_ad12TBase                           590      // 2 Bits, Bit 7-6
+#define     DFA_ad12TBaseMask 0xC0
+#define     DFA_ad12TBaseShift 6
+#define DFA_ad12TTime                           590      // 14 Bits, Bit 13-0
+#define     DFA_ad12TTimeMask 0x3FFF
+#define     DFA_ad12TTimeShift 0
+#define DFA_az12o1Send                          592      // 8 Bits, Bit 7-0
+#define DFA_az12o1Dpt1                          593      // 8 Bits, Bit 7-0
+#define DFA_az12o1Dpt2                          593      // 8 Bits, Bit 7-0
+#define DFA_az12o1Dpt5                          593      // uint8_t
+#define DFA_az12o1Dpt5001                       593      // uint8_t
+#define DFA_az12o1Dpt6                          593      // int8_t
+#define DFA_az12o1Dpt7                          593      // uint16_t
+#define DFA_az12o1Dpt8                          593      // int16_t
+#define DFA_az12o1Dpt9                          593      // float (2 Byte)
+#define DFA_az12o1Dpt12                         593      // uint32_t
+#define DFA_az12o1Dpt13                         593      // int32_t
+#define DFA_az12o1Dpt14                         593      // float (4 Byte)
+#define DFA_az12o1Dpt17                         593      // 8 Bits, Bit 7-0
+#define DFA_az12o1Dpt232                        593      // 24 Bits, Bit 31-8
+#define     DFA_az12o1Dpt232Mask 0xFFFFFF00
+#define     DFA_az12o1Dpt232Shift 8
+#define DFA_az12o2Send                          597      // 8 Bits, Bit 7-0
+#define DFA_az12o2Dpt1                          598      // 8 Bits, Bit 7-0
+#define DFA_az12o2Dpt2                          598      // 8 Bits, Bit 7-0
+#define DFA_az12o2Dpt5                          598      // uint8_t
+#define DFA_az12o2Dpt5001                       598      // uint8_t
+#define DFA_az12o2Dpt6                          598      // int8_t
+#define DFA_az12o2Dpt7                          598      // uint16_t
+#define DFA_az12o2Dpt8                          598      // int16_t
+#define DFA_az12o2Dpt9                          598      // float (2 Byte)
+#define DFA_az12o2Dpt12                         598      // uint32_t
+#define DFA_az12o2Dpt13                         598      // int32_t
+#define DFA_az12o2Dpt14                         598      // float (4 Byte)
+#define DFA_az12o2Dpt17                         598      // 8 Bits, Bit 7-0
+#define DFA_az12o2Dpt232                        598      // 24 Bits, Bit 31-8
+#define     DFA_az12o2Dpt232Mask 0xFFFFFF00
+#define     DFA_az12o2Dpt232Shift 8
+#define DFA_az12o3Send                          602      // 8 Bits, Bit 7-0
+#define DFA_az12o3Dpt1                          603      // 8 Bits, Bit 7-0
+#define DFA_az12o3Dpt2                          603      // 8 Bits, Bit 7-0
+#define DFA_az12o3Dpt5                          603      // uint8_t
+#define DFA_az12o3Dpt5001                       603      // uint8_t
+#define DFA_az12o3Dpt6                          603      // int8_t
+#define DFA_az12o3Dpt7                          603      // uint16_t
+#define DFA_az12o3Dpt8                          603      // int16_t
+#define DFA_az12o3Dpt9                          603      // float (2 Byte)
+#define DFA_az12o3Dpt12                         603      // uint32_t
+#define DFA_az12o3Dpt13                         603      // int32_t
+#define DFA_az12o3Dpt14                         603      // float (4 Byte)
+#define DFA_az12o3Dpt17                         603      // 8 Bits, Bit 7-0
+#define DFA_az12o3Dpt232                        603      // 24 Bits, Bit 31-8
+#define     DFA_az12o3Dpt232Mask 0xFFFFFF00
+#define     DFA_az12o3Dpt232Shift 8
+#define DFA_az12o4Send                          607      // 8 Bits, Bit 7-0
+#define DFA_az12o4Dpt1                          608      // 8 Bits, Bit 7-0
+#define DFA_az12o4Dpt2                          608      // 8 Bits, Bit 7-0
+#define DFA_az12o4Dpt5                          608      // uint8_t
+#define DFA_az12o4Dpt5001                       608      // uint8_t
+#define DFA_az12o4Dpt6                          608      // int8_t
+#define DFA_az12o4Dpt7                          608      // uint16_t
+#define DFA_az12o4Dpt8                          608      // int16_t
+#define DFA_az12o4Dpt9                          608      // float (2 Byte)
+#define DFA_az12o4Dpt12                         608      // uint32_t
+#define DFA_az12o4Dpt13                         608      // int32_t
+#define DFA_az12o4Dpt14                         608      // float (4 Byte)
+#define DFA_az12o4Dpt16                         608      // char*, 14 Byte
+#define     DFA_az12o4Dpt16Length 14
+#define DFA_az12o4Dpt17                         608      // 8 Bits, Bit 7-0
+#define DFA_az12o4Dpt232                        608      // 24 Bits, Bit 31-8
+#define     DFA_az12o4Dpt232Mask 0xFFFFFF00
+#define     DFA_az12o4Dpt232Shift 8
+#define DFA_ad13A                               623      // 8 Bits, Bit 7-0
+#define DFA_ad13B                               624      // 8 Bits, Bit 7-0
+#define DFA_ad13C                               625      // 8 Bits, Bit 7-0
+#define DFA_ad13D                               626      // 8 Bits, Bit 7-0
+#define DFA_ad13E                               627      // 8 Bits, Bit 7-0
+#define DFA_ad13F                               628      // 8 Bits, Bit 7-0
+#define DFA_ad13G                               629      // 8 Bits, Bit 7-0
+#define DFA_ad13H                               630      // 8 Bits, Bit 7-0
+#define DFA_ad13T                               631      // 8 Bits, Bit 7-0
+#define DFA_ad13TBase                           632      // 2 Bits, Bit 7-6
+#define     DFA_ad13TBaseMask 0xC0
+#define     DFA_ad13TBaseShift 6
+#define DFA_ad13TTime                           632      // 14 Bits, Bit 13-0
+#define     DFA_ad13TTimeMask 0x3FFF
+#define     DFA_ad13TTimeShift 0
+#define DFA_az13o1Send                          634      // 8 Bits, Bit 7-0
+#define DFA_az13o1Dpt1                          635      // 8 Bits, Bit 7-0
+#define DFA_az13o1Dpt2                          635      // 8 Bits, Bit 7-0
+#define DFA_az13o1Dpt5                          635      // uint8_t
+#define DFA_az13o1Dpt5001                       635      // uint8_t
+#define DFA_az13o1Dpt6                          635      // int8_t
+#define DFA_az13o1Dpt7                          635      // uint16_t
+#define DFA_az13o1Dpt8                          635      // int16_t
+#define DFA_az13o1Dpt9                          635      // float (2 Byte)
+#define DFA_az13o1Dpt12                         635      // uint32_t
+#define DFA_az13o1Dpt13                         635      // int32_t
+#define DFA_az13o1Dpt14                         635      // float (4 Byte)
+#define DFA_az13o1Dpt17                         635      // 8 Bits, Bit 7-0
+#define DFA_az13o1Dpt232                        635      // 24 Bits, Bit 31-8
+#define     DFA_az13o1Dpt232Mask 0xFFFFFF00
+#define     DFA_az13o1Dpt232Shift 8
+#define DFA_az13o2Send                          639      // 8 Bits, Bit 7-0
+#define DFA_az13o2Dpt1                          640      // 8 Bits, Bit 7-0
+#define DFA_az13o2Dpt2                          640      // 8 Bits, Bit 7-0
+#define DFA_az13o2Dpt5                          640      // uint8_t
+#define DFA_az13o2Dpt5001                       640      // uint8_t
+#define DFA_az13o2Dpt6                          640      // int8_t
+#define DFA_az13o2Dpt7                          640      // uint16_t
+#define DFA_az13o2Dpt8                          640      // int16_t
+#define DFA_az13o2Dpt9                          640      // float (2 Byte)
+#define DFA_az13o2Dpt12                         640      // uint32_t
+#define DFA_az13o2Dpt13                         640      // int32_t
+#define DFA_az13o2Dpt14                         640      // float (4 Byte)
+#define DFA_az13o2Dpt17                         640      // 8 Bits, Bit 7-0
+#define DFA_az13o2Dpt232                        640      // 24 Bits, Bit 31-8
+#define     DFA_az13o2Dpt232Mask 0xFFFFFF00
+#define     DFA_az13o2Dpt232Shift 8
+#define DFA_az13o3Send                          644      // 8 Bits, Bit 7-0
+#define DFA_az13o3Dpt1                          645      // 8 Bits, Bit 7-0
+#define DFA_az13o3Dpt2                          645      // 8 Bits, Bit 7-0
+#define DFA_az13o3Dpt5                          645      // uint8_t
+#define DFA_az13o3Dpt5001                       645      // uint8_t
+#define DFA_az13o3Dpt6                          645      // int8_t
+#define DFA_az13o3Dpt7                          645      // uint16_t
+#define DFA_az13o3Dpt8                          645      // int16_t
+#define DFA_az13o3Dpt9                          645      // float (2 Byte)
+#define DFA_az13o3Dpt12                         645      // uint32_t
+#define DFA_az13o3Dpt13                         645      // int32_t
+#define DFA_az13o3Dpt14                         645      // float (4 Byte)
+#define DFA_az13o3Dpt17                         645      // 8 Bits, Bit 7-0
+#define DFA_az13o3Dpt232                        645      // 24 Bits, Bit 31-8
+#define     DFA_az13o3Dpt232Mask 0xFFFFFF00
+#define     DFA_az13o3Dpt232Shift 8
+#define DFA_az13o4Send                          649      // 8 Bits, Bit 7-0
+#define DFA_az13o4Dpt1                          650      // 8 Bits, Bit 7-0
+#define DFA_az13o4Dpt2                          650      // 8 Bits, Bit 7-0
+#define DFA_az13o4Dpt5                          650      // uint8_t
+#define DFA_az13o4Dpt5001                       650      // uint8_t
+#define DFA_az13o4Dpt6                          650      // int8_t
+#define DFA_az13o4Dpt7                          650      // uint16_t
+#define DFA_az13o4Dpt8                          650      // int16_t
+#define DFA_az13o4Dpt9                          650      // float (2 Byte)
+#define DFA_az13o4Dpt12                         650      // uint32_t
+#define DFA_az13o4Dpt13                         650      // int32_t
+#define DFA_az13o4Dpt14                         650      // float (4 Byte)
+#define DFA_az13o4Dpt16                         650      // char*, 14 Byte
+#define     DFA_az13o4Dpt16Length 14
+#define DFA_az13o4Dpt17                         650      // 8 Bits, Bit 7-0
+#define DFA_az13o4Dpt232                        650      // 24 Bits, Bit 31-8
+#define     DFA_az13o4Dpt232Mask 0xFFFFFF00
+#define     DFA_az13o4Dpt232Shift 8
+#define DFA_ad14A                               665      // 8 Bits, Bit 7-0
+#define DFA_ad14B                               666      // 8 Bits, Bit 7-0
+#define DFA_ad14C                               667      // 8 Bits, Bit 7-0
+#define DFA_ad14D                               668      // 8 Bits, Bit 7-0
+#define DFA_ad14E                               669      // 8 Bits, Bit 7-0
+#define DFA_ad14F                               670      // 8 Bits, Bit 7-0
+#define DFA_ad14G                               671      // 8 Bits, Bit 7-0
+#define DFA_ad14H                               672      // 8 Bits, Bit 7-0
+#define DFA_ad14T                               673      // 8 Bits, Bit 7-0
+#define DFA_ad14TBase                           674      // 2 Bits, Bit 7-6
+#define     DFA_ad14TBaseMask 0xC0
+#define     DFA_ad14TBaseShift 6
+#define DFA_ad14TTime                           674      // 14 Bits, Bit 13-0
+#define     DFA_ad14TTimeMask 0x3FFF
+#define     DFA_ad14TTimeShift 0
+#define DFA_az14o1Send                          676      // 8 Bits, Bit 7-0
+#define DFA_az14o1Dpt1                          677      // 8 Bits, Bit 7-0
+#define DFA_az14o1Dpt2                          677      // 8 Bits, Bit 7-0
+#define DFA_az14o1Dpt5                          677      // uint8_t
+#define DFA_az14o1Dpt5001                       677      // uint8_t
+#define DFA_az14o1Dpt6                          677      // int8_t
+#define DFA_az14o1Dpt7                          677      // uint16_t
+#define DFA_az14o1Dpt8                          677      // int16_t
+#define DFA_az14o1Dpt9                          677      // float (2 Byte)
+#define DFA_az14o1Dpt12                         677      // uint32_t
+#define DFA_az14o1Dpt13                         677      // int32_t
+#define DFA_az14o1Dpt14                         677      // float (4 Byte)
+#define DFA_az14o1Dpt17                         677      // 8 Bits, Bit 7-0
+#define DFA_az14o1Dpt232                        677      // 24 Bits, Bit 31-8
+#define     DFA_az14o1Dpt232Mask 0xFFFFFF00
+#define     DFA_az14o1Dpt232Shift 8
+#define DFA_az14o2Send                          681      // 8 Bits, Bit 7-0
+#define DFA_az14o2Dpt1                          682      // 8 Bits, Bit 7-0
+#define DFA_az14o2Dpt2                          682      // 8 Bits, Bit 7-0
+#define DFA_az14o2Dpt5                          682      // uint8_t
+#define DFA_az14o2Dpt5001                       682      // uint8_t
+#define DFA_az14o2Dpt6                          682      // int8_t
+#define DFA_az14o2Dpt7                          682      // uint16_t
+#define DFA_az14o2Dpt8                          682      // int16_t
+#define DFA_az14o2Dpt9                          682      // float (2 Byte)
+#define DFA_az14o2Dpt12                         682      // uint32_t
+#define DFA_az14o2Dpt13                         682      // int32_t
+#define DFA_az14o2Dpt14                         682      // float (4 Byte)
+#define DFA_az14o2Dpt17                         682      // 8 Bits, Bit 7-0
+#define DFA_az14o2Dpt232                        682      // 24 Bits, Bit 31-8
+#define     DFA_az14o2Dpt232Mask 0xFFFFFF00
+#define     DFA_az14o2Dpt232Shift 8
+#define DFA_az14o3Send                          686      // 8 Bits, Bit 7-0
+#define DFA_az14o3Dpt1                          687      // 8 Bits, Bit 7-0
+#define DFA_az14o3Dpt2                          687      // 8 Bits, Bit 7-0
+#define DFA_az14o3Dpt5                          687      // uint8_t
+#define DFA_az14o3Dpt5001                       687      // uint8_t
+#define DFA_az14o3Dpt6                          687      // int8_t
+#define DFA_az14o3Dpt7                          687      // uint16_t
+#define DFA_az14o3Dpt8                          687      // int16_t
+#define DFA_az14o3Dpt9                          687      // float (2 Byte)
+#define DFA_az14o3Dpt12                         687      // uint32_t
+#define DFA_az14o3Dpt13                         687      // int32_t
+#define DFA_az14o3Dpt14                         687      // float (4 Byte)
+#define DFA_az14o3Dpt17                         687      // 8 Bits, Bit 7-0
+#define DFA_az14o3Dpt232                        687      // 24 Bits, Bit 31-8
+#define     DFA_az14o3Dpt232Mask 0xFFFFFF00
+#define     DFA_az14o3Dpt232Shift 8
+#define DFA_az14o4Send                          691      // 8 Bits, Bit 7-0
+#define DFA_az14o4Dpt1                          692      // 8 Bits, Bit 7-0
+#define DFA_az14o4Dpt2                          692      // 8 Bits, Bit 7-0
+#define DFA_az14o4Dpt5                          692      // uint8_t
+#define DFA_az14o4Dpt5001                       692      // uint8_t
+#define DFA_az14o4Dpt6                          692      // int8_t
+#define DFA_az14o4Dpt7                          692      // uint16_t
+#define DFA_az14o4Dpt8                          692      // int16_t
+#define DFA_az14o4Dpt9                          692      // float (2 Byte)
+#define DFA_az14o4Dpt12                         692      // uint32_t
+#define DFA_az14o4Dpt13                         692      // int32_t
+#define DFA_az14o4Dpt14                         692      // float (4 Byte)
+#define DFA_az14o4Dpt16                         692      // char*, 14 Byte
+#define     DFA_az14o4Dpt16Length 14
+#define DFA_az14o4Dpt17                         692      // 8 Bits, Bit 7-0
+#define DFA_az14o4Dpt232                        692      // 24 Bits, Bit 31-8
+#define     DFA_az14o4Dpt232Mask 0xFFFFFF00
+#define     DFA_az14o4Dpt232Shift 8
+#define DFA_ad15A                               707      // 8 Bits, Bit 7-0
+#define DFA_ad15B                               708      // 8 Bits, Bit 7-0
+#define DFA_ad15C                               709      // 8 Bits, Bit 7-0
+#define DFA_ad15D                               710      // 8 Bits, Bit 7-0
+#define DFA_ad15E                               711      // 8 Bits, Bit 7-0
+#define DFA_ad15F                               712      // 8 Bits, Bit 7-0
+#define DFA_ad15G                               713      // 8 Bits, Bit 7-0
+#define DFA_ad15H                               714      // 8 Bits, Bit 7-0
+#define DFA_ad15T                               715      // 8 Bits, Bit 7-0
+#define DFA_ad15TBase                           716      // 2 Bits, Bit 7-6
+#define     DFA_ad15TBaseMask 0xC0
+#define     DFA_ad15TBaseShift 6
+#define DFA_ad15TTime                           716      // 14 Bits, Bit 13-0
+#define     DFA_ad15TTimeMask 0x3FFF
+#define     DFA_ad15TTimeShift 0
+#define DFA_az15o1Send                          718      // 8 Bits, Bit 7-0
+#define DFA_az15o1Dpt1                          719      // 8 Bits, Bit 7-0
+#define DFA_az15o1Dpt2                          719      // 8 Bits, Bit 7-0
+#define DFA_az15o1Dpt5                          719      // uint8_t
+#define DFA_az15o1Dpt5001                       719      // uint8_t
+#define DFA_az15o1Dpt6                          719      // int8_t
+#define DFA_az15o1Dpt7                          719      // uint16_t
+#define DFA_az15o1Dpt8                          719      // int16_t
+#define DFA_az15o1Dpt9                          719      // float (2 Byte)
+#define DFA_az15o1Dpt12                         719      // uint32_t
+#define DFA_az15o1Dpt13                         719      // int32_t
+#define DFA_az15o1Dpt14                         719      // float (4 Byte)
+#define DFA_az15o1Dpt17                         719      // 8 Bits, Bit 7-0
+#define DFA_az15o1Dpt232                        719      // 24 Bits, Bit 31-8
+#define     DFA_az15o1Dpt232Mask 0xFFFFFF00
+#define     DFA_az15o1Dpt232Shift 8
+#define DFA_az15o2Send                          723      // 8 Bits, Bit 7-0
+#define DFA_az15o2Dpt1                          724      // 8 Bits, Bit 7-0
+#define DFA_az15o2Dpt2                          724      // 8 Bits, Bit 7-0
+#define DFA_az15o2Dpt5                          724      // uint8_t
+#define DFA_az15o2Dpt5001                       724      // uint8_t
+#define DFA_az15o2Dpt6                          724      // int8_t
+#define DFA_az15o2Dpt7                          724      // uint16_t
+#define DFA_az15o2Dpt8                          724      // int16_t
+#define DFA_az15o2Dpt9                          724      // float (2 Byte)
+#define DFA_az15o2Dpt12                         724      // uint32_t
+#define DFA_az15o2Dpt13                         724      // int32_t
+#define DFA_az15o2Dpt14                         724      // float (4 Byte)
+#define DFA_az15o2Dpt17                         724      // 8 Bits, Bit 7-0
+#define DFA_az15o2Dpt232                        724      // 24 Bits, Bit 31-8
+#define     DFA_az15o2Dpt232Mask 0xFFFFFF00
+#define     DFA_az15o2Dpt232Shift 8
+#define DFA_az15o3Send                          728      // 8 Bits, Bit 7-0
+#define DFA_az15o3Dpt1                          729      // 8 Bits, Bit 7-0
+#define DFA_az15o3Dpt2                          729      // 8 Bits, Bit 7-0
+#define DFA_az15o3Dpt5                          729      // uint8_t
+#define DFA_az15o3Dpt5001                       729      // uint8_t
+#define DFA_az15o3Dpt6                          729      // int8_t
+#define DFA_az15o3Dpt7                          729      // uint16_t
+#define DFA_az15o3Dpt8                          729      // int16_t
+#define DFA_az15o3Dpt9                          729      // float (2 Byte)
+#define DFA_az15o3Dpt12                         729      // uint32_t
+#define DFA_az15o3Dpt13                         729      // int32_t
+#define DFA_az15o3Dpt14                         729      // float (4 Byte)
+#define DFA_az15o3Dpt17                         729      // 8 Bits, Bit 7-0
+#define DFA_az15o3Dpt232                        729      // 24 Bits, Bit 31-8
+#define     DFA_az15o3Dpt232Mask 0xFFFFFF00
+#define     DFA_az15o3Dpt232Shift 8
+#define DFA_az15o4Send                          733      // 8 Bits, Bit 7-0
+#define DFA_az15o4Dpt1                          734      // 8 Bits, Bit 7-0
+#define DFA_az15o4Dpt2                          734      // 8 Bits, Bit 7-0
+#define DFA_az15o4Dpt5                          734      // uint8_t
+#define DFA_az15o4Dpt5001                       734      // uint8_t
+#define DFA_az15o4Dpt6                          734      // int8_t
+#define DFA_az15o4Dpt7                          734      // uint16_t
+#define DFA_az15o4Dpt8                          734      // int16_t
+#define DFA_az15o4Dpt9                          734      // float (2 Byte)
+#define DFA_az15o4Dpt12                         734      // uint32_t
+#define DFA_az15o4Dpt13                         734      // int32_t
+#define DFA_az15o4Dpt14                         734      // float (4 Byte)
+#define DFA_az15o4Dpt16                         734      // char*, 14 Byte
+#define     DFA_az15o4Dpt16Length 14
+#define DFA_az15o4Dpt17                         734      // 8 Bits, Bit 7-0
+#define DFA_az15o4Dpt232                        734      // 24 Bits, Bit 31-8
+#define     DFA_az15o4Dpt232Mask 0xFFFFFF00
+#define     DFA_az15o4Dpt232Shift 8
+#define DFA_ad16A                               749      // 8 Bits, Bit 7-0
+#define DFA_ad16B                               750      // 8 Bits, Bit 7-0
+#define DFA_ad16C                               751      // 8 Bits, Bit 7-0
+#define DFA_ad16D                               752      // 8 Bits, Bit 7-0
+#define DFA_ad16E                               753      // 8 Bits, Bit 7-0
+#define DFA_ad16F                               754      // 8 Bits, Bit 7-0
+#define DFA_ad16G                               755      // 8 Bits, Bit 7-0
+#define DFA_ad16H                               756      // 8 Bits, Bit 7-0
+#define DFA_ad16T                               757      // 8 Bits, Bit 7-0
+#define DFA_ad16TBase                           758      // 2 Bits, Bit 7-6
+#define     DFA_ad16TBaseMask 0xC0
+#define     DFA_ad16TBaseShift 6
+#define DFA_ad16TTime                           758      // 14 Bits, Bit 13-0
+#define     DFA_ad16TTimeMask 0x3FFF
+#define     DFA_ad16TTimeShift 0
+#define DFA_az16o1Send                          760      // 8 Bits, Bit 7-0
+#define DFA_az16o1Dpt1                          761      // 8 Bits, Bit 7-0
+#define DFA_az16o1Dpt2                          761      // 8 Bits, Bit 7-0
+#define DFA_az16o1Dpt5                          761      // uint8_t
+#define DFA_az16o1Dpt5001                       761      // uint8_t
+#define DFA_az16o1Dpt6                          761      // int8_t
+#define DFA_az16o1Dpt7                          761      // uint16_t
+#define DFA_az16o1Dpt8                          761      // int16_t
+#define DFA_az16o1Dpt9                          761      // float (2 Byte)
+#define DFA_az16o1Dpt12                         761      // uint32_t
+#define DFA_az16o1Dpt13                         761      // int32_t
+#define DFA_az16o1Dpt14                         761      // float (4 Byte)
+#define DFA_az16o1Dpt17                         761      // 8 Bits, Bit 7-0
+#define DFA_az16o1Dpt232                        761      // 24 Bits, Bit 31-8
+#define     DFA_az16o1Dpt232Mask 0xFFFFFF00
+#define     DFA_az16o1Dpt232Shift 8
+#define DFA_az16o2Send                          765      // 8 Bits, Bit 7-0
+#define DFA_az16o2Dpt1                          766      // 8 Bits, Bit 7-0
+#define DFA_az16o2Dpt2                          766      // 8 Bits, Bit 7-0
+#define DFA_az16o2Dpt5                          766      // uint8_t
+#define DFA_az16o2Dpt5001                       766      // uint8_t
+#define DFA_az16o2Dpt6                          766      // int8_t
+#define DFA_az16o2Dpt7                          766      // uint16_t
+#define DFA_az16o2Dpt8                          766      // int16_t
+#define DFA_az16o2Dpt9                          766      // float (2 Byte)
+#define DFA_az16o2Dpt12                         766      // uint32_t
+#define DFA_az16o2Dpt13                         766      // int32_t
+#define DFA_az16o2Dpt14                         766      // float (4 Byte)
+#define DFA_az16o2Dpt17                         766      // 8 Bits, Bit 7-0
+#define DFA_az16o2Dpt232                        766      // 24 Bits, Bit 31-8
+#define     DFA_az16o2Dpt232Mask 0xFFFFFF00
+#define     DFA_az16o2Dpt232Shift 8
+#define DFA_az16o3Send                          770      // 8 Bits, Bit 7-0
+#define DFA_az16o3Dpt1                          771      // 8 Bits, Bit 7-0
+#define DFA_az16o3Dpt2                          771      // 8 Bits, Bit 7-0
+#define DFA_az16o3Dpt5                          771      // uint8_t
+#define DFA_az16o3Dpt5001                       771      // uint8_t
+#define DFA_az16o3Dpt6                          771      // int8_t
+#define DFA_az16o3Dpt7                          771      // uint16_t
+#define DFA_az16o3Dpt8                          771      // int16_t
+#define DFA_az16o3Dpt9                          771      // float (2 Byte)
+#define DFA_az16o3Dpt12                         771      // uint32_t
+#define DFA_az16o3Dpt13                         771      // int32_t
+#define DFA_az16o3Dpt14                         771      // float (4 Byte)
+#define DFA_az16o3Dpt17                         771      // 8 Bits, Bit 7-0
+#define DFA_az16o3Dpt232                        771      // 24 Bits, Bit 31-8
+#define     DFA_az16o3Dpt232Mask 0xFFFFFF00
+#define     DFA_az16o3Dpt232Shift 8
+#define DFA_az16o4Send                          775      // 8 Bits, Bit 7-0
+#define DFA_az16o4Dpt1                          776      // 8 Bits, Bit 7-0
+#define DFA_az16o4Dpt2                          776      // 8 Bits, Bit 7-0
+#define DFA_az16o4Dpt5                          776      // uint8_t
+#define DFA_az16o4Dpt5001                       776      // uint8_t
+#define DFA_az16o4Dpt6                          776      // int8_t
+#define DFA_az16o4Dpt7                          776      // uint16_t
+#define DFA_az16o4Dpt8                          776      // int16_t
+#define DFA_az16o4Dpt9                          776      // float (2 Byte)
+#define DFA_az16o4Dpt12                         776      // uint32_t
+#define DFA_az16o4Dpt13                         776      // int32_t
+#define DFA_az16o4Dpt14                         776      // float (4 Byte)
+#define DFA_az16o4Dpt16                         776      // char*, 14 Byte
+#define     DFA_az16o4Dpt16Length 14
+#define DFA_az16o4Dpt17                         776      // 8 Bits, Bit 7-0
+#define DFA_az16o4Dpt232                        776      // 24 Bits, Bit 31-8
+#define     DFA_az16o4Dpt232Mask 0xFFFFFF00
+#define     DFA_az16o4Dpt232Shift 8
+
+// Kanal verwenden?
+#define ParamDFA_aActive                             ((knx.paramByte(DFA_ParamCalcIndex(DFA_aActive)) & DFA_aActiveMask) >> DFA_aActiveShift)
+// Pausieren erlauben
+#define ParamDFA_aStartPause                         ((knx.paramByte(DFA_ParamCalcIndex(DFA_aStartPause)) & DFA_aStartPauseMask) >> DFA_aStartPauseShift)
+// Rekonstruktion bei erneutem Start
+#define ParamDFA_aStateRestore                       ((knx.paramByte(DFA_ParamCalcIndex(DFA_aStateRestore)) & DFA_aStateRestoreMask) >> DFA_aStateRestoreShift)
+// Direktes Setzen von Zustand erlauben?
+#define ParamDFA_aStateSetting                       ((knx.paramByte(DFA_ParamCalcIndex(DFA_aStateSetting)) & DFA_aStateSettingMask) >> DFA_aStateSettingShift)
+// Erneutes Setzen von aktuellem Zustand
+#define ParamDFA_aStateSettingSame                   ((knx.paramByte(DFA_ParamCalcIndex(DFA_aStateSettingSame)) & DFA_aStateSettingSameMask) >> DFA_aStateSettingSameShift)
+// Kombination A/B
+#define ParamDFA_aSymbolPairAB                       ((bool)(knx.paramByte(DFA_ParamCalcIndex(DFA_aSymbolPairAB)) & DFA_aSymbolPairABMask))
+// Kombination C/D
+#define ParamDFA_aSymbolPairCD                       ((bool)(knx.paramByte(DFA_ParamCalcIndex(DFA_aSymbolPairCD)) & DFA_aSymbolPairCDMask))
+// Kombination E/F
+#define ParamDFA_aSymbolPairEF                       ((bool)(knx.paramByte(DFA_ParamCalcIndex(DFA_aSymbolPairEF)) & DFA_aSymbolPairEFMask))
+// Kombination G/H
+#define ParamDFA_aSymbolPairGH                       ((bool)(knx.paramByte(DFA_ParamCalcIndex(DFA_aSymbolPairGH)) & DFA_aSymbolPairGHMask))
+// Startzustand oder bedingter Übergang
+#define ParamDFA_az0                                 (knx.paramByte(DFA_ParamCalcIndex(DFA_az0)))
+// ... bei erfolgloser Auswertung
+#define ParamDFA_az0Fallback                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az0Fallback)))
+// Einschaltverzögerung Zeitbasis
+#define ParamDFA_aStartupDelayBase                   ((knx.paramByte(DFA_ParamCalcIndex(DFA_aStartupDelayBase)) & DFA_aStartupDelayBaseMask) >> DFA_aStartupDelayBaseShift)
+// Einschaltverzögerung Zeit
+#define ParamDFA_aStartupDelayTime                   (knx.paramWord(DFA_ParamCalcIndex(DFA_aStartupDelayTime)) & DFA_aStartupDelayTimeMask)
+// Einschaltverzögerung Zeit (in Millisekunden)
+#define ParamDFA_aStartupDelayTimeMS                 (paramDelay(knx.paramWord(DFA_ParamCalcIndex(DFA_aStartupDelayTime))))
+// Datentyp Ausgabe 1
+#define ParamDFA_aOutput1Dpt                         (knx.paramByte(DFA_ParamCalcIndex(DFA_aOutput1Dpt)))
+// Sendeintervall Zeitbasis
+#define ParamDFA_aOutput1IntervalBase                ((knx.paramByte(DFA_ParamCalcIndex(DFA_aOutput1IntervalBase)) & DFA_aOutput1IntervalBaseMask) >> DFA_aOutput1IntervalBaseShift)
+// Sendeintervall Zeit
+#define ParamDFA_aOutput1IntervalTime                (knx.paramWord(DFA_ParamCalcIndex(DFA_aOutput1IntervalTime)) & DFA_aOutput1IntervalTimeMask)
+// Sendeintervall Zeit (in Millisekunden)
+#define ParamDFA_aOutput1IntervalTimeMS              (paramDelay(knx.paramWord(DFA_ParamCalcIndex(DFA_aOutput1IntervalTime))))
+// Datentyp Ausgabe 2
+#define ParamDFA_aOutput2Dpt                         (knx.paramByte(DFA_ParamCalcIndex(DFA_aOutput2Dpt)))
+// Sendeintervall Zeitbasis
+#define ParamDFA_aOutput2IntervalBase                ((knx.paramByte(DFA_ParamCalcIndex(DFA_aOutput2IntervalBase)) & DFA_aOutput2IntervalBaseMask) >> DFA_aOutput2IntervalBaseShift)
+// Sendeintervall Zeit
+#define ParamDFA_aOutput2IntervalTime                (knx.paramWord(DFA_ParamCalcIndex(DFA_aOutput2IntervalTime)) & DFA_aOutput2IntervalTimeMask)
+// Sendeintervall Zeit (in Millisekunden)
+#define ParamDFA_aOutput2IntervalTimeMS              (paramDelay(knx.paramWord(DFA_ParamCalcIndex(DFA_aOutput2IntervalTime))))
+// Datentyp Ausgabe 3
+#define ParamDFA_aOutput3Dpt                         (knx.paramByte(DFA_ParamCalcIndex(DFA_aOutput3Dpt)))
+// Sendeintervall Zeitbasis
+#define ParamDFA_aOutput3IntervalBase                ((knx.paramByte(DFA_ParamCalcIndex(DFA_aOutput3IntervalBase)) & DFA_aOutput3IntervalBaseMask) >> DFA_aOutput3IntervalBaseShift)
+// Sendeintervall Zeit
+#define ParamDFA_aOutput3IntervalTime                (knx.paramWord(DFA_ParamCalcIndex(DFA_aOutput3IntervalTime)) & DFA_aOutput3IntervalTimeMask)
+// Sendeintervall Zeit (in Millisekunden)
+#define ParamDFA_aOutput3IntervalTimeMS              (paramDelay(knx.paramWord(DFA_ParamCalcIndex(DFA_aOutput3IntervalTime))))
+// Datentyp Ausgabe 4
+#define ParamDFA_aOutput4Dpt                         (knx.paramByte(DFA_ParamCalcIndex(DFA_aOutput4Dpt)))
+// Sendeintervall Zeitbasis
+#define ParamDFA_aOutput4IntervalBase                ((knx.paramByte(DFA_ParamCalcIndex(DFA_aOutput4IntervalBase)) & DFA_aOutput4IntervalBaseMask) >> DFA_aOutput4IntervalBaseShift)
+// Sendeintervall Zeit
+#define ParamDFA_aOutput4IntervalTime                (knx.paramWord(DFA_ParamCalcIndex(DFA_aOutput4IntervalTime)) & DFA_aOutput4IntervalTimeMask)
+// Sendeintervall Zeit (in Millisekunden)
+#define ParamDFA_aOutput4IntervalTimeMS              (paramDelay(knx.paramWord(DFA_ParamCalcIndex(DFA_aOutput4IntervalTime))))
+// KO Eingabe 1
+#define ParamDFA_aSymbolAInput                       ((knx.paramByte(DFA_ParamCalcIndex(DFA_aSymbolAInput)) & DFA_aSymbolAInputMask) >> DFA_aSymbolAInputShift)
+// KO-Nummer Eingabe 1
+#define ParamDFA_aSymbolAKoNumber                    ((knx.paramWord(DFA_ParamCalcIndex(DFA_aSymbolAKoNumber)) & DFA_aSymbolAKoNumberMask) >> DFA_aSymbolAKoNumberShift)
+// Logik-Kanal-Ausgangs-Nummer Eingabe 1
+#define ParamDFA_aSymbolALogicNumber                 (knx.paramByte(DFA_ParamCalcIndex(DFA_aSymbolALogicNumber)))
+// Eingabewert 1
+#define ParamDFA_aSymbolATrigger                     ((knx.paramByte(DFA_ParamCalcIndex(DFA_aSymbolATrigger)) & DFA_aSymbolATriggerMask) >> DFA_aSymbolATriggerShift)
+// KO Eingabe 2
+#define ParamDFA_aSymbolBInput                       ((knx.paramByte(DFA_ParamCalcIndex(DFA_aSymbolBInput)) & DFA_aSymbolBInputMask) >> DFA_aSymbolBInputShift)
+// KO-Nummer Eingabe 2
+#define ParamDFA_aSymbolBKoNumber                    ((knx.paramWord(DFA_ParamCalcIndex(DFA_aSymbolBKoNumber)) & DFA_aSymbolBKoNumberMask) >> DFA_aSymbolBKoNumberShift)
+// Logik-Kanal-Ausgangs-Nummer Eingabe 2
+#define ParamDFA_aSymbolBLogicNumber                 (knx.paramByte(DFA_ParamCalcIndex(DFA_aSymbolBLogicNumber)))
+// Eingabewert 2
+#define ParamDFA_aSymbolBTrigger                     ((knx.paramByte(DFA_ParamCalcIndex(DFA_aSymbolBTrigger)) & DFA_aSymbolBTriggerMask) >> DFA_aSymbolBTriggerShift)
+// KO Eingabe 3
+#define ParamDFA_aSymbolCInput                       ((knx.paramByte(DFA_ParamCalcIndex(DFA_aSymbolCInput)) & DFA_aSymbolCInputMask) >> DFA_aSymbolCInputShift)
+// KO-Nummer Eingabe 3
+#define ParamDFA_aSymbolCKoNumber                    ((knx.paramWord(DFA_ParamCalcIndex(DFA_aSymbolCKoNumber)) & DFA_aSymbolCKoNumberMask) >> DFA_aSymbolCKoNumberShift)
+// Logik-Kanal-Ausgangs-Nummer Eingabe 3
+#define ParamDFA_aSymbolCLogicNumber                 (knx.paramByte(DFA_ParamCalcIndex(DFA_aSymbolCLogicNumber)))
+// Eingabewert 3
+#define ParamDFA_aSymbolCTrigger                     ((knx.paramByte(DFA_ParamCalcIndex(DFA_aSymbolCTrigger)) & DFA_aSymbolCTriggerMask) >> DFA_aSymbolCTriggerShift)
+// KO Eingabe 4
+#define ParamDFA_aSymbolDInput                       ((knx.paramByte(DFA_ParamCalcIndex(DFA_aSymbolDInput)) & DFA_aSymbolDInputMask) >> DFA_aSymbolDInputShift)
+// KO-Nummer Eingabe 4
+#define ParamDFA_aSymbolDKoNumber                    ((knx.paramWord(DFA_ParamCalcIndex(DFA_aSymbolDKoNumber)) & DFA_aSymbolDKoNumberMask) >> DFA_aSymbolDKoNumberShift)
+// Logik-Kanal-Ausgangs-Nummer Eingabe 4
+#define ParamDFA_aSymbolDLogicNumber                 (knx.paramByte(DFA_ParamCalcIndex(DFA_aSymbolDLogicNumber)))
+// Eingabewert 4
+#define ParamDFA_aSymbolDTrigger                     ((knx.paramByte(DFA_ParamCalcIndex(DFA_aSymbolDTrigger)) & DFA_aSymbolDTriggerMask) >> DFA_aSymbolDTriggerShift)
+// KO Eingabe 5
+#define ParamDFA_aSymbolEInput                       ((knx.paramByte(DFA_ParamCalcIndex(DFA_aSymbolEInput)) & DFA_aSymbolEInputMask) >> DFA_aSymbolEInputShift)
+// KO-Nummer Eingabe 5
+#define ParamDFA_aSymbolEKoNumber                    ((knx.paramWord(DFA_ParamCalcIndex(DFA_aSymbolEKoNumber)) & DFA_aSymbolEKoNumberMask) >> DFA_aSymbolEKoNumberShift)
+// Logik-Kanal-Ausgangs-Nummer Eingabe 5
+#define ParamDFA_aSymbolELogicNumber                 (knx.paramByte(DFA_ParamCalcIndex(DFA_aSymbolELogicNumber)))
+// Eingabewert 5
+#define ParamDFA_aSymbolETrigger                     ((knx.paramByte(DFA_ParamCalcIndex(DFA_aSymbolETrigger)) & DFA_aSymbolETriggerMask) >> DFA_aSymbolETriggerShift)
+// KO Eingabe 6
+#define ParamDFA_aSymbolFInput                       ((knx.paramByte(DFA_ParamCalcIndex(DFA_aSymbolFInput)) & DFA_aSymbolFInputMask) >> DFA_aSymbolFInputShift)
+// KO-Nummer Eingabe 6
+#define ParamDFA_aSymbolFKoNumber                    ((knx.paramWord(DFA_ParamCalcIndex(DFA_aSymbolFKoNumber)) & DFA_aSymbolFKoNumberMask) >> DFA_aSymbolFKoNumberShift)
+// Logik-Kanal-Ausgangs-Nummer Eingabe 6
+#define ParamDFA_aSymbolFLogicNumber                 (knx.paramByte(DFA_ParamCalcIndex(DFA_aSymbolFLogicNumber)))
+// Eingabewert 6
+#define ParamDFA_aSymbolFTrigger                     ((knx.paramByte(DFA_ParamCalcIndex(DFA_aSymbolFTrigger)) & DFA_aSymbolFTriggerMask) >> DFA_aSymbolFTriggerShift)
+// KO Eingabe 7
+#define ParamDFA_aSymbolGInput                       ((knx.paramByte(DFA_ParamCalcIndex(DFA_aSymbolGInput)) & DFA_aSymbolGInputMask) >> DFA_aSymbolGInputShift)
+// KO-Nummer Eingabe 7
+#define ParamDFA_aSymbolGKoNumber                    ((knx.paramWord(DFA_ParamCalcIndex(DFA_aSymbolGKoNumber)) & DFA_aSymbolGKoNumberMask) >> DFA_aSymbolGKoNumberShift)
+// Logik-Kanal-Ausgangs-Nummer Eingabe 7
+#define ParamDFA_aSymbolGLogicNumber                 (knx.paramByte(DFA_ParamCalcIndex(DFA_aSymbolGLogicNumber)))
+// Eingabewert 7
+#define ParamDFA_aSymbolGTrigger                     ((knx.paramByte(DFA_ParamCalcIndex(DFA_aSymbolGTrigger)) & DFA_aSymbolGTriggerMask) >> DFA_aSymbolGTriggerShift)
+// KO Eingabe 8
+#define ParamDFA_aSymbolHInput                       ((knx.paramByte(DFA_ParamCalcIndex(DFA_aSymbolHInput)) & DFA_aSymbolHInputMask) >> DFA_aSymbolHInputShift)
+// KO-Nummer Eingabe 8
+#define ParamDFA_aSymbolHKoNumber                    ((knx.paramWord(DFA_ParamCalcIndex(DFA_aSymbolHKoNumber)) & DFA_aSymbolHKoNumberMask) >> DFA_aSymbolHKoNumberShift)
+// Logik-Kanal-Ausgangs-Nummer Eingabe 8
+#define ParamDFA_aSymbolHLogicNumber                 (knx.paramByte(DFA_ParamCalcIndex(DFA_aSymbolHLogicNumber)))
+// Eingabewert 8
+#define ParamDFA_aSymbolHTrigger                     ((knx.paramByte(DFA_ParamCalcIndex(DFA_aSymbolHTrigger)) & DFA_aSymbolHTriggerMask) >> DFA_aSymbolHTriggerShift)
+// Direktes Auslösen von Timeout (Symbol T)
+#define ParamDFA_aSymbolTInput                       ((knx.paramByte(DFA_ParamCalcIndex(DFA_aSymbolTInput)) & DFA_aSymbolTInputMask) >> DFA_aSymbolTInputShift)
+// KO-Nummer für Symbol T
+#define ParamDFA_aSymbolTKoNumber                    ((knx.paramWord(DFA_ParamCalcIndex(DFA_aSymbolTKoNumber)) & DFA_aSymbolTKoNumberMask) >> DFA_aSymbolTKoNumberShift)
+// Logik-Kanal-Ausgangs-Nummer für Symbol T
+#define ParamDFA_aSymbolTLogicNumber                 (knx.paramByte(DFA_ParamCalcIndex(DFA_aSymbolTLogicNumber)))
+// Eingabewert zum Auslösen von Timeout
+#define ParamDFA_aSymbolTTrigger                     ((knx.paramByte(DFA_ParamCalcIndex(DFA_aSymbolTTrigger)) & DFA_aSymbolTTriggerMask) >> DFA_aSymbolTTriggerShift)
+// Bedingungsauswertung 1 - Logikkanal
+#define ParamDFA_aCaLOG                              (knx.paramByte(DFA_ParamCalcIndex(DFA_aCaLOG)))
+// Bedingungsauswertung 1 - Folgezustand bei 1
+#define ParamDFA_aCaT                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCaT)))
+// Bedingungsauswertung 1 - Folgezustand bei 0
+#define ParamDFA_aCaF                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCaF)))
+// Bedingungsauswertung 1 - Folgezustand bei UNDEFINIERT
+#define ParamDFA_aCaU                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCaU)))
+// Bedingungsauswertung 2 - Logikkanal
+#define ParamDFA_aCbLOG                              (knx.paramByte(DFA_ParamCalcIndex(DFA_aCbLOG)))
+// Bedingungsauswertung 2 - Folgezustand bei 1
+#define ParamDFA_aCbT                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCbT)))
+// Bedingungsauswertung 2 - Folgezustand bei 0
+#define ParamDFA_aCbF                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCbF)))
+// Bedingungsauswertung 2 - Folgezustand bei UNDEFINIERT
+#define ParamDFA_aCbU                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCbU)))
+// Bedingungsauswertung 3 - Logikkanal
+#define ParamDFA_aCcLOG                              (knx.paramByte(DFA_ParamCalcIndex(DFA_aCcLOG)))
+// Bedingungsauswertung 3 - Folgezustand bei 1
+#define ParamDFA_aCcT                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCcT)))
+// Bedingungsauswertung 3 - Folgezustand bei 0
+#define ParamDFA_aCcF                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCcF)))
+// Bedingungsauswertung 3 - Folgezustand bei UNDEFINIERT
+#define ParamDFA_aCcU                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCcU)))
+// Bedingungsauswertung 4 - Logikkanal
+#define ParamDFA_aCdLOG                              (knx.paramByte(DFA_ParamCalcIndex(DFA_aCdLOG)))
+// Bedingungsauswertung 4 - Folgezustand bei 1
+#define ParamDFA_aCdT                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCdT)))
+// Bedingungsauswertung 4 - Folgezustand bei 0
+#define ParamDFA_aCdF                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCdF)))
+// Bedingungsauswertung 4 - Folgezustand bei UNDEFINIERT
+#define ParamDFA_aCdU                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCdU)))
+// Bedingungsauswertung 5 - Logikkanal
+#define ParamDFA_aCeLOG                              (knx.paramByte(DFA_ParamCalcIndex(DFA_aCeLOG)))
+// Bedingungsauswertung 5 - Folgezustand bei 1
+#define ParamDFA_aCeT                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCeT)))
+// Bedingungsauswertung 5 - Folgezustand bei 0
+#define ParamDFA_aCeF                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCeF)))
+// Bedingungsauswertung 5 - Folgezustand bei UNDEFINIERT
+#define ParamDFA_aCeU                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCeU)))
+// Bedingungsauswertung 6 - Logikkanal
+#define ParamDFA_aCfLOG                              (knx.paramByte(DFA_ParamCalcIndex(DFA_aCfLOG)))
+// Bedingungsauswertung 6 - Folgezustand bei 1
+#define ParamDFA_aCfT                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCfT)))
+// Bedingungsauswertung 6 - Folgezustand bei 0
+#define ParamDFA_aCfF                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCfF)))
+// Bedingungsauswertung 6 - Folgezustand bei UNDEFINIERT
+#define ParamDFA_aCfU                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCfU)))
+// Bedingungsauswertung 7 - Logikkanal
+#define ParamDFA_aCgLOG                              (knx.paramByte(DFA_ParamCalcIndex(DFA_aCgLOG)))
+// Bedingungsauswertung 7 - Folgezustand bei 1
+#define ParamDFA_aCgT                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCgT)))
+// Bedingungsauswertung 7 - Folgezustand bei 0
+#define ParamDFA_aCgF                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCgF)))
+// Bedingungsauswertung 7 - Folgezustand bei UNDEFINIERT
+#define ParamDFA_aCgU                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCgU)))
+// Bedingungsauswertung 8 - Logikkanal
+#define ParamDFA_aChLOG                              (knx.paramByte(DFA_ParamCalcIndex(DFA_aChLOG)))
+// Bedingungsauswertung 8 - Folgezustand bei 1
+#define ParamDFA_aChT                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aChT)))
+// Bedingungsauswertung 8 - Folgezustand bei 0
+#define ParamDFA_aChF                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aChF)))
+// Bedingungsauswertung 8 - Folgezustand bei UNDEFINIERT
+#define ParamDFA_aChU                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aChU)))
+// Bedingungsauswertung 9 - Logikkanal
+#define ParamDFA_aCiLOG                              (knx.paramByte(DFA_ParamCalcIndex(DFA_aCiLOG)))
+// Bedingungsauswertung 9 - Folgezustand bei 1
+#define ParamDFA_aCiT                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCiT)))
+// Bedingungsauswertung 9 - Folgezustand bei 0
+#define ParamDFA_aCiF                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCiF)))
+// Bedingungsauswertung 9 - Folgezustand bei UNDEFINIERT
+#define ParamDFA_aCiU                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCiU)))
+// Bedingungsauswertung 10 - Logikkanal
+#define ParamDFA_aCjLOG                              (knx.paramByte(DFA_ParamCalcIndex(DFA_aCjLOG)))
+// Bedingungsauswertung 10 - Folgezustand bei 1
+#define ParamDFA_aCjT                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCjT)))
+// Bedingungsauswertung 10 - Folgezustand bei 0
+#define ParamDFA_aCjF                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCjF)))
+// Bedingungsauswertung 10 - Folgezustand bei UNDEFINIERT
+#define ParamDFA_aCjU                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCjU)))
+// Bedingungsauswertung 11 - Logikkanal
+#define ParamDFA_aCkLOG                              (knx.paramByte(DFA_ParamCalcIndex(DFA_aCkLOG)))
+// Bedingungsauswertung 11 - Folgezustand bei 1
+#define ParamDFA_aCkT                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCkT)))
+// Bedingungsauswertung 11 - Folgezustand bei 0
+#define ParamDFA_aCkF                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCkF)))
+// Bedingungsauswertung 11 - Folgezustand bei UNDEFINIERT
+#define ParamDFA_aCkU                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCkU)))
+// Bedingungsauswertung 12 - Logikkanal
+#define ParamDFA_aClLOG                              (knx.paramByte(DFA_ParamCalcIndex(DFA_aClLOG)))
+// Bedingungsauswertung 12 - Folgezustand bei 1
+#define ParamDFA_aClT                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aClT)))
+// Bedingungsauswertung 12 - Folgezustand bei 0
+#define ParamDFA_aClF                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aClF)))
+// Bedingungsauswertung 12 - Folgezustand bei UNDEFINIERT
+#define ParamDFA_aClU                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aClU)))
+// Bedingungsauswertung 13 - Logikkanal
+#define ParamDFA_aCmLOG                              (knx.paramByte(DFA_ParamCalcIndex(DFA_aCmLOG)))
+// Bedingungsauswertung 13 - Folgezustand bei 1
+#define ParamDFA_aCmT                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCmT)))
+// Bedingungsauswertung 13 - Folgezustand bei 0
+#define ParamDFA_aCmF                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCmF)))
+// Bedingungsauswertung 13 - Folgezustand bei UNDEFINIERT
+#define ParamDFA_aCmU                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCmU)))
+// Bedingungsauswertung 14 - Logikkanal
+#define ParamDFA_aCnLOG                              (knx.paramByte(DFA_ParamCalcIndex(DFA_aCnLOG)))
+// Bedingungsauswertung 14 - Folgezustand bei 1
+#define ParamDFA_aCnT                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCnT)))
+// Bedingungsauswertung 14 - Folgezustand bei 0
+#define ParamDFA_aCnF                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCnF)))
+// Bedingungsauswertung 14 - Folgezustand bei UNDEFINIERT
+#define ParamDFA_aCnU                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCnU)))
+// Bedingungsauswertung 15 - Logikkanal
+#define ParamDFA_aCoLOG                              (knx.paramByte(DFA_ParamCalcIndex(DFA_aCoLOG)))
+// Bedingungsauswertung 15 - Folgezustand bei 1
+#define ParamDFA_aCoT                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCoT)))
+// Bedingungsauswertung 15 - Folgezustand bei 0
+#define ParamDFA_aCoF                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCoF)))
+// Bedingungsauswertung 15 - Folgezustand bei UNDEFINIERT
+#define ParamDFA_aCoU                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCoU)))
+// Bedingungsauswertung 16 - Logikkanal
+#define ParamDFA_aCpLOG                              (knx.paramByte(DFA_ParamCalcIndex(DFA_aCpLOG)))
+// Bedingungsauswertung 16 - Folgezustand bei 1
+#define ParamDFA_aCpT                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCpT)))
+// Bedingungsauswertung 16 - Folgezustand bei 0
+#define ParamDFA_aCpF                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCpF)))
+// Bedingungsauswertung 16 - Folgezustand bei UNDEFINIERT
+#define ParamDFA_aCpU                                (knx.paramByte(DFA_ParamCalcIndex(DFA_aCpU)))
+// trans(01,1)
+#define ParamDFA_ad01A                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad01A)))
+// trans(01,2)
+#define ParamDFA_ad01B                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad01B)))
+// trans(01,3)
+#define ParamDFA_ad01C                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad01C)))
+// trans(01,4)
+#define ParamDFA_ad01D                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad01D)))
+// trans(01,5)
+#define ParamDFA_ad01E                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad01E)))
+// trans(01,6)
+#define ParamDFA_ad01F                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad01F)))
+// trans(01,7)
+#define ParamDFA_ad01G                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad01G)))
+// trans(01,8)
+#define ParamDFA_ad01H                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad01H)))
+// trans(01,timeout)
+#define ParamDFA_ad01T                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad01T)))
+// Zeitbasis
+#define ParamDFA_ad01TBase                           ((knx.paramByte(DFA_ParamCalcIndex(DFA_ad01TBase)) & DFA_ad01TBaseMask) >> DFA_ad01TBaseShift)
+// Zeit
+#define ParamDFA_ad01TTime                           (knx.paramWord(DFA_ParamCalcIndex(DFA_ad01TTime)) & DFA_ad01TTimeMask)
+// Zeit (in Millisekunden)
+#define ParamDFA_ad01TTimeMS                         (paramDelay(knx.paramWord(DFA_ParamCalcIndex(DFA_ad01TTime))))
+// Sendeverhalten Zustand 1
+#define ParamDFA_az01o1Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az01o1Send)))
+// Ausgabewert Zustand 1 (DPT 1)
+#define ParamDFA_az01o1Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az01o1Dpt1)))
+// Ausgabewert Zustand 1 (DPT 2)
+#define ParamDFA_az01o1Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az01o1Dpt2)))
+// Ausgabewert Zustand 1 (DPT 5)
+#define ParamDFA_az01o1Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az01o1Dpt5)))
+// Ausgabewert Zustand 1 (DPT 5.001)
+#define ParamDFA_az01o1Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az01o1Dpt5001)))
+// Ausgabewert Zustand 1 (DPT 6)
+#define ParamDFA_az01o1Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az01o1Dpt6)))
+// Ausgabewert Zustand 1 (DPT 7)
+#define ParamDFA_az01o1Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az01o1Dpt7)))
+// Ausgabewert Zustand 1 (DPT 8)
+#define ParamDFA_az01o1Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az01o1Dpt8)))
+// Ausgabewert Zustand 1 (DPT 9)
+#define ParamDFA_az01o1Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az01o1Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 1 (DPT 12)
+#define ParamDFA_az01o1Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az01o1Dpt12)))
+// Ausgabewert Zustand 1 (DPT 13)
+#define ParamDFA_az01o1Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az01o1Dpt13)))
+// Ausgabewert Zustand 1 (DPT 14)
+#define ParamDFA_az01o1Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az01o1Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 1 (DPT 17)
+#define ParamDFA_az01o1Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az01o1Dpt17)))
+// Ausgabewert Zustand 1 (DPT 232)
+#define ParamDFA_az01o1Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az01o1Dpt232)) & DFA_az01o1Dpt232Mask) >> DFA_az01o1Dpt232Shift)
+// Sendeverhalten Zustand 1
+#define ParamDFA_az01o2Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az01o2Send)))
+// Ausgabewert Zustand 1 (DPT 1)
+#define ParamDFA_az01o2Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az01o2Dpt1)))
+// Ausgabewert Zustand 1 (DPT 2)
+#define ParamDFA_az01o2Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az01o2Dpt2)))
+// Ausgabewert Zustand 1 (DPT 5)
+#define ParamDFA_az01o2Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az01o2Dpt5)))
+// Ausgabewert Zustand 1 (DPT 5.001)
+#define ParamDFA_az01o2Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az01o2Dpt5001)))
+// Ausgabewert Zustand 1 (DPT 6)
+#define ParamDFA_az01o2Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az01o2Dpt6)))
+// Ausgabewert Zustand 1 (DPT 7)
+#define ParamDFA_az01o2Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az01o2Dpt7)))
+// Ausgabewert Zustand 1 (DPT 8)
+#define ParamDFA_az01o2Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az01o2Dpt8)))
+// Ausgabewert Zustand 1 (DPT 9)
+#define ParamDFA_az01o2Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az01o2Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 1 (DPT 12)
+#define ParamDFA_az01o2Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az01o2Dpt12)))
+// Ausgabewert Zustand 1 (DPT 13)
+#define ParamDFA_az01o2Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az01o2Dpt13)))
+// Ausgabewert Zustand 1 (DPT 14)
+#define ParamDFA_az01o2Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az01o2Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 1 (DPT 17)
+#define ParamDFA_az01o2Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az01o2Dpt17)))
+// Ausgabewert Zustand 1 (DPT 232)
+#define ParamDFA_az01o2Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az01o2Dpt232)) & DFA_az01o2Dpt232Mask) >> DFA_az01o2Dpt232Shift)
+// Sendeverhalten Zustand 1
+#define ParamDFA_az01o3Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az01o3Send)))
+// Ausgabewert Zustand 1 (DPT 1)
+#define ParamDFA_az01o3Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az01o3Dpt1)))
+// Ausgabewert Zustand 1 (DPT 2)
+#define ParamDFA_az01o3Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az01o3Dpt2)))
+// Ausgabewert Zustand 1 (DPT 5)
+#define ParamDFA_az01o3Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az01o3Dpt5)))
+// Ausgabewert Zustand 1 (DPT 5.001)
+#define ParamDFA_az01o3Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az01o3Dpt5001)))
+// Ausgabewert Zustand 1 (DPT 6)
+#define ParamDFA_az01o3Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az01o3Dpt6)))
+// Ausgabewert Zustand 1 (DPT 7)
+#define ParamDFA_az01o3Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az01o3Dpt7)))
+// Ausgabewert Zustand 1 (DPT 8)
+#define ParamDFA_az01o3Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az01o3Dpt8)))
+// Ausgabewert Zustand 1 (DPT 9)
+#define ParamDFA_az01o3Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az01o3Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 1 (DPT 12)
+#define ParamDFA_az01o3Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az01o3Dpt12)))
+// Ausgabewert Zustand 1 (DPT 13)
+#define ParamDFA_az01o3Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az01o3Dpt13)))
+// Ausgabewert Zustand 1 (DPT 14)
+#define ParamDFA_az01o3Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az01o3Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 1 (DPT 17)
+#define ParamDFA_az01o3Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az01o3Dpt17)))
+// Ausgabewert Zustand 1 (DPT 232)
+#define ParamDFA_az01o3Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az01o3Dpt232)) & DFA_az01o3Dpt232Mask) >> DFA_az01o3Dpt232Shift)
+// Sendeverhalten Zustand 1
+#define ParamDFA_az01o4Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az01o4Send)))
+// Ausgabewert Zustand 1 (DPT 1)
+#define ParamDFA_az01o4Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az01o4Dpt1)))
+// Ausgabewert Zustand 1 (DPT 2)
+#define ParamDFA_az01o4Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az01o4Dpt2)))
+// Ausgabewert Zustand 1 (DPT 5)
+#define ParamDFA_az01o4Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az01o4Dpt5)))
+// Ausgabewert Zustand 1 (DPT 5.001)
+#define ParamDFA_az01o4Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az01o4Dpt5001)))
+// Ausgabewert Zustand 1 (DPT 6)
+#define ParamDFA_az01o4Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az01o4Dpt6)))
+// Ausgabewert Zustand 1 (DPT 7)
+#define ParamDFA_az01o4Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az01o4Dpt7)))
+// Ausgabewert Zustand 1 (DPT 8)
+#define ParamDFA_az01o4Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az01o4Dpt8)))
+// Ausgabewert Zustand 1 (DPT 9)
+#define ParamDFA_az01o4Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az01o4Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 1 (DPT 12)
+#define ParamDFA_az01o4Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az01o4Dpt12)))
+// Ausgabewert Zustand 1 (DPT 13)
+#define ParamDFA_az01o4Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az01o4Dpt13)))
+// Ausgabewert Zustand 1 (DPT 14)
+#define ParamDFA_az01o4Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az01o4Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 1 (DPT 16)
+#define ParamDFA_az01o4Dpt16                         (knx.paramData(DFA_ParamCalcIndex(DFA_az01o4Dpt16)))
+#define ParamDFA_az01o4Dpt16Str                      (knx.paramString(DFA_ParamCalcIndex(DFA_az01o4Dpt16), DFA_az01o4Dpt16Length))
+// Ausgabewert Zustand 1 (DPT 17)
+#define ParamDFA_az01o4Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az01o4Dpt17)))
+// Ausgabewert Zustand 1 (DPT 232)
+#define ParamDFA_az01o4Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az01o4Dpt232)) & DFA_az01o4Dpt232Mask) >> DFA_az01o4Dpt232Shift)
+// trans(02,1)
+#define ParamDFA_ad02A                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad02A)))
+// trans(02,2)
+#define ParamDFA_ad02B                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad02B)))
+// trans(02,3)
+#define ParamDFA_ad02C                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad02C)))
+// trans(02,4)
+#define ParamDFA_ad02D                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad02D)))
+// trans(02,5)
+#define ParamDFA_ad02E                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad02E)))
+// trans(02,6)
+#define ParamDFA_ad02F                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad02F)))
+// trans(02,7)
+#define ParamDFA_ad02G                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad02G)))
+// trans(02,8)
+#define ParamDFA_ad02H                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad02H)))
+// trans(02,timeout)
+#define ParamDFA_ad02T                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad02T)))
+// Zeitbasis
+#define ParamDFA_ad02TBase                           ((knx.paramByte(DFA_ParamCalcIndex(DFA_ad02TBase)) & DFA_ad02TBaseMask) >> DFA_ad02TBaseShift)
+// Zeit
+#define ParamDFA_ad02TTime                           (knx.paramWord(DFA_ParamCalcIndex(DFA_ad02TTime)) & DFA_ad02TTimeMask)
+// Zeit (in Millisekunden)
+#define ParamDFA_ad02TTimeMS                         (paramDelay(knx.paramWord(DFA_ParamCalcIndex(DFA_ad02TTime))))
+// Sendeverhalten Zustand 2
+#define ParamDFA_az02o1Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az02o1Send)))
+// Ausgabewert Zustand 2 (DPT 1)
+#define ParamDFA_az02o1Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az02o1Dpt1)))
+// Ausgabewert Zustand 2 (DPT 2)
+#define ParamDFA_az02o1Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az02o1Dpt2)))
+// Ausgabewert Zustand 2 (DPT 5)
+#define ParamDFA_az02o1Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az02o1Dpt5)))
+// Ausgabewert Zustand 2 (DPT 5.001)
+#define ParamDFA_az02o1Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az02o1Dpt5001)))
+// Ausgabewert Zustand 2 (DPT 6)
+#define ParamDFA_az02o1Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az02o1Dpt6)))
+// Ausgabewert Zustand 2 (DPT 7)
+#define ParamDFA_az02o1Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az02o1Dpt7)))
+// Ausgabewert Zustand 2 (DPT 8)
+#define ParamDFA_az02o1Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az02o1Dpt8)))
+// Ausgabewert Zustand 2 (DPT 9)
+#define ParamDFA_az02o1Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az02o1Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 2 (DPT 12)
+#define ParamDFA_az02o1Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az02o1Dpt12)))
+// Ausgabewert Zustand 2 (DPT 13)
+#define ParamDFA_az02o1Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az02o1Dpt13)))
+// Ausgabewert Zustand 2 (DPT 14)
+#define ParamDFA_az02o1Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az02o1Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 2 (DPT 17)
+#define ParamDFA_az02o1Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az02o1Dpt17)))
+// Ausgabewert Zustand 2 (DPT 232)
+#define ParamDFA_az02o1Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az02o1Dpt232)) & DFA_az02o1Dpt232Mask) >> DFA_az02o1Dpt232Shift)
+// Sendeverhalten Zustand 2
+#define ParamDFA_az02o2Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az02o2Send)))
+// Ausgabewert Zustand 2 (DPT 1)
+#define ParamDFA_az02o2Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az02o2Dpt1)))
+// Ausgabewert Zustand 2 (DPT 2)
+#define ParamDFA_az02o2Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az02o2Dpt2)))
+// Ausgabewert Zustand 2 (DPT 5)
+#define ParamDFA_az02o2Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az02o2Dpt5)))
+// Ausgabewert Zustand 2 (DPT 5.001)
+#define ParamDFA_az02o2Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az02o2Dpt5001)))
+// Ausgabewert Zustand 2 (DPT 6)
+#define ParamDFA_az02o2Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az02o2Dpt6)))
+// Ausgabewert Zustand 2 (DPT 7)
+#define ParamDFA_az02o2Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az02o2Dpt7)))
+// Ausgabewert Zustand 2 (DPT 8)
+#define ParamDFA_az02o2Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az02o2Dpt8)))
+// Ausgabewert Zustand 2 (DPT 9)
+#define ParamDFA_az02o2Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az02o2Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 2 (DPT 12)
+#define ParamDFA_az02o2Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az02o2Dpt12)))
+// Ausgabewert Zustand 2 (DPT 13)
+#define ParamDFA_az02o2Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az02o2Dpt13)))
+// Ausgabewert Zustand 2 (DPT 14)
+#define ParamDFA_az02o2Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az02o2Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 2 (DPT 17)
+#define ParamDFA_az02o2Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az02o2Dpt17)))
+// Ausgabewert Zustand 2 (DPT 232)
+#define ParamDFA_az02o2Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az02o2Dpt232)) & DFA_az02o2Dpt232Mask) >> DFA_az02o2Dpt232Shift)
+// Sendeverhalten Zustand 2
+#define ParamDFA_az02o3Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az02o3Send)))
+// Ausgabewert Zustand 2 (DPT 1)
+#define ParamDFA_az02o3Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az02o3Dpt1)))
+// Ausgabewert Zustand 2 (DPT 2)
+#define ParamDFA_az02o3Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az02o3Dpt2)))
+// Ausgabewert Zustand 2 (DPT 5)
+#define ParamDFA_az02o3Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az02o3Dpt5)))
+// Ausgabewert Zustand 2 (DPT 5.001)
+#define ParamDFA_az02o3Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az02o3Dpt5001)))
+// Ausgabewert Zustand 2 (DPT 6)
+#define ParamDFA_az02o3Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az02o3Dpt6)))
+// Ausgabewert Zustand 2 (DPT 7)
+#define ParamDFA_az02o3Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az02o3Dpt7)))
+// Ausgabewert Zustand 2 (DPT 8)
+#define ParamDFA_az02o3Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az02o3Dpt8)))
+// Ausgabewert Zustand 2 (DPT 9)
+#define ParamDFA_az02o3Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az02o3Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 2 (DPT 12)
+#define ParamDFA_az02o3Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az02o3Dpt12)))
+// Ausgabewert Zustand 2 (DPT 13)
+#define ParamDFA_az02o3Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az02o3Dpt13)))
+// Ausgabewert Zustand 2 (DPT 14)
+#define ParamDFA_az02o3Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az02o3Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 2 (DPT 17)
+#define ParamDFA_az02o3Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az02o3Dpt17)))
+// Ausgabewert Zustand 2 (DPT 232)
+#define ParamDFA_az02o3Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az02o3Dpt232)) & DFA_az02o3Dpt232Mask) >> DFA_az02o3Dpt232Shift)
+// Sendeverhalten Zustand 2
+#define ParamDFA_az02o4Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az02o4Send)))
+// Ausgabewert Zustand 2 (DPT 1)
+#define ParamDFA_az02o4Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az02o4Dpt1)))
+// Ausgabewert Zustand 2 (DPT 2)
+#define ParamDFA_az02o4Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az02o4Dpt2)))
+// Ausgabewert Zustand 2 (DPT 5)
+#define ParamDFA_az02o4Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az02o4Dpt5)))
+// Ausgabewert Zustand 2 (DPT 5.001)
+#define ParamDFA_az02o4Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az02o4Dpt5001)))
+// Ausgabewert Zustand 2 (DPT 6)
+#define ParamDFA_az02o4Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az02o4Dpt6)))
+// Ausgabewert Zustand 2 (DPT 7)
+#define ParamDFA_az02o4Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az02o4Dpt7)))
+// Ausgabewert Zustand 2 (DPT 8)
+#define ParamDFA_az02o4Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az02o4Dpt8)))
+// Ausgabewert Zustand 2 (DPT 9)
+#define ParamDFA_az02o4Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az02o4Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 2 (DPT 12)
+#define ParamDFA_az02o4Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az02o4Dpt12)))
+// Ausgabewert Zustand 2 (DPT 13)
+#define ParamDFA_az02o4Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az02o4Dpt13)))
+// Ausgabewert Zustand 2 (DPT 14)
+#define ParamDFA_az02o4Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az02o4Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 2 (DPT 16)
+#define ParamDFA_az02o4Dpt16                         (knx.paramData(DFA_ParamCalcIndex(DFA_az02o4Dpt16)))
+#define ParamDFA_az02o4Dpt16Str                      (knx.paramString(DFA_ParamCalcIndex(DFA_az02o4Dpt16), DFA_az02o4Dpt16Length))
+// Ausgabewert Zustand 2 (DPT 17)
+#define ParamDFA_az02o4Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az02o4Dpt17)))
+// Ausgabewert Zustand 2 (DPT 232)
+#define ParamDFA_az02o4Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az02o4Dpt232)) & DFA_az02o4Dpt232Mask) >> DFA_az02o4Dpt232Shift)
+// trans(03,1)
+#define ParamDFA_ad03A                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad03A)))
+// trans(03,2)
+#define ParamDFA_ad03B                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad03B)))
+// trans(03,3)
+#define ParamDFA_ad03C                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad03C)))
+// trans(03,4)
+#define ParamDFA_ad03D                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad03D)))
+// trans(03,5)
+#define ParamDFA_ad03E                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad03E)))
+// trans(03,6)
+#define ParamDFA_ad03F                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad03F)))
+// trans(03,7)
+#define ParamDFA_ad03G                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad03G)))
+// trans(03,8)
+#define ParamDFA_ad03H                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad03H)))
+// trans(03,timeout)
+#define ParamDFA_ad03T                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad03T)))
+// Zeitbasis
+#define ParamDFA_ad03TBase                           ((knx.paramByte(DFA_ParamCalcIndex(DFA_ad03TBase)) & DFA_ad03TBaseMask) >> DFA_ad03TBaseShift)
+// Zeit
+#define ParamDFA_ad03TTime                           (knx.paramWord(DFA_ParamCalcIndex(DFA_ad03TTime)) & DFA_ad03TTimeMask)
+// Zeit (in Millisekunden)
+#define ParamDFA_ad03TTimeMS                         (paramDelay(knx.paramWord(DFA_ParamCalcIndex(DFA_ad03TTime))))
+// Sendeverhalten Zustand 3
+#define ParamDFA_az03o1Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az03o1Send)))
+// Ausgabewert Zustand 3 (DPT 1)
+#define ParamDFA_az03o1Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az03o1Dpt1)))
+// Ausgabewert Zustand 3 (DPT 2)
+#define ParamDFA_az03o1Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az03o1Dpt2)))
+// Ausgabewert Zustand 3 (DPT 5)
+#define ParamDFA_az03o1Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az03o1Dpt5)))
+// Ausgabewert Zustand 3 (DPT 5.001)
+#define ParamDFA_az03o1Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az03o1Dpt5001)))
+// Ausgabewert Zustand 3 (DPT 6)
+#define ParamDFA_az03o1Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az03o1Dpt6)))
+// Ausgabewert Zustand 3 (DPT 7)
+#define ParamDFA_az03o1Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az03o1Dpt7)))
+// Ausgabewert Zustand 3 (DPT 8)
+#define ParamDFA_az03o1Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az03o1Dpt8)))
+// Ausgabewert Zustand 3 (DPT 9)
+#define ParamDFA_az03o1Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az03o1Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 3 (DPT 12)
+#define ParamDFA_az03o1Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az03o1Dpt12)))
+// Ausgabewert Zustand 3 (DPT 13)
+#define ParamDFA_az03o1Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az03o1Dpt13)))
+// Ausgabewert Zustand 3 (DPT 14)
+#define ParamDFA_az03o1Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az03o1Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 3 (DPT 17)
+#define ParamDFA_az03o1Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az03o1Dpt17)))
+// Ausgabewert Zustand 3 (DPT 232)
+#define ParamDFA_az03o1Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az03o1Dpt232)) & DFA_az03o1Dpt232Mask) >> DFA_az03o1Dpt232Shift)
+// Sendeverhalten Zustand 3
+#define ParamDFA_az03o2Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az03o2Send)))
+// Ausgabewert Zustand 3 (DPT 1)
+#define ParamDFA_az03o2Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az03o2Dpt1)))
+// Ausgabewert Zustand 3 (DPT 2)
+#define ParamDFA_az03o2Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az03o2Dpt2)))
+// Ausgabewert Zustand 3 (DPT 5)
+#define ParamDFA_az03o2Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az03o2Dpt5)))
+// Ausgabewert Zustand 3 (DPT 5.001)
+#define ParamDFA_az03o2Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az03o2Dpt5001)))
+// Ausgabewert Zustand 3 (DPT 6)
+#define ParamDFA_az03o2Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az03o2Dpt6)))
+// Ausgabewert Zustand 3 (DPT 7)
+#define ParamDFA_az03o2Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az03o2Dpt7)))
+// Ausgabewert Zustand 3 (DPT 8)
+#define ParamDFA_az03o2Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az03o2Dpt8)))
+// Ausgabewert Zustand 3 (DPT 9)
+#define ParamDFA_az03o2Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az03o2Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 3 (DPT 12)
+#define ParamDFA_az03o2Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az03o2Dpt12)))
+// Ausgabewert Zustand 3 (DPT 13)
+#define ParamDFA_az03o2Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az03o2Dpt13)))
+// Ausgabewert Zustand 3 (DPT 14)
+#define ParamDFA_az03o2Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az03o2Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 3 (DPT 17)
+#define ParamDFA_az03o2Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az03o2Dpt17)))
+// Ausgabewert Zustand 3 (DPT 232)
+#define ParamDFA_az03o2Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az03o2Dpt232)) & DFA_az03o2Dpt232Mask) >> DFA_az03o2Dpt232Shift)
+// Sendeverhalten Zustand 3
+#define ParamDFA_az03o3Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az03o3Send)))
+// Ausgabewert Zustand 3 (DPT 1)
+#define ParamDFA_az03o3Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az03o3Dpt1)))
+// Ausgabewert Zustand 3 (DPT 2)
+#define ParamDFA_az03o3Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az03o3Dpt2)))
+// Ausgabewert Zustand 3 (DPT 5)
+#define ParamDFA_az03o3Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az03o3Dpt5)))
+// Ausgabewert Zustand 3 (DPT 5.001)
+#define ParamDFA_az03o3Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az03o3Dpt5001)))
+// Ausgabewert Zustand 3 (DPT 6)
+#define ParamDFA_az03o3Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az03o3Dpt6)))
+// Ausgabewert Zustand 3 (DPT 7)
+#define ParamDFA_az03o3Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az03o3Dpt7)))
+// Ausgabewert Zustand 3 (DPT 8)
+#define ParamDFA_az03o3Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az03o3Dpt8)))
+// Ausgabewert Zustand 3 (DPT 9)
+#define ParamDFA_az03o3Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az03o3Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 3 (DPT 12)
+#define ParamDFA_az03o3Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az03o3Dpt12)))
+// Ausgabewert Zustand 3 (DPT 13)
+#define ParamDFA_az03o3Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az03o3Dpt13)))
+// Ausgabewert Zustand 3 (DPT 14)
+#define ParamDFA_az03o3Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az03o3Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 3 (DPT 17)
+#define ParamDFA_az03o3Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az03o3Dpt17)))
+// Ausgabewert Zustand 3 (DPT 232)
+#define ParamDFA_az03o3Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az03o3Dpt232)) & DFA_az03o3Dpt232Mask) >> DFA_az03o3Dpt232Shift)
+// Sendeverhalten Zustand 3
+#define ParamDFA_az03o4Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az03o4Send)))
+// Ausgabewert Zustand 3 (DPT 1)
+#define ParamDFA_az03o4Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az03o4Dpt1)))
+// Ausgabewert Zustand 3 (DPT 2)
+#define ParamDFA_az03o4Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az03o4Dpt2)))
+// Ausgabewert Zustand 3 (DPT 5)
+#define ParamDFA_az03o4Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az03o4Dpt5)))
+// Ausgabewert Zustand 3 (DPT 5.001)
+#define ParamDFA_az03o4Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az03o4Dpt5001)))
+// Ausgabewert Zustand 3 (DPT 6)
+#define ParamDFA_az03o4Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az03o4Dpt6)))
+// Ausgabewert Zustand 3 (DPT 7)
+#define ParamDFA_az03o4Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az03o4Dpt7)))
+// Ausgabewert Zustand 3 (DPT 8)
+#define ParamDFA_az03o4Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az03o4Dpt8)))
+// Ausgabewert Zustand 3 (DPT 9)
+#define ParamDFA_az03o4Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az03o4Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 3 (DPT 12)
+#define ParamDFA_az03o4Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az03o4Dpt12)))
+// Ausgabewert Zustand 3 (DPT 13)
+#define ParamDFA_az03o4Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az03o4Dpt13)))
+// Ausgabewert Zustand 3 (DPT 14)
+#define ParamDFA_az03o4Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az03o4Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 3 (DPT 16)
+#define ParamDFA_az03o4Dpt16                         (knx.paramData(DFA_ParamCalcIndex(DFA_az03o4Dpt16)))
+#define ParamDFA_az03o4Dpt16Str                      (knx.paramString(DFA_ParamCalcIndex(DFA_az03o4Dpt16), DFA_az03o4Dpt16Length))
+// Ausgabewert Zustand 3 (DPT 17)
+#define ParamDFA_az03o4Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az03o4Dpt17)))
+// Ausgabewert Zustand 3 (DPT 232)
+#define ParamDFA_az03o4Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az03o4Dpt232)) & DFA_az03o4Dpt232Mask) >> DFA_az03o4Dpt232Shift)
+// trans(04,1)
+#define ParamDFA_ad04A                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad04A)))
+// trans(04,2)
+#define ParamDFA_ad04B                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad04B)))
+// trans(04,3)
+#define ParamDFA_ad04C                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad04C)))
+// trans(04,4)
+#define ParamDFA_ad04D                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad04D)))
+// trans(04,5)
+#define ParamDFA_ad04E                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad04E)))
+// trans(04,6)
+#define ParamDFA_ad04F                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad04F)))
+// trans(04,7)
+#define ParamDFA_ad04G                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad04G)))
+// trans(04,8)
+#define ParamDFA_ad04H                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad04H)))
+// trans(04,timeout)
+#define ParamDFA_ad04T                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad04T)))
+// Zeitbasis
+#define ParamDFA_ad04TBase                           ((knx.paramByte(DFA_ParamCalcIndex(DFA_ad04TBase)) & DFA_ad04TBaseMask) >> DFA_ad04TBaseShift)
+// Zeit
+#define ParamDFA_ad04TTime                           (knx.paramWord(DFA_ParamCalcIndex(DFA_ad04TTime)) & DFA_ad04TTimeMask)
+// Zeit (in Millisekunden)
+#define ParamDFA_ad04TTimeMS                         (paramDelay(knx.paramWord(DFA_ParamCalcIndex(DFA_ad04TTime))))
+// Sendeverhalten Zustand 4
+#define ParamDFA_az04o1Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az04o1Send)))
+// Ausgabewert Zustand 4 (DPT 1)
+#define ParamDFA_az04o1Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az04o1Dpt1)))
+// Ausgabewert Zustand 4 (DPT 2)
+#define ParamDFA_az04o1Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az04o1Dpt2)))
+// Ausgabewert Zustand 4 (DPT 5)
+#define ParamDFA_az04o1Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az04o1Dpt5)))
+// Ausgabewert Zustand 4 (DPT 5.001)
+#define ParamDFA_az04o1Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az04o1Dpt5001)))
+// Ausgabewert Zustand 4 (DPT 6)
+#define ParamDFA_az04o1Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az04o1Dpt6)))
+// Ausgabewert Zustand 4 (DPT 7)
+#define ParamDFA_az04o1Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az04o1Dpt7)))
+// Ausgabewert Zustand 4 (DPT 8)
+#define ParamDFA_az04o1Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az04o1Dpt8)))
+// Ausgabewert Zustand 4 (DPT 9)
+#define ParamDFA_az04o1Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az04o1Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 4 (DPT 12)
+#define ParamDFA_az04o1Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az04o1Dpt12)))
+// Ausgabewert Zustand 4 (DPT 13)
+#define ParamDFA_az04o1Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az04o1Dpt13)))
+// Ausgabewert Zustand 4 (DPT 14)
+#define ParamDFA_az04o1Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az04o1Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 4 (DPT 17)
+#define ParamDFA_az04o1Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az04o1Dpt17)))
+// Ausgabewert Zustand 4 (DPT 232)
+#define ParamDFA_az04o1Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az04o1Dpt232)) & DFA_az04o1Dpt232Mask) >> DFA_az04o1Dpt232Shift)
+// Sendeverhalten Zustand 4
+#define ParamDFA_az04o2Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az04o2Send)))
+// Ausgabewert Zustand 4 (DPT 1)
+#define ParamDFA_az04o2Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az04o2Dpt1)))
+// Ausgabewert Zustand 4 (DPT 2)
+#define ParamDFA_az04o2Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az04o2Dpt2)))
+// Ausgabewert Zustand 4 (DPT 5)
+#define ParamDFA_az04o2Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az04o2Dpt5)))
+// Ausgabewert Zustand 4 (DPT 5.001)
+#define ParamDFA_az04o2Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az04o2Dpt5001)))
+// Ausgabewert Zustand 4 (DPT 6)
+#define ParamDFA_az04o2Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az04o2Dpt6)))
+// Ausgabewert Zustand 4 (DPT 7)
+#define ParamDFA_az04o2Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az04o2Dpt7)))
+// Ausgabewert Zustand 4 (DPT 8)
+#define ParamDFA_az04o2Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az04o2Dpt8)))
+// Ausgabewert Zustand 4 (DPT 9)
+#define ParamDFA_az04o2Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az04o2Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 4 (DPT 12)
+#define ParamDFA_az04o2Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az04o2Dpt12)))
+// Ausgabewert Zustand 4 (DPT 13)
+#define ParamDFA_az04o2Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az04o2Dpt13)))
+// Ausgabewert Zustand 4 (DPT 14)
+#define ParamDFA_az04o2Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az04o2Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 4 (DPT 17)
+#define ParamDFA_az04o2Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az04o2Dpt17)))
+// Ausgabewert Zustand 4 (DPT 232)
+#define ParamDFA_az04o2Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az04o2Dpt232)) & DFA_az04o2Dpt232Mask) >> DFA_az04o2Dpt232Shift)
+// Sendeverhalten Zustand 4
+#define ParamDFA_az04o3Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az04o3Send)))
+// Ausgabewert Zustand 4 (DPT 1)
+#define ParamDFA_az04o3Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az04o3Dpt1)))
+// Ausgabewert Zustand 4 (DPT 2)
+#define ParamDFA_az04o3Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az04o3Dpt2)))
+// Ausgabewert Zustand 4 (DPT 5)
+#define ParamDFA_az04o3Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az04o3Dpt5)))
+// Ausgabewert Zustand 4 (DPT 5.001)
+#define ParamDFA_az04o3Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az04o3Dpt5001)))
+// Ausgabewert Zustand 4 (DPT 6)
+#define ParamDFA_az04o3Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az04o3Dpt6)))
+// Ausgabewert Zustand 4 (DPT 7)
+#define ParamDFA_az04o3Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az04o3Dpt7)))
+// Ausgabewert Zustand 4 (DPT 8)
+#define ParamDFA_az04o3Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az04o3Dpt8)))
+// Ausgabewert Zustand 4 (DPT 9)
+#define ParamDFA_az04o3Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az04o3Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 4 (DPT 12)
+#define ParamDFA_az04o3Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az04o3Dpt12)))
+// Ausgabewert Zustand 4 (DPT 13)
+#define ParamDFA_az04o3Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az04o3Dpt13)))
+// Ausgabewert Zustand 4 (DPT 14)
+#define ParamDFA_az04o3Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az04o3Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 4 (DPT 17)
+#define ParamDFA_az04o3Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az04o3Dpt17)))
+// Ausgabewert Zustand 4 (DPT 232)
+#define ParamDFA_az04o3Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az04o3Dpt232)) & DFA_az04o3Dpt232Mask) >> DFA_az04o3Dpt232Shift)
+// Sendeverhalten Zustand 4
+#define ParamDFA_az04o4Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az04o4Send)))
+// Ausgabewert Zustand 4 (DPT 1)
+#define ParamDFA_az04o4Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az04o4Dpt1)))
+// Ausgabewert Zustand 4 (DPT 2)
+#define ParamDFA_az04o4Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az04o4Dpt2)))
+// Ausgabewert Zustand 4 (DPT 5)
+#define ParamDFA_az04o4Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az04o4Dpt5)))
+// Ausgabewert Zustand 4 (DPT 5.001)
+#define ParamDFA_az04o4Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az04o4Dpt5001)))
+// Ausgabewert Zustand 4 (DPT 6)
+#define ParamDFA_az04o4Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az04o4Dpt6)))
+// Ausgabewert Zustand 4 (DPT 7)
+#define ParamDFA_az04o4Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az04o4Dpt7)))
+// Ausgabewert Zustand 4 (DPT 8)
+#define ParamDFA_az04o4Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az04o4Dpt8)))
+// Ausgabewert Zustand 4 (DPT 9)
+#define ParamDFA_az04o4Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az04o4Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 4 (DPT 12)
+#define ParamDFA_az04o4Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az04o4Dpt12)))
+// Ausgabewert Zustand 4 (DPT 13)
+#define ParamDFA_az04o4Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az04o4Dpt13)))
+// Ausgabewert Zustand 4 (DPT 14)
+#define ParamDFA_az04o4Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az04o4Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 4 (DPT 16)
+#define ParamDFA_az04o4Dpt16                         (knx.paramData(DFA_ParamCalcIndex(DFA_az04o4Dpt16)))
+#define ParamDFA_az04o4Dpt16Str                      (knx.paramString(DFA_ParamCalcIndex(DFA_az04o4Dpt16), DFA_az04o4Dpt16Length))
+// Ausgabewert Zustand 4 (DPT 17)
+#define ParamDFA_az04o4Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az04o4Dpt17)))
+// Ausgabewert Zustand 4 (DPT 232)
+#define ParamDFA_az04o4Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az04o4Dpt232)) & DFA_az04o4Dpt232Mask) >> DFA_az04o4Dpt232Shift)
+// trans(05,1)
+#define ParamDFA_ad05A                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad05A)))
+// trans(05,2)
+#define ParamDFA_ad05B                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad05B)))
+// trans(05,3)
+#define ParamDFA_ad05C                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad05C)))
+// trans(05,4)
+#define ParamDFA_ad05D                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad05D)))
+// trans(05,5)
+#define ParamDFA_ad05E                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad05E)))
+// trans(05,6)
+#define ParamDFA_ad05F                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad05F)))
+// trans(05,7)
+#define ParamDFA_ad05G                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad05G)))
+// trans(05,8)
+#define ParamDFA_ad05H                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad05H)))
+// trans(05,timeout)
+#define ParamDFA_ad05T                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad05T)))
+// Zeitbasis
+#define ParamDFA_ad05TBase                           ((knx.paramByte(DFA_ParamCalcIndex(DFA_ad05TBase)) & DFA_ad05TBaseMask) >> DFA_ad05TBaseShift)
+// Zeit
+#define ParamDFA_ad05TTime                           (knx.paramWord(DFA_ParamCalcIndex(DFA_ad05TTime)) & DFA_ad05TTimeMask)
+// Zeit (in Millisekunden)
+#define ParamDFA_ad05TTimeMS                         (paramDelay(knx.paramWord(DFA_ParamCalcIndex(DFA_ad05TTime))))
+// Sendeverhalten Zustand 5
+#define ParamDFA_az05o1Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az05o1Send)))
+// Ausgabewert Zustand 5 (DPT 1)
+#define ParamDFA_az05o1Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az05o1Dpt1)))
+// Ausgabewert Zustand 5 (DPT 2)
+#define ParamDFA_az05o1Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az05o1Dpt2)))
+// Ausgabewert Zustand 5 (DPT 5)
+#define ParamDFA_az05o1Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az05o1Dpt5)))
+// Ausgabewert Zustand 5 (DPT 5.001)
+#define ParamDFA_az05o1Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az05o1Dpt5001)))
+// Ausgabewert Zustand 5 (DPT 6)
+#define ParamDFA_az05o1Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az05o1Dpt6)))
+// Ausgabewert Zustand 5 (DPT 7)
+#define ParamDFA_az05o1Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az05o1Dpt7)))
+// Ausgabewert Zustand 5 (DPT 8)
+#define ParamDFA_az05o1Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az05o1Dpt8)))
+// Ausgabewert Zustand 5 (DPT 9)
+#define ParamDFA_az05o1Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az05o1Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 5 (DPT 12)
+#define ParamDFA_az05o1Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az05o1Dpt12)))
+// Ausgabewert Zustand 5 (DPT 13)
+#define ParamDFA_az05o1Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az05o1Dpt13)))
+// Ausgabewert Zustand 5 (DPT 14)
+#define ParamDFA_az05o1Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az05o1Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 5 (DPT 17)
+#define ParamDFA_az05o1Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az05o1Dpt17)))
+// Ausgabewert Zustand 5 (DPT 232)
+#define ParamDFA_az05o1Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az05o1Dpt232)) & DFA_az05o1Dpt232Mask) >> DFA_az05o1Dpt232Shift)
+// Sendeverhalten Zustand 5
+#define ParamDFA_az05o2Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az05o2Send)))
+// Ausgabewert Zustand 5 (DPT 1)
+#define ParamDFA_az05o2Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az05o2Dpt1)))
+// Ausgabewert Zustand 5 (DPT 2)
+#define ParamDFA_az05o2Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az05o2Dpt2)))
+// Ausgabewert Zustand 5 (DPT 5)
+#define ParamDFA_az05o2Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az05o2Dpt5)))
+// Ausgabewert Zustand 5 (DPT 5.001)
+#define ParamDFA_az05o2Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az05o2Dpt5001)))
+// Ausgabewert Zustand 5 (DPT 6)
+#define ParamDFA_az05o2Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az05o2Dpt6)))
+// Ausgabewert Zustand 5 (DPT 7)
+#define ParamDFA_az05o2Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az05o2Dpt7)))
+// Ausgabewert Zustand 5 (DPT 8)
+#define ParamDFA_az05o2Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az05o2Dpt8)))
+// Ausgabewert Zustand 5 (DPT 9)
+#define ParamDFA_az05o2Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az05o2Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 5 (DPT 12)
+#define ParamDFA_az05o2Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az05o2Dpt12)))
+// Ausgabewert Zustand 5 (DPT 13)
+#define ParamDFA_az05o2Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az05o2Dpt13)))
+// Ausgabewert Zustand 5 (DPT 14)
+#define ParamDFA_az05o2Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az05o2Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 5 (DPT 17)
+#define ParamDFA_az05o2Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az05o2Dpt17)))
+// Ausgabewert Zustand 5 (DPT 232)
+#define ParamDFA_az05o2Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az05o2Dpt232)) & DFA_az05o2Dpt232Mask) >> DFA_az05o2Dpt232Shift)
+// Sendeverhalten Zustand 5
+#define ParamDFA_az05o3Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az05o3Send)))
+// Ausgabewert Zustand 5 (DPT 1)
+#define ParamDFA_az05o3Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az05o3Dpt1)))
+// Ausgabewert Zustand 5 (DPT 2)
+#define ParamDFA_az05o3Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az05o3Dpt2)))
+// Ausgabewert Zustand 5 (DPT 5)
+#define ParamDFA_az05o3Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az05o3Dpt5)))
+// Ausgabewert Zustand 5 (DPT 5.001)
+#define ParamDFA_az05o3Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az05o3Dpt5001)))
+// Ausgabewert Zustand 5 (DPT 6)
+#define ParamDFA_az05o3Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az05o3Dpt6)))
+// Ausgabewert Zustand 5 (DPT 7)
+#define ParamDFA_az05o3Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az05o3Dpt7)))
+// Ausgabewert Zustand 5 (DPT 8)
+#define ParamDFA_az05o3Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az05o3Dpt8)))
+// Ausgabewert Zustand 5 (DPT 9)
+#define ParamDFA_az05o3Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az05o3Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 5 (DPT 12)
+#define ParamDFA_az05o3Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az05o3Dpt12)))
+// Ausgabewert Zustand 5 (DPT 13)
+#define ParamDFA_az05o3Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az05o3Dpt13)))
+// Ausgabewert Zustand 5 (DPT 14)
+#define ParamDFA_az05o3Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az05o3Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 5 (DPT 17)
+#define ParamDFA_az05o3Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az05o3Dpt17)))
+// Ausgabewert Zustand 5 (DPT 232)
+#define ParamDFA_az05o3Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az05o3Dpt232)) & DFA_az05o3Dpt232Mask) >> DFA_az05o3Dpt232Shift)
+// Sendeverhalten Zustand 5
+#define ParamDFA_az05o4Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az05o4Send)))
+// Ausgabewert Zustand 5 (DPT 1)
+#define ParamDFA_az05o4Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az05o4Dpt1)))
+// Ausgabewert Zustand 5 (DPT 2)
+#define ParamDFA_az05o4Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az05o4Dpt2)))
+// Ausgabewert Zustand 5 (DPT 5)
+#define ParamDFA_az05o4Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az05o4Dpt5)))
+// Ausgabewert Zustand 5 (DPT 5.001)
+#define ParamDFA_az05o4Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az05o4Dpt5001)))
+// Ausgabewert Zustand 5 (DPT 6)
+#define ParamDFA_az05o4Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az05o4Dpt6)))
+// Ausgabewert Zustand 5 (DPT 7)
+#define ParamDFA_az05o4Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az05o4Dpt7)))
+// Ausgabewert Zustand 5 (DPT 8)
+#define ParamDFA_az05o4Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az05o4Dpt8)))
+// Ausgabewert Zustand 5 (DPT 9)
+#define ParamDFA_az05o4Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az05o4Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 5 (DPT 12)
+#define ParamDFA_az05o4Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az05o4Dpt12)))
+// Ausgabewert Zustand 5 (DPT 13)
+#define ParamDFA_az05o4Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az05o4Dpt13)))
+// Ausgabewert Zustand 5 (DPT 14)
+#define ParamDFA_az05o4Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az05o4Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 5 (DPT 16)
+#define ParamDFA_az05o4Dpt16                         (knx.paramData(DFA_ParamCalcIndex(DFA_az05o4Dpt16)))
+#define ParamDFA_az05o4Dpt16Str                      (knx.paramString(DFA_ParamCalcIndex(DFA_az05o4Dpt16), DFA_az05o4Dpt16Length))
+// Ausgabewert Zustand 5 (DPT 17)
+#define ParamDFA_az05o4Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az05o4Dpt17)))
+// Ausgabewert Zustand 5 (DPT 232)
+#define ParamDFA_az05o4Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az05o4Dpt232)) & DFA_az05o4Dpt232Mask) >> DFA_az05o4Dpt232Shift)
+// trans(06,1)
+#define ParamDFA_ad06A                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad06A)))
+// trans(06,2)
+#define ParamDFA_ad06B                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad06B)))
+// trans(06,3)
+#define ParamDFA_ad06C                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad06C)))
+// trans(06,4)
+#define ParamDFA_ad06D                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad06D)))
+// trans(06,5)
+#define ParamDFA_ad06E                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad06E)))
+// trans(06,6)
+#define ParamDFA_ad06F                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad06F)))
+// trans(06,7)
+#define ParamDFA_ad06G                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad06G)))
+// trans(06,8)
+#define ParamDFA_ad06H                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad06H)))
+// trans(06,timeout)
+#define ParamDFA_ad06T                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad06T)))
+// Zeitbasis
+#define ParamDFA_ad06TBase                           ((knx.paramByte(DFA_ParamCalcIndex(DFA_ad06TBase)) & DFA_ad06TBaseMask) >> DFA_ad06TBaseShift)
+// Zeit
+#define ParamDFA_ad06TTime                           (knx.paramWord(DFA_ParamCalcIndex(DFA_ad06TTime)) & DFA_ad06TTimeMask)
+// Zeit (in Millisekunden)
+#define ParamDFA_ad06TTimeMS                         (paramDelay(knx.paramWord(DFA_ParamCalcIndex(DFA_ad06TTime))))
+// Sendeverhalten Zustand 6
+#define ParamDFA_az06o1Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az06o1Send)))
+// Ausgabewert Zustand 6 (DPT 1)
+#define ParamDFA_az06o1Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az06o1Dpt1)))
+// Ausgabewert Zustand 6 (DPT 2)
+#define ParamDFA_az06o1Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az06o1Dpt2)))
+// Ausgabewert Zustand 6 (DPT 5)
+#define ParamDFA_az06o1Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az06o1Dpt5)))
+// Ausgabewert Zustand 6 (DPT 5.001)
+#define ParamDFA_az06o1Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az06o1Dpt5001)))
+// Ausgabewert Zustand 6 (DPT 6)
+#define ParamDFA_az06o1Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az06o1Dpt6)))
+// Ausgabewert Zustand 6 (DPT 7)
+#define ParamDFA_az06o1Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az06o1Dpt7)))
+// Ausgabewert Zustand 6 (DPT 8)
+#define ParamDFA_az06o1Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az06o1Dpt8)))
+// Ausgabewert Zustand 6 (DPT 9)
+#define ParamDFA_az06o1Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az06o1Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 6 (DPT 12)
+#define ParamDFA_az06o1Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az06o1Dpt12)))
+// Ausgabewert Zustand 6 (DPT 13)
+#define ParamDFA_az06o1Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az06o1Dpt13)))
+// Ausgabewert Zustand 6 (DPT 14)
+#define ParamDFA_az06o1Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az06o1Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 6 (DPT 17)
+#define ParamDFA_az06o1Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az06o1Dpt17)))
+// Ausgabewert Zustand 6 (DPT 232)
+#define ParamDFA_az06o1Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az06o1Dpt232)) & DFA_az06o1Dpt232Mask) >> DFA_az06o1Dpt232Shift)
+// Sendeverhalten Zustand 6
+#define ParamDFA_az06o2Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az06o2Send)))
+// Ausgabewert Zustand 6 (DPT 1)
+#define ParamDFA_az06o2Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az06o2Dpt1)))
+// Ausgabewert Zustand 6 (DPT 2)
+#define ParamDFA_az06o2Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az06o2Dpt2)))
+// Ausgabewert Zustand 6 (DPT 5)
+#define ParamDFA_az06o2Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az06o2Dpt5)))
+// Ausgabewert Zustand 6 (DPT 5.001)
+#define ParamDFA_az06o2Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az06o2Dpt5001)))
+// Ausgabewert Zustand 6 (DPT 6)
+#define ParamDFA_az06o2Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az06o2Dpt6)))
+// Ausgabewert Zustand 6 (DPT 7)
+#define ParamDFA_az06o2Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az06o2Dpt7)))
+// Ausgabewert Zustand 6 (DPT 8)
+#define ParamDFA_az06o2Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az06o2Dpt8)))
+// Ausgabewert Zustand 6 (DPT 9)
+#define ParamDFA_az06o2Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az06o2Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 6 (DPT 12)
+#define ParamDFA_az06o2Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az06o2Dpt12)))
+// Ausgabewert Zustand 6 (DPT 13)
+#define ParamDFA_az06o2Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az06o2Dpt13)))
+// Ausgabewert Zustand 6 (DPT 14)
+#define ParamDFA_az06o2Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az06o2Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 6 (DPT 17)
+#define ParamDFA_az06o2Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az06o2Dpt17)))
+// Ausgabewert Zustand 6 (DPT 232)
+#define ParamDFA_az06o2Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az06o2Dpt232)) & DFA_az06o2Dpt232Mask) >> DFA_az06o2Dpt232Shift)
+// Sendeverhalten Zustand 6
+#define ParamDFA_az06o3Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az06o3Send)))
+// Ausgabewert Zustand 6 (DPT 1)
+#define ParamDFA_az06o3Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az06o3Dpt1)))
+// Ausgabewert Zustand 6 (DPT 2)
+#define ParamDFA_az06o3Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az06o3Dpt2)))
+// Ausgabewert Zustand 6 (DPT 5)
+#define ParamDFA_az06o3Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az06o3Dpt5)))
+// Ausgabewert Zustand 6 (DPT 5.001)
+#define ParamDFA_az06o3Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az06o3Dpt5001)))
+// Ausgabewert Zustand 6 (DPT 6)
+#define ParamDFA_az06o3Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az06o3Dpt6)))
+// Ausgabewert Zustand 6 (DPT 7)
+#define ParamDFA_az06o3Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az06o3Dpt7)))
+// Ausgabewert Zustand 6 (DPT 8)
+#define ParamDFA_az06o3Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az06o3Dpt8)))
+// Ausgabewert Zustand 6 (DPT 9)
+#define ParamDFA_az06o3Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az06o3Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 6 (DPT 12)
+#define ParamDFA_az06o3Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az06o3Dpt12)))
+// Ausgabewert Zustand 6 (DPT 13)
+#define ParamDFA_az06o3Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az06o3Dpt13)))
+// Ausgabewert Zustand 6 (DPT 14)
+#define ParamDFA_az06o3Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az06o3Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 6 (DPT 17)
+#define ParamDFA_az06o3Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az06o3Dpt17)))
+// Ausgabewert Zustand 6 (DPT 232)
+#define ParamDFA_az06o3Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az06o3Dpt232)) & DFA_az06o3Dpt232Mask) >> DFA_az06o3Dpt232Shift)
+// Sendeverhalten Zustand 6
+#define ParamDFA_az06o4Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az06o4Send)))
+// Ausgabewert Zustand 6 (DPT 1)
+#define ParamDFA_az06o4Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az06o4Dpt1)))
+// Ausgabewert Zustand 6 (DPT 2)
+#define ParamDFA_az06o4Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az06o4Dpt2)))
+// Ausgabewert Zustand 6 (DPT 5)
+#define ParamDFA_az06o4Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az06o4Dpt5)))
+// Ausgabewert Zustand 6 (DPT 5.001)
+#define ParamDFA_az06o4Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az06o4Dpt5001)))
+// Ausgabewert Zustand 6 (DPT 6)
+#define ParamDFA_az06o4Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az06o4Dpt6)))
+// Ausgabewert Zustand 6 (DPT 7)
+#define ParamDFA_az06o4Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az06o4Dpt7)))
+// Ausgabewert Zustand 6 (DPT 8)
+#define ParamDFA_az06o4Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az06o4Dpt8)))
+// Ausgabewert Zustand 6 (DPT 9)
+#define ParamDFA_az06o4Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az06o4Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 6 (DPT 12)
+#define ParamDFA_az06o4Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az06o4Dpt12)))
+// Ausgabewert Zustand 6 (DPT 13)
+#define ParamDFA_az06o4Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az06o4Dpt13)))
+// Ausgabewert Zustand 6 (DPT 14)
+#define ParamDFA_az06o4Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az06o4Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 6 (DPT 16)
+#define ParamDFA_az06o4Dpt16                         (knx.paramData(DFA_ParamCalcIndex(DFA_az06o4Dpt16)))
+#define ParamDFA_az06o4Dpt16Str                      (knx.paramString(DFA_ParamCalcIndex(DFA_az06o4Dpt16), DFA_az06o4Dpt16Length))
+// Ausgabewert Zustand 6 (DPT 17)
+#define ParamDFA_az06o4Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az06o4Dpt17)))
+// Ausgabewert Zustand 6 (DPT 232)
+#define ParamDFA_az06o4Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az06o4Dpt232)) & DFA_az06o4Dpt232Mask) >> DFA_az06o4Dpt232Shift)
+// trans(07,1)
+#define ParamDFA_ad07A                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad07A)))
+// trans(07,2)
+#define ParamDFA_ad07B                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad07B)))
+// trans(07,3)
+#define ParamDFA_ad07C                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad07C)))
+// trans(07,4)
+#define ParamDFA_ad07D                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad07D)))
+// trans(07,5)
+#define ParamDFA_ad07E                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad07E)))
+// trans(07,6)
+#define ParamDFA_ad07F                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad07F)))
+// trans(07,7)
+#define ParamDFA_ad07G                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad07G)))
+// trans(07,8)
+#define ParamDFA_ad07H                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad07H)))
+// trans(07,timeout)
+#define ParamDFA_ad07T                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad07T)))
+// Zeitbasis
+#define ParamDFA_ad07TBase                           ((knx.paramByte(DFA_ParamCalcIndex(DFA_ad07TBase)) & DFA_ad07TBaseMask) >> DFA_ad07TBaseShift)
+// Zeit
+#define ParamDFA_ad07TTime                           (knx.paramWord(DFA_ParamCalcIndex(DFA_ad07TTime)) & DFA_ad07TTimeMask)
+// Zeit (in Millisekunden)
+#define ParamDFA_ad07TTimeMS                         (paramDelay(knx.paramWord(DFA_ParamCalcIndex(DFA_ad07TTime))))
+// Sendeverhalten Zustand 7
+#define ParamDFA_az07o1Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az07o1Send)))
+// Ausgabewert Zustand 7 (DPT 1)
+#define ParamDFA_az07o1Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az07o1Dpt1)))
+// Ausgabewert Zustand 7 (DPT 2)
+#define ParamDFA_az07o1Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az07o1Dpt2)))
+// Ausgabewert Zustand 7 (DPT 5)
+#define ParamDFA_az07o1Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az07o1Dpt5)))
+// Ausgabewert Zustand 7 (DPT 5.001)
+#define ParamDFA_az07o1Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az07o1Dpt5001)))
+// Ausgabewert Zustand 7 (DPT 6)
+#define ParamDFA_az07o1Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az07o1Dpt6)))
+// Ausgabewert Zustand 7 (DPT 7)
+#define ParamDFA_az07o1Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az07o1Dpt7)))
+// Ausgabewert Zustand 7 (DPT 8)
+#define ParamDFA_az07o1Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az07o1Dpt8)))
+// Ausgabewert Zustand 7 (DPT 9)
+#define ParamDFA_az07o1Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az07o1Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 7 (DPT 12)
+#define ParamDFA_az07o1Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az07o1Dpt12)))
+// Ausgabewert Zustand 7 (DPT 13)
+#define ParamDFA_az07o1Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az07o1Dpt13)))
+// Ausgabewert Zustand 7 (DPT 14)
+#define ParamDFA_az07o1Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az07o1Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 7 (DPT 17)
+#define ParamDFA_az07o1Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az07o1Dpt17)))
+// Ausgabewert Zustand 7 (DPT 232)
+#define ParamDFA_az07o1Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az07o1Dpt232)) & DFA_az07o1Dpt232Mask) >> DFA_az07o1Dpt232Shift)
+// Sendeverhalten Zustand 7
+#define ParamDFA_az07o2Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az07o2Send)))
+// Ausgabewert Zustand 7 (DPT 1)
+#define ParamDFA_az07o2Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az07o2Dpt1)))
+// Ausgabewert Zustand 7 (DPT 2)
+#define ParamDFA_az07o2Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az07o2Dpt2)))
+// Ausgabewert Zustand 7 (DPT 5)
+#define ParamDFA_az07o2Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az07o2Dpt5)))
+// Ausgabewert Zustand 7 (DPT 5.001)
+#define ParamDFA_az07o2Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az07o2Dpt5001)))
+// Ausgabewert Zustand 7 (DPT 6)
+#define ParamDFA_az07o2Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az07o2Dpt6)))
+// Ausgabewert Zustand 7 (DPT 7)
+#define ParamDFA_az07o2Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az07o2Dpt7)))
+// Ausgabewert Zustand 7 (DPT 8)
+#define ParamDFA_az07o2Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az07o2Dpt8)))
+// Ausgabewert Zustand 7 (DPT 9)
+#define ParamDFA_az07o2Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az07o2Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 7 (DPT 12)
+#define ParamDFA_az07o2Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az07o2Dpt12)))
+// Ausgabewert Zustand 7 (DPT 13)
+#define ParamDFA_az07o2Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az07o2Dpt13)))
+// Ausgabewert Zustand 7 (DPT 14)
+#define ParamDFA_az07o2Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az07o2Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 7 (DPT 17)
+#define ParamDFA_az07o2Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az07o2Dpt17)))
+// Ausgabewert Zustand 7 (DPT 232)
+#define ParamDFA_az07o2Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az07o2Dpt232)) & DFA_az07o2Dpt232Mask) >> DFA_az07o2Dpt232Shift)
+// Sendeverhalten Zustand 7
+#define ParamDFA_az07o3Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az07o3Send)))
+// Ausgabewert Zustand 7 (DPT 1)
+#define ParamDFA_az07o3Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az07o3Dpt1)))
+// Ausgabewert Zustand 7 (DPT 2)
+#define ParamDFA_az07o3Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az07o3Dpt2)))
+// Ausgabewert Zustand 7 (DPT 5)
+#define ParamDFA_az07o3Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az07o3Dpt5)))
+// Ausgabewert Zustand 7 (DPT 5.001)
+#define ParamDFA_az07o3Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az07o3Dpt5001)))
+// Ausgabewert Zustand 7 (DPT 6)
+#define ParamDFA_az07o3Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az07o3Dpt6)))
+// Ausgabewert Zustand 7 (DPT 7)
+#define ParamDFA_az07o3Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az07o3Dpt7)))
+// Ausgabewert Zustand 7 (DPT 8)
+#define ParamDFA_az07o3Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az07o3Dpt8)))
+// Ausgabewert Zustand 7 (DPT 9)
+#define ParamDFA_az07o3Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az07o3Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 7 (DPT 12)
+#define ParamDFA_az07o3Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az07o3Dpt12)))
+// Ausgabewert Zustand 7 (DPT 13)
+#define ParamDFA_az07o3Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az07o3Dpt13)))
+// Ausgabewert Zustand 7 (DPT 14)
+#define ParamDFA_az07o3Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az07o3Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 7 (DPT 17)
+#define ParamDFA_az07o3Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az07o3Dpt17)))
+// Ausgabewert Zustand 7 (DPT 232)
+#define ParamDFA_az07o3Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az07o3Dpt232)) & DFA_az07o3Dpt232Mask) >> DFA_az07o3Dpt232Shift)
+// Sendeverhalten Zustand 7
+#define ParamDFA_az07o4Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az07o4Send)))
+// Ausgabewert Zustand 7 (DPT 1)
+#define ParamDFA_az07o4Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az07o4Dpt1)))
+// Ausgabewert Zustand 7 (DPT 2)
+#define ParamDFA_az07o4Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az07o4Dpt2)))
+// Ausgabewert Zustand 7 (DPT 5)
+#define ParamDFA_az07o4Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az07o4Dpt5)))
+// Ausgabewert Zustand 7 (DPT 5.001)
+#define ParamDFA_az07o4Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az07o4Dpt5001)))
+// Ausgabewert Zustand 7 (DPT 6)
+#define ParamDFA_az07o4Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az07o4Dpt6)))
+// Ausgabewert Zustand 7 (DPT 7)
+#define ParamDFA_az07o4Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az07o4Dpt7)))
+// Ausgabewert Zustand 7 (DPT 8)
+#define ParamDFA_az07o4Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az07o4Dpt8)))
+// Ausgabewert Zustand 7 (DPT 9)
+#define ParamDFA_az07o4Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az07o4Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 7 (DPT 12)
+#define ParamDFA_az07o4Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az07o4Dpt12)))
+// Ausgabewert Zustand 7 (DPT 13)
+#define ParamDFA_az07o4Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az07o4Dpt13)))
+// Ausgabewert Zustand 7 (DPT 14)
+#define ParamDFA_az07o4Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az07o4Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 7 (DPT 16)
+#define ParamDFA_az07o4Dpt16                         (knx.paramData(DFA_ParamCalcIndex(DFA_az07o4Dpt16)))
+#define ParamDFA_az07o4Dpt16Str                      (knx.paramString(DFA_ParamCalcIndex(DFA_az07o4Dpt16), DFA_az07o4Dpt16Length))
+// Ausgabewert Zustand 7 (DPT 17)
+#define ParamDFA_az07o4Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az07o4Dpt17)))
+// Ausgabewert Zustand 7 (DPT 232)
+#define ParamDFA_az07o4Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az07o4Dpt232)) & DFA_az07o4Dpt232Mask) >> DFA_az07o4Dpt232Shift)
+// trans(08,1)
+#define ParamDFA_ad08A                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad08A)))
+// trans(08,2)
+#define ParamDFA_ad08B                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad08B)))
+// trans(08,3)
+#define ParamDFA_ad08C                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad08C)))
+// trans(08,4)
+#define ParamDFA_ad08D                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad08D)))
+// trans(08,5)
+#define ParamDFA_ad08E                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad08E)))
+// trans(08,6)
+#define ParamDFA_ad08F                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad08F)))
+// trans(08,7)
+#define ParamDFA_ad08G                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad08G)))
+// trans(08,8)
+#define ParamDFA_ad08H                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad08H)))
+// trans(08,timeout)
+#define ParamDFA_ad08T                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad08T)))
+// Zeitbasis
+#define ParamDFA_ad08TBase                           ((knx.paramByte(DFA_ParamCalcIndex(DFA_ad08TBase)) & DFA_ad08TBaseMask) >> DFA_ad08TBaseShift)
+// Zeit
+#define ParamDFA_ad08TTime                           (knx.paramWord(DFA_ParamCalcIndex(DFA_ad08TTime)) & DFA_ad08TTimeMask)
+// Zeit (in Millisekunden)
+#define ParamDFA_ad08TTimeMS                         (paramDelay(knx.paramWord(DFA_ParamCalcIndex(DFA_ad08TTime))))
+// Sendeverhalten Zustand 8
+#define ParamDFA_az08o1Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az08o1Send)))
+// Ausgabewert Zustand 8 (DPT 1)
+#define ParamDFA_az08o1Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az08o1Dpt1)))
+// Ausgabewert Zustand 8 (DPT 2)
+#define ParamDFA_az08o1Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az08o1Dpt2)))
+// Ausgabewert Zustand 8 (DPT 5)
+#define ParamDFA_az08o1Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az08o1Dpt5)))
+// Ausgabewert Zustand 8 (DPT 5.001)
+#define ParamDFA_az08o1Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az08o1Dpt5001)))
+// Ausgabewert Zustand 8 (DPT 6)
+#define ParamDFA_az08o1Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az08o1Dpt6)))
+// Ausgabewert Zustand 8 (DPT 7)
+#define ParamDFA_az08o1Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az08o1Dpt7)))
+// Ausgabewert Zustand 8 (DPT 8)
+#define ParamDFA_az08o1Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az08o1Dpt8)))
+// Ausgabewert Zustand 8 (DPT 9)
+#define ParamDFA_az08o1Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az08o1Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 8 (DPT 12)
+#define ParamDFA_az08o1Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az08o1Dpt12)))
+// Ausgabewert Zustand 8 (DPT 13)
+#define ParamDFA_az08o1Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az08o1Dpt13)))
+// Ausgabewert Zustand 8 (DPT 14)
+#define ParamDFA_az08o1Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az08o1Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 8 (DPT 17)
+#define ParamDFA_az08o1Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az08o1Dpt17)))
+// Ausgabewert Zustand 8 (DPT 232)
+#define ParamDFA_az08o1Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az08o1Dpt232)) & DFA_az08o1Dpt232Mask) >> DFA_az08o1Dpt232Shift)
+// Sendeverhalten Zustand 8
+#define ParamDFA_az08o2Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az08o2Send)))
+// Ausgabewert Zustand 8 (DPT 1)
+#define ParamDFA_az08o2Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az08o2Dpt1)))
+// Ausgabewert Zustand 8 (DPT 2)
+#define ParamDFA_az08o2Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az08o2Dpt2)))
+// Ausgabewert Zustand 8 (DPT 5)
+#define ParamDFA_az08o2Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az08o2Dpt5)))
+// Ausgabewert Zustand 8 (DPT 5.001)
+#define ParamDFA_az08o2Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az08o2Dpt5001)))
+// Ausgabewert Zustand 8 (DPT 6)
+#define ParamDFA_az08o2Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az08o2Dpt6)))
+// Ausgabewert Zustand 8 (DPT 7)
+#define ParamDFA_az08o2Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az08o2Dpt7)))
+// Ausgabewert Zustand 8 (DPT 8)
+#define ParamDFA_az08o2Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az08o2Dpt8)))
+// Ausgabewert Zustand 8 (DPT 9)
+#define ParamDFA_az08o2Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az08o2Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 8 (DPT 12)
+#define ParamDFA_az08o2Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az08o2Dpt12)))
+// Ausgabewert Zustand 8 (DPT 13)
+#define ParamDFA_az08o2Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az08o2Dpt13)))
+// Ausgabewert Zustand 8 (DPT 14)
+#define ParamDFA_az08o2Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az08o2Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 8 (DPT 17)
+#define ParamDFA_az08o2Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az08o2Dpt17)))
+// Ausgabewert Zustand 8 (DPT 232)
+#define ParamDFA_az08o2Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az08o2Dpt232)) & DFA_az08o2Dpt232Mask) >> DFA_az08o2Dpt232Shift)
+// Sendeverhalten Zustand 8
+#define ParamDFA_az08o3Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az08o3Send)))
+// Ausgabewert Zustand 8 (DPT 1)
+#define ParamDFA_az08o3Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az08o3Dpt1)))
+// Ausgabewert Zustand 8 (DPT 2)
+#define ParamDFA_az08o3Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az08o3Dpt2)))
+// Ausgabewert Zustand 8 (DPT 5)
+#define ParamDFA_az08o3Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az08o3Dpt5)))
+// Ausgabewert Zustand 8 (DPT 5.001)
+#define ParamDFA_az08o3Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az08o3Dpt5001)))
+// Ausgabewert Zustand 8 (DPT 6)
+#define ParamDFA_az08o3Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az08o3Dpt6)))
+// Ausgabewert Zustand 8 (DPT 7)
+#define ParamDFA_az08o3Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az08o3Dpt7)))
+// Ausgabewert Zustand 8 (DPT 8)
+#define ParamDFA_az08o3Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az08o3Dpt8)))
+// Ausgabewert Zustand 8 (DPT 9)
+#define ParamDFA_az08o3Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az08o3Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 8 (DPT 12)
+#define ParamDFA_az08o3Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az08o3Dpt12)))
+// Ausgabewert Zustand 8 (DPT 13)
+#define ParamDFA_az08o3Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az08o3Dpt13)))
+// Ausgabewert Zustand 8 (DPT 14)
+#define ParamDFA_az08o3Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az08o3Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 8 (DPT 17)
+#define ParamDFA_az08o3Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az08o3Dpt17)))
+// Ausgabewert Zustand 8 (DPT 232)
+#define ParamDFA_az08o3Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az08o3Dpt232)) & DFA_az08o3Dpt232Mask) >> DFA_az08o3Dpt232Shift)
+// Sendeverhalten Zustand 8
+#define ParamDFA_az08o4Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az08o4Send)))
+// Ausgabewert Zustand 8 (DPT 1)
+#define ParamDFA_az08o4Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az08o4Dpt1)))
+// Ausgabewert Zustand 8 (DPT 2)
+#define ParamDFA_az08o4Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az08o4Dpt2)))
+// Ausgabewert Zustand 8 (DPT 5)
+#define ParamDFA_az08o4Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az08o4Dpt5)))
+// Ausgabewert Zustand 8 (DPT 5.001)
+#define ParamDFA_az08o4Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az08o4Dpt5001)))
+// Ausgabewert Zustand 8 (DPT 6)
+#define ParamDFA_az08o4Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az08o4Dpt6)))
+// Ausgabewert Zustand 8 (DPT 7)
+#define ParamDFA_az08o4Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az08o4Dpt7)))
+// Ausgabewert Zustand 8 (DPT 8)
+#define ParamDFA_az08o4Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az08o4Dpt8)))
+// Ausgabewert Zustand 8 (DPT 9)
+#define ParamDFA_az08o4Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az08o4Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 8 (DPT 12)
+#define ParamDFA_az08o4Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az08o4Dpt12)))
+// Ausgabewert Zustand 8 (DPT 13)
+#define ParamDFA_az08o4Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az08o4Dpt13)))
+// Ausgabewert Zustand 8 (DPT 14)
+#define ParamDFA_az08o4Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az08o4Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 8 (DPT 16)
+#define ParamDFA_az08o4Dpt16                         (knx.paramData(DFA_ParamCalcIndex(DFA_az08o4Dpt16)))
+#define ParamDFA_az08o4Dpt16Str                      (knx.paramString(DFA_ParamCalcIndex(DFA_az08o4Dpt16), DFA_az08o4Dpt16Length))
+// Ausgabewert Zustand 8 (DPT 17)
+#define ParamDFA_az08o4Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az08o4Dpt17)))
+// Ausgabewert Zustand 8 (DPT 232)
+#define ParamDFA_az08o4Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az08o4Dpt232)) & DFA_az08o4Dpt232Mask) >> DFA_az08o4Dpt232Shift)
+// trans(09,1)
+#define ParamDFA_ad09A                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad09A)))
+// trans(09,2)
+#define ParamDFA_ad09B                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad09B)))
+// trans(09,3)
+#define ParamDFA_ad09C                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad09C)))
+// trans(09,4)
+#define ParamDFA_ad09D                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad09D)))
+// trans(09,5)
+#define ParamDFA_ad09E                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad09E)))
+// trans(09,6)
+#define ParamDFA_ad09F                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad09F)))
+// trans(09,7)
+#define ParamDFA_ad09G                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad09G)))
+// trans(09,8)
+#define ParamDFA_ad09H                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad09H)))
+// trans(09,timeout)
+#define ParamDFA_ad09T                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad09T)))
+// Zeitbasis
+#define ParamDFA_ad09TBase                           ((knx.paramByte(DFA_ParamCalcIndex(DFA_ad09TBase)) & DFA_ad09TBaseMask) >> DFA_ad09TBaseShift)
+// Zeit
+#define ParamDFA_ad09TTime                           (knx.paramWord(DFA_ParamCalcIndex(DFA_ad09TTime)) & DFA_ad09TTimeMask)
+// Zeit (in Millisekunden)
+#define ParamDFA_ad09TTimeMS                         (paramDelay(knx.paramWord(DFA_ParamCalcIndex(DFA_ad09TTime))))
+// Sendeverhalten Zustand 9
+#define ParamDFA_az09o1Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az09o1Send)))
+// Ausgabewert Zustand 9 (DPT 1)
+#define ParamDFA_az09o1Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az09o1Dpt1)))
+// Ausgabewert Zustand 9 (DPT 2)
+#define ParamDFA_az09o1Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az09o1Dpt2)))
+// Ausgabewert Zustand 9 (DPT 5)
+#define ParamDFA_az09o1Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az09o1Dpt5)))
+// Ausgabewert Zustand 9 (DPT 5.001)
+#define ParamDFA_az09o1Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az09o1Dpt5001)))
+// Ausgabewert Zustand 9 (DPT 6)
+#define ParamDFA_az09o1Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az09o1Dpt6)))
+// Ausgabewert Zustand 9 (DPT 7)
+#define ParamDFA_az09o1Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az09o1Dpt7)))
+// Ausgabewert Zustand 9 (DPT 8)
+#define ParamDFA_az09o1Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az09o1Dpt8)))
+// Ausgabewert Zustand 9 (DPT 9)
+#define ParamDFA_az09o1Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az09o1Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 9 (DPT 12)
+#define ParamDFA_az09o1Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az09o1Dpt12)))
+// Ausgabewert Zustand 9 (DPT 13)
+#define ParamDFA_az09o1Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az09o1Dpt13)))
+// Ausgabewert Zustand 9 (DPT 14)
+#define ParamDFA_az09o1Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az09o1Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 9 (DPT 17)
+#define ParamDFA_az09o1Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az09o1Dpt17)))
+// Ausgabewert Zustand 9 (DPT 232)
+#define ParamDFA_az09o1Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az09o1Dpt232)) & DFA_az09o1Dpt232Mask) >> DFA_az09o1Dpt232Shift)
+// Sendeverhalten Zustand 9
+#define ParamDFA_az09o2Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az09o2Send)))
+// Ausgabewert Zustand 9 (DPT 1)
+#define ParamDFA_az09o2Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az09o2Dpt1)))
+// Ausgabewert Zustand 9 (DPT 2)
+#define ParamDFA_az09o2Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az09o2Dpt2)))
+// Ausgabewert Zustand 9 (DPT 5)
+#define ParamDFA_az09o2Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az09o2Dpt5)))
+// Ausgabewert Zustand 9 (DPT 5.001)
+#define ParamDFA_az09o2Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az09o2Dpt5001)))
+// Ausgabewert Zustand 9 (DPT 6)
+#define ParamDFA_az09o2Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az09o2Dpt6)))
+// Ausgabewert Zustand 9 (DPT 7)
+#define ParamDFA_az09o2Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az09o2Dpt7)))
+// Ausgabewert Zustand 9 (DPT 8)
+#define ParamDFA_az09o2Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az09o2Dpt8)))
+// Ausgabewert Zustand 9 (DPT 9)
+#define ParamDFA_az09o2Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az09o2Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 9 (DPT 12)
+#define ParamDFA_az09o2Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az09o2Dpt12)))
+// Ausgabewert Zustand 9 (DPT 13)
+#define ParamDFA_az09o2Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az09o2Dpt13)))
+// Ausgabewert Zustand 9 (DPT 14)
+#define ParamDFA_az09o2Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az09o2Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 9 (DPT 17)
+#define ParamDFA_az09o2Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az09o2Dpt17)))
+// Ausgabewert Zustand 9 (DPT 232)
+#define ParamDFA_az09o2Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az09o2Dpt232)) & DFA_az09o2Dpt232Mask) >> DFA_az09o2Dpt232Shift)
+// Sendeverhalten Zustand 9
+#define ParamDFA_az09o3Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az09o3Send)))
+// Ausgabewert Zustand 9 (DPT 1)
+#define ParamDFA_az09o3Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az09o3Dpt1)))
+// Ausgabewert Zustand 9 (DPT 2)
+#define ParamDFA_az09o3Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az09o3Dpt2)))
+// Ausgabewert Zustand 9 (DPT 5)
+#define ParamDFA_az09o3Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az09o3Dpt5)))
+// Ausgabewert Zustand 9 (DPT 5.001)
+#define ParamDFA_az09o3Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az09o3Dpt5001)))
+// Ausgabewert Zustand 9 (DPT 6)
+#define ParamDFA_az09o3Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az09o3Dpt6)))
+// Ausgabewert Zustand 9 (DPT 7)
+#define ParamDFA_az09o3Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az09o3Dpt7)))
+// Ausgabewert Zustand 9 (DPT 8)
+#define ParamDFA_az09o3Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az09o3Dpt8)))
+// Ausgabewert Zustand 9 (DPT 9)
+#define ParamDFA_az09o3Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az09o3Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 9 (DPT 12)
+#define ParamDFA_az09o3Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az09o3Dpt12)))
+// Ausgabewert Zustand 9 (DPT 13)
+#define ParamDFA_az09o3Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az09o3Dpt13)))
+// Ausgabewert Zustand 9 (DPT 14)
+#define ParamDFA_az09o3Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az09o3Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 9 (DPT 17)
+#define ParamDFA_az09o3Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az09o3Dpt17)))
+// Ausgabewert Zustand 9 (DPT 232)
+#define ParamDFA_az09o3Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az09o3Dpt232)) & DFA_az09o3Dpt232Mask) >> DFA_az09o3Dpt232Shift)
+// Sendeverhalten Zustand 9
+#define ParamDFA_az09o4Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az09o4Send)))
+// Ausgabewert Zustand 9 (DPT 1)
+#define ParamDFA_az09o4Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az09o4Dpt1)))
+// Ausgabewert Zustand 9 (DPT 2)
+#define ParamDFA_az09o4Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az09o4Dpt2)))
+// Ausgabewert Zustand 9 (DPT 5)
+#define ParamDFA_az09o4Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az09o4Dpt5)))
+// Ausgabewert Zustand 9 (DPT 5.001)
+#define ParamDFA_az09o4Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az09o4Dpt5001)))
+// Ausgabewert Zustand 9 (DPT 6)
+#define ParamDFA_az09o4Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az09o4Dpt6)))
+// Ausgabewert Zustand 9 (DPT 7)
+#define ParamDFA_az09o4Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az09o4Dpt7)))
+// Ausgabewert Zustand 9 (DPT 8)
+#define ParamDFA_az09o4Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az09o4Dpt8)))
+// Ausgabewert Zustand 9 (DPT 9)
+#define ParamDFA_az09o4Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az09o4Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 9 (DPT 12)
+#define ParamDFA_az09o4Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az09o4Dpt12)))
+// Ausgabewert Zustand 9 (DPT 13)
+#define ParamDFA_az09o4Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az09o4Dpt13)))
+// Ausgabewert Zustand 9 (DPT 14)
+#define ParamDFA_az09o4Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az09o4Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 9 (DPT 16)
+#define ParamDFA_az09o4Dpt16                         (knx.paramData(DFA_ParamCalcIndex(DFA_az09o4Dpt16)))
+#define ParamDFA_az09o4Dpt16Str                      (knx.paramString(DFA_ParamCalcIndex(DFA_az09o4Dpt16), DFA_az09o4Dpt16Length))
+// Ausgabewert Zustand 9 (DPT 17)
+#define ParamDFA_az09o4Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az09o4Dpt17)))
+// Ausgabewert Zustand 9 (DPT 232)
+#define ParamDFA_az09o4Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az09o4Dpt232)) & DFA_az09o4Dpt232Mask) >> DFA_az09o4Dpt232Shift)
+// trans(10,1)
+#define ParamDFA_ad10A                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad10A)))
+// trans(10,2)
+#define ParamDFA_ad10B                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad10B)))
+// trans(10,3)
+#define ParamDFA_ad10C                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad10C)))
+// trans(10,4)
+#define ParamDFA_ad10D                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad10D)))
+// trans(10,5)
+#define ParamDFA_ad10E                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad10E)))
+// trans(10,6)
+#define ParamDFA_ad10F                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad10F)))
+// trans(10,7)
+#define ParamDFA_ad10G                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad10G)))
+// trans(10,8)
+#define ParamDFA_ad10H                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad10H)))
+// trans(10,timeout)
+#define ParamDFA_ad10T                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad10T)))
+// Zeitbasis
+#define ParamDFA_ad10TBase                           ((knx.paramByte(DFA_ParamCalcIndex(DFA_ad10TBase)) & DFA_ad10TBaseMask) >> DFA_ad10TBaseShift)
+// Zeit
+#define ParamDFA_ad10TTime                           (knx.paramWord(DFA_ParamCalcIndex(DFA_ad10TTime)) & DFA_ad10TTimeMask)
+// Zeit (in Millisekunden)
+#define ParamDFA_ad10TTimeMS                         (paramDelay(knx.paramWord(DFA_ParamCalcIndex(DFA_ad10TTime))))
+// Sendeverhalten Zustand 10
+#define ParamDFA_az10o1Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az10o1Send)))
+// Ausgabewert Zustand 10 (DPT 1)
+#define ParamDFA_az10o1Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az10o1Dpt1)))
+// Ausgabewert Zustand 10 (DPT 2)
+#define ParamDFA_az10o1Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az10o1Dpt2)))
+// Ausgabewert Zustand 10 (DPT 5)
+#define ParamDFA_az10o1Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az10o1Dpt5)))
+// Ausgabewert Zustand 10 (DPT 5.001)
+#define ParamDFA_az10o1Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az10o1Dpt5001)))
+// Ausgabewert Zustand 10 (DPT 6)
+#define ParamDFA_az10o1Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az10o1Dpt6)))
+// Ausgabewert Zustand 10 (DPT 7)
+#define ParamDFA_az10o1Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az10o1Dpt7)))
+// Ausgabewert Zustand 10 (DPT 8)
+#define ParamDFA_az10o1Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az10o1Dpt8)))
+// Ausgabewert Zustand 10 (DPT 9)
+#define ParamDFA_az10o1Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az10o1Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 10 (DPT 12)
+#define ParamDFA_az10o1Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az10o1Dpt12)))
+// Ausgabewert Zustand 10 (DPT 13)
+#define ParamDFA_az10o1Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az10o1Dpt13)))
+// Ausgabewert Zustand 10 (DPT 14)
+#define ParamDFA_az10o1Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az10o1Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 10 (DPT 17)
+#define ParamDFA_az10o1Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az10o1Dpt17)))
+// Ausgabewert Zustand 10 (DPT 232)
+#define ParamDFA_az10o1Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az10o1Dpt232)) & DFA_az10o1Dpt232Mask) >> DFA_az10o1Dpt232Shift)
+// Sendeverhalten Zustand 10
+#define ParamDFA_az10o2Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az10o2Send)))
+// Ausgabewert Zustand 10 (DPT 1)
+#define ParamDFA_az10o2Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az10o2Dpt1)))
+// Ausgabewert Zustand 10 (DPT 2)
+#define ParamDFA_az10o2Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az10o2Dpt2)))
+// Ausgabewert Zustand 10 (DPT 5)
+#define ParamDFA_az10o2Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az10o2Dpt5)))
+// Ausgabewert Zustand 10 (DPT 5.001)
+#define ParamDFA_az10o2Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az10o2Dpt5001)))
+// Ausgabewert Zustand 10 (DPT 6)
+#define ParamDFA_az10o2Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az10o2Dpt6)))
+// Ausgabewert Zustand 10 (DPT 7)
+#define ParamDFA_az10o2Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az10o2Dpt7)))
+// Ausgabewert Zustand 10 (DPT 8)
+#define ParamDFA_az10o2Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az10o2Dpt8)))
+// Ausgabewert Zustand 10 (DPT 9)
+#define ParamDFA_az10o2Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az10o2Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 10 (DPT 12)
+#define ParamDFA_az10o2Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az10o2Dpt12)))
+// Ausgabewert Zustand 10 (DPT 13)
+#define ParamDFA_az10o2Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az10o2Dpt13)))
+// Ausgabewert Zustand 10 (DPT 14)
+#define ParamDFA_az10o2Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az10o2Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 10 (DPT 17)
+#define ParamDFA_az10o2Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az10o2Dpt17)))
+// Ausgabewert Zustand 10 (DPT 232)
+#define ParamDFA_az10o2Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az10o2Dpt232)) & DFA_az10o2Dpt232Mask) >> DFA_az10o2Dpt232Shift)
+// Sendeverhalten Zustand 10
+#define ParamDFA_az10o3Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az10o3Send)))
+// Ausgabewert Zustand 10 (DPT 1)
+#define ParamDFA_az10o3Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az10o3Dpt1)))
+// Ausgabewert Zustand 10 (DPT 2)
+#define ParamDFA_az10o3Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az10o3Dpt2)))
+// Ausgabewert Zustand 10 (DPT 5)
+#define ParamDFA_az10o3Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az10o3Dpt5)))
+// Ausgabewert Zustand 10 (DPT 5.001)
+#define ParamDFA_az10o3Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az10o3Dpt5001)))
+// Ausgabewert Zustand 10 (DPT 6)
+#define ParamDFA_az10o3Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az10o3Dpt6)))
+// Ausgabewert Zustand 10 (DPT 7)
+#define ParamDFA_az10o3Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az10o3Dpt7)))
+// Ausgabewert Zustand 10 (DPT 8)
+#define ParamDFA_az10o3Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az10o3Dpt8)))
+// Ausgabewert Zustand 10 (DPT 9)
+#define ParamDFA_az10o3Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az10o3Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 10 (DPT 12)
+#define ParamDFA_az10o3Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az10o3Dpt12)))
+// Ausgabewert Zustand 10 (DPT 13)
+#define ParamDFA_az10o3Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az10o3Dpt13)))
+// Ausgabewert Zustand 10 (DPT 14)
+#define ParamDFA_az10o3Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az10o3Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 10 (DPT 17)
+#define ParamDFA_az10o3Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az10o3Dpt17)))
+// Ausgabewert Zustand 10 (DPT 232)
+#define ParamDFA_az10o3Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az10o3Dpt232)) & DFA_az10o3Dpt232Mask) >> DFA_az10o3Dpt232Shift)
+// Sendeverhalten Zustand 10
+#define ParamDFA_az10o4Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az10o4Send)))
+// Ausgabewert Zustand 10 (DPT 1)
+#define ParamDFA_az10o4Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az10o4Dpt1)))
+// Ausgabewert Zustand 10 (DPT 2)
+#define ParamDFA_az10o4Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az10o4Dpt2)))
+// Ausgabewert Zustand 10 (DPT 5)
+#define ParamDFA_az10o4Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az10o4Dpt5)))
+// Ausgabewert Zustand 10 (DPT 5.001)
+#define ParamDFA_az10o4Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az10o4Dpt5001)))
+// Ausgabewert Zustand 10 (DPT 6)
+#define ParamDFA_az10o4Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az10o4Dpt6)))
+// Ausgabewert Zustand 10 (DPT 7)
+#define ParamDFA_az10o4Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az10o4Dpt7)))
+// Ausgabewert Zustand 10 (DPT 8)
+#define ParamDFA_az10o4Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az10o4Dpt8)))
+// Ausgabewert Zustand 10 (DPT 9)
+#define ParamDFA_az10o4Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az10o4Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 10 (DPT 12)
+#define ParamDFA_az10o4Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az10o4Dpt12)))
+// Ausgabewert Zustand 10 (DPT 13)
+#define ParamDFA_az10o4Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az10o4Dpt13)))
+// Ausgabewert Zustand 10 (DPT 14)
+#define ParamDFA_az10o4Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az10o4Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 10 (DPT 16)
+#define ParamDFA_az10o4Dpt16                         (knx.paramData(DFA_ParamCalcIndex(DFA_az10o4Dpt16)))
+#define ParamDFA_az10o4Dpt16Str                      (knx.paramString(DFA_ParamCalcIndex(DFA_az10o4Dpt16), DFA_az10o4Dpt16Length))
+// Ausgabewert Zustand 10 (DPT 17)
+#define ParamDFA_az10o4Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az10o4Dpt17)))
+// Ausgabewert Zustand 10 (DPT 232)
+#define ParamDFA_az10o4Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az10o4Dpt232)) & DFA_az10o4Dpt232Mask) >> DFA_az10o4Dpt232Shift)
+// trans(11,1)
+#define ParamDFA_ad11A                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad11A)))
+// trans(11,2)
+#define ParamDFA_ad11B                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad11B)))
+// trans(11,3)
+#define ParamDFA_ad11C                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad11C)))
+// trans(11,4)
+#define ParamDFA_ad11D                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad11D)))
+// trans(11,5)
+#define ParamDFA_ad11E                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad11E)))
+// trans(11,6)
+#define ParamDFA_ad11F                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad11F)))
+// trans(11,7)
+#define ParamDFA_ad11G                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad11G)))
+// trans(11,8)
+#define ParamDFA_ad11H                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad11H)))
+// trans(11,timeout)
+#define ParamDFA_ad11T                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad11T)))
+// Zeitbasis
+#define ParamDFA_ad11TBase                           ((knx.paramByte(DFA_ParamCalcIndex(DFA_ad11TBase)) & DFA_ad11TBaseMask) >> DFA_ad11TBaseShift)
+// Zeit
+#define ParamDFA_ad11TTime                           (knx.paramWord(DFA_ParamCalcIndex(DFA_ad11TTime)) & DFA_ad11TTimeMask)
+// Zeit (in Millisekunden)
+#define ParamDFA_ad11TTimeMS                         (paramDelay(knx.paramWord(DFA_ParamCalcIndex(DFA_ad11TTime))))
+// Sendeverhalten Zustand 11
+#define ParamDFA_az11o1Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az11o1Send)))
+// Ausgabewert Zustand 11 (DPT 1)
+#define ParamDFA_az11o1Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az11o1Dpt1)))
+// Ausgabewert Zustand 11 (DPT 2)
+#define ParamDFA_az11o1Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az11o1Dpt2)))
+// Ausgabewert Zustand 11 (DPT 5)
+#define ParamDFA_az11o1Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az11o1Dpt5)))
+// Ausgabewert Zustand 11 (DPT 5.001)
+#define ParamDFA_az11o1Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az11o1Dpt5001)))
+// Ausgabewert Zustand 11 (DPT 6)
+#define ParamDFA_az11o1Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az11o1Dpt6)))
+// Ausgabewert Zustand 11 (DPT 7)
+#define ParamDFA_az11o1Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az11o1Dpt7)))
+// Ausgabewert Zustand 11 (DPT 8)
+#define ParamDFA_az11o1Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az11o1Dpt8)))
+// Ausgabewert Zustand 11 (DPT 9)
+#define ParamDFA_az11o1Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az11o1Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 11 (DPT 12)
+#define ParamDFA_az11o1Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az11o1Dpt12)))
+// Ausgabewert Zustand 11 (DPT 13)
+#define ParamDFA_az11o1Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az11o1Dpt13)))
+// Ausgabewert Zustand 11 (DPT 14)
+#define ParamDFA_az11o1Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az11o1Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 11 (DPT 17)
+#define ParamDFA_az11o1Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az11o1Dpt17)))
+// Ausgabewert Zustand 11 (DPT 232)
+#define ParamDFA_az11o1Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az11o1Dpt232)) & DFA_az11o1Dpt232Mask) >> DFA_az11o1Dpt232Shift)
+// Sendeverhalten Zustand 11
+#define ParamDFA_az11o2Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az11o2Send)))
+// Ausgabewert Zustand 11 (DPT 1)
+#define ParamDFA_az11o2Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az11o2Dpt1)))
+// Ausgabewert Zustand 11 (DPT 2)
+#define ParamDFA_az11o2Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az11o2Dpt2)))
+// Ausgabewert Zustand 11 (DPT 5)
+#define ParamDFA_az11o2Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az11o2Dpt5)))
+// Ausgabewert Zustand 11 (DPT 5.001)
+#define ParamDFA_az11o2Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az11o2Dpt5001)))
+// Ausgabewert Zustand 11 (DPT 6)
+#define ParamDFA_az11o2Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az11o2Dpt6)))
+// Ausgabewert Zustand 11 (DPT 7)
+#define ParamDFA_az11o2Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az11o2Dpt7)))
+// Ausgabewert Zustand 11 (DPT 8)
+#define ParamDFA_az11o2Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az11o2Dpt8)))
+// Ausgabewert Zustand 11 (DPT 9)
+#define ParamDFA_az11o2Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az11o2Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 11 (DPT 12)
+#define ParamDFA_az11o2Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az11o2Dpt12)))
+// Ausgabewert Zustand 11 (DPT 13)
+#define ParamDFA_az11o2Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az11o2Dpt13)))
+// Ausgabewert Zustand 11 (DPT 14)
+#define ParamDFA_az11o2Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az11o2Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 11 (DPT 17)
+#define ParamDFA_az11o2Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az11o2Dpt17)))
+// Ausgabewert Zustand 11 (DPT 232)
+#define ParamDFA_az11o2Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az11o2Dpt232)) & DFA_az11o2Dpt232Mask) >> DFA_az11o2Dpt232Shift)
+// Sendeverhalten Zustand 11
+#define ParamDFA_az11o3Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az11o3Send)))
+// Ausgabewert Zustand 11 (DPT 1)
+#define ParamDFA_az11o3Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az11o3Dpt1)))
+// Ausgabewert Zustand 11 (DPT 2)
+#define ParamDFA_az11o3Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az11o3Dpt2)))
+// Ausgabewert Zustand 11 (DPT 5)
+#define ParamDFA_az11o3Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az11o3Dpt5)))
+// Ausgabewert Zustand 11 (DPT 5.001)
+#define ParamDFA_az11o3Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az11o3Dpt5001)))
+// Ausgabewert Zustand 11 (DPT 6)
+#define ParamDFA_az11o3Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az11o3Dpt6)))
+// Ausgabewert Zustand 11 (DPT 7)
+#define ParamDFA_az11o3Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az11o3Dpt7)))
+// Ausgabewert Zustand 11 (DPT 8)
+#define ParamDFA_az11o3Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az11o3Dpt8)))
+// Ausgabewert Zustand 11 (DPT 9)
+#define ParamDFA_az11o3Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az11o3Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 11 (DPT 12)
+#define ParamDFA_az11o3Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az11o3Dpt12)))
+// Ausgabewert Zustand 11 (DPT 13)
+#define ParamDFA_az11o3Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az11o3Dpt13)))
+// Ausgabewert Zustand 11 (DPT 14)
+#define ParamDFA_az11o3Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az11o3Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 11 (DPT 17)
+#define ParamDFA_az11o3Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az11o3Dpt17)))
+// Ausgabewert Zustand 11 (DPT 232)
+#define ParamDFA_az11o3Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az11o3Dpt232)) & DFA_az11o3Dpt232Mask) >> DFA_az11o3Dpt232Shift)
+// Sendeverhalten Zustand 11
+#define ParamDFA_az11o4Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az11o4Send)))
+// Ausgabewert Zustand 11 (DPT 1)
+#define ParamDFA_az11o4Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az11o4Dpt1)))
+// Ausgabewert Zustand 11 (DPT 2)
+#define ParamDFA_az11o4Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az11o4Dpt2)))
+// Ausgabewert Zustand 11 (DPT 5)
+#define ParamDFA_az11o4Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az11o4Dpt5)))
+// Ausgabewert Zustand 11 (DPT 5.001)
+#define ParamDFA_az11o4Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az11o4Dpt5001)))
+// Ausgabewert Zustand 11 (DPT 6)
+#define ParamDFA_az11o4Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az11o4Dpt6)))
+// Ausgabewert Zustand 11 (DPT 7)
+#define ParamDFA_az11o4Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az11o4Dpt7)))
+// Ausgabewert Zustand 11 (DPT 8)
+#define ParamDFA_az11o4Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az11o4Dpt8)))
+// Ausgabewert Zustand 11 (DPT 9)
+#define ParamDFA_az11o4Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az11o4Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 11 (DPT 12)
+#define ParamDFA_az11o4Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az11o4Dpt12)))
+// Ausgabewert Zustand 11 (DPT 13)
+#define ParamDFA_az11o4Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az11o4Dpt13)))
+// Ausgabewert Zustand 11 (DPT 14)
+#define ParamDFA_az11o4Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az11o4Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 11 (DPT 16)
+#define ParamDFA_az11o4Dpt16                         (knx.paramData(DFA_ParamCalcIndex(DFA_az11o4Dpt16)))
+#define ParamDFA_az11o4Dpt16Str                      (knx.paramString(DFA_ParamCalcIndex(DFA_az11o4Dpt16), DFA_az11o4Dpt16Length))
+// Ausgabewert Zustand 11 (DPT 17)
+#define ParamDFA_az11o4Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az11o4Dpt17)))
+// Ausgabewert Zustand 11 (DPT 232)
+#define ParamDFA_az11o4Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az11o4Dpt232)) & DFA_az11o4Dpt232Mask) >> DFA_az11o4Dpt232Shift)
+// trans(12,1)
+#define ParamDFA_ad12A                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad12A)))
+// trans(12,2)
+#define ParamDFA_ad12B                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad12B)))
+// trans(12,3)
+#define ParamDFA_ad12C                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad12C)))
+// trans(12,4)
+#define ParamDFA_ad12D                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad12D)))
+// trans(12,5)
+#define ParamDFA_ad12E                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad12E)))
+// trans(12,6)
+#define ParamDFA_ad12F                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad12F)))
+// trans(12,7)
+#define ParamDFA_ad12G                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad12G)))
+// trans(12,8)
+#define ParamDFA_ad12H                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad12H)))
+// trans(12,timeout)
+#define ParamDFA_ad12T                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad12T)))
+// Zeitbasis
+#define ParamDFA_ad12TBase                           ((knx.paramByte(DFA_ParamCalcIndex(DFA_ad12TBase)) & DFA_ad12TBaseMask) >> DFA_ad12TBaseShift)
+// Zeit
+#define ParamDFA_ad12TTime                           (knx.paramWord(DFA_ParamCalcIndex(DFA_ad12TTime)) & DFA_ad12TTimeMask)
+// Zeit (in Millisekunden)
+#define ParamDFA_ad12TTimeMS                         (paramDelay(knx.paramWord(DFA_ParamCalcIndex(DFA_ad12TTime))))
+// Sendeverhalten Zustand 12
+#define ParamDFA_az12o1Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az12o1Send)))
+// Ausgabewert Zustand 12 (DPT 1)
+#define ParamDFA_az12o1Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az12o1Dpt1)))
+// Ausgabewert Zustand 12 (DPT 2)
+#define ParamDFA_az12o1Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az12o1Dpt2)))
+// Ausgabewert Zustand 12 (DPT 5)
+#define ParamDFA_az12o1Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az12o1Dpt5)))
+// Ausgabewert Zustand 12 (DPT 5.001)
+#define ParamDFA_az12o1Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az12o1Dpt5001)))
+// Ausgabewert Zustand 12 (DPT 6)
+#define ParamDFA_az12o1Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az12o1Dpt6)))
+// Ausgabewert Zustand 12 (DPT 7)
+#define ParamDFA_az12o1Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az12o1Dpt7)))
+// Ausgabewert Zustand 12 (DPT 8)
+#define ParamDFA_az12o1Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az12o1Dpt8)))
+// Ausgabewert Zustand 12 (DPT 9)
+#define ParamDFA_az12o1Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az12o1Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 12 (DPT 12)
+#define ParamDFA_az12o1Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az12o1Dpt12)))
+// Ausgabewert Zustand 12 (DPT 13)
+#define ParamDFA_az12o1Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az12o1Dpt13)))
+// Ausgabewert Zustand 12 (DPT 14)
+#define ParamDFA_az12o1Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az12o1Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 12 (DPT 17)
+#define ParamDFA_az12o1Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az12o1Dpt17)))
+// Ausgabewert Zustand 12 (DPT 232)
+#define ParamDFA_az12o1Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az12o1Dpt232)) & DFA_az12o1Dpt232Mask) >> DFA_az12o1Dpt232Shift)
+// Sendeverhalten Zustand 12
+#define ParamDFA_az12o2Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az12o2Send)))
+// Ausgabewert Zustand 12 (DPT 1)
+#define ParamDFA_az12o2Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az12o2Dpt1)))
+// Ausgabewert Zustand 12 (DPT 2)
+#define ParamDFA_az12o2Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az12o2Dpt2)))
+// Ausgabewert Zustand 12 (DPT 5)
+#define ParamDFA_az12o2Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az12o2Dpt5)))
+// Ausgabewert Zustand 12 (DPT 5.001)
+#define ParamDFA_az12o2Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az12o2Dpt5001)))
+// Ausgabewert Zustand 12 (DPT 6)
+#define ParamDFA_az12o2Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az12o2Dpt6)))
+// Ausgabewert Zustand 12 (DPT 7)
+#define ParamDFA_az12o2Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az12o2Dpt7)))
+// Ausgabewert Zustand 12 (DPT 8)
+#define ParamDFA_az12o2Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az12o2Dpt8)))
+// Ausgabewert Zustand 12 (DPT 9)
+#define ParamDFA_az12o2Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az12o2Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 12 (DPT 12)
+#define ParamDFA_az12o2Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az12o2Dpt12)))
+// Ausgabewert Zustand 12 (DPT 13)
+#define ParamDFA_az12o2Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az12o2Dpt13)))
+// Ausgabewert Zustand 12 (DPT 14)
+#define ParamDFA_az12o2Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az12o2Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 12 (DPT 17)
+#define ParamDFA_az12o2Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az12o2Dpt17)))
+// Ausgabewert Zustand 12 (DPT 232)
+#define ParamDFA_az12o2Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az12o2Dpt232)) & DFA_az12o2Dpt232Mask) >> DFA_az12o2Dpt232Shift)
+// Sendeverhalten Zustand 12
+#define ParamDFA_az12o3Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az12o3Send)))
+// Ausgabewert Zustand 12 (DPT 1)
+#define ParamDFA_az12o3Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az12o3Dpt1)))
+// Ausgabewert Zustand 12 (DPT 2)
+#define ParamDFA_az12o3Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az12o3Dpt2)))
+// Ausgabewert Zustand 12 (DPT 5)
+#define ParamDFA_az12o3Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az12o3Dpt5)))
+// Ausgabewert Zustand 12 (DPT 5.001)
+#define ParamDFA_az12o3Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az12o3Dpt5001)))
+// Ausgabewert Zustand 12 (DPT 6)
+#define ParamDFA_az12o3Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az12o3Dpt6)))
+// Ausgabewert Zustand 12 (DPT 7)
+#define ParamDFA_az12o3Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az12o3Dpt7)))
+// Ausgabewert Zustand 12 (DPT 8)
+#define ParamDFA_az12o3Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az12o3Dpt8)))
+// Ausgabewert Zustand 12 (DPT 9)
+#define ParamDFA_az12o3Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az12o3Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 12 (DPT 12)
+#define ParamDFA_az12o3Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az12o3Dpt12)))
+// Ausgabewert Zustand 12 (DPT 13)
+#define ParamDFA_az12o3Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az12o3Dpt13)))
+// Ausgabewert Zustand 12 (DPT 14)
+#define ParamDFA_az12o3Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az12o3Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 12 (DPT 17)
+#define ParamDFA_az12o3Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az12o3Dpt17)))
+// Ausgabewert Zustand 12 (DPT 232)
+#define ParamDFA_az12o3Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az12o3Dpt232)) & DFA_az12o3Dpt232Mask) >> DFA_az12o3Dpt232Shift)
+// Sendeverhalten Zustand 12
+#define ParamDFA_az12o4Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az12o4Send)))
+// Ausgabewert Zustand 12 (DPT 1)
+#define ParamDFA_az12o4Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az12o4Dpt1)))
+// Ausgabewert Zustand 12 (DPT 2)
+#define ParamDFA_az12o4Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az12o4Dpt2)))
+// Ausgabewert Zustand 12 (DPT 5)
+#define ParamDFA_az12o4Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az12o4Dpt5)))
+// Ausgabewert Zustand 12 (DPT 5.001)
+#define ParamDFA_az12o4Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az12o4Dpt5001)))
+// Ausgabewert Zustand 12 (DPT 6)
+#define ParamDFA_az12o4Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az12o4Dpt6)))
+// Ausgabewert Zustand 12 (DPT 7)
+#define ParamDFA_az12o4Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az12o4Dpt7)))
+// Ausgabewert Zustand 12 (DPT 8)
+#define ParamDFA_az12o4Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az12o4Dpt8)))
+// Ausgabewert Zustand 12 (DPT 9)
+#define ParamDFA_az12o4Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az12o4Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 12 (DPT 12)
+#define ParamDFA_az12o4Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az12o4Dpt12)))
+// Ausgabewert Zustand 12 (DPT 13)
+#define ParamDFA_az12o4Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az12o4Dpt13)))
+// Ausgabewert Zustand 12 (DPT 14)
+#define ParamDFA_az12o4Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az12o4Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 12 (DPT 16)
+#define ParamDFA_az12o4Dpt16                         (knx.paramData(DFA_ParamCalcIndex(DFA_az12o4Dpt16)))
+#define ParamDFA_az12o4Dpt16Str                      (knx.paramString(DFA_ParamCalcIndex(DFA_az12o4Dpt16), DFA_az12o4Dpt16Length))
+// Ausgabewert Zustand 12 (DPT 17)
+#define ParamDFA_az12o4Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az12o4Dpt17)))
+// Ausgabewert Zustand 12 (DPT 232)
+#define ParamDFA_az12o4Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az12o4Dpt232)) & DFA_az12o4Dpt232Mask) >> DFA_az12o4Dpt232Shift)
+// trans(13,1)
+#define ParamDFA_ad13A                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad13A)))
+// trans(13,2)
+#define ParamDFA_ad13B                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad13B)))
+// trans(13,3)
+#define ParamDFA_ad13C                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad13C)))
+// trans(13,4)
+#define ParamDFA_ad13D                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad13D)))
+// trans(13,5)
+#define ParamDFA_ad13E                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad13E)))
+// trans(13,6)
+#define ParamDFA_ad13F                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad13F)))
+// trans(13,7)
+#define ParamDFA_ad13G                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad13G)))
+// trans(13,8)
+#define ParamDFA_ad13H                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad13H)))
+// trans(13,timeout)
+#define ParamDFA_ad13T                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad13T)))
+// Zeitbasis
+#define ParamDFA_ad13TBase                           ((knx.paramByte(DFA_ParamCalcIndex(DFA_ad13TBase)) & DFA_ad13TBaseMask) >> DFA_ad13TBaseShift)
+// Zeit
+#define ParamDFA_ad13TTime                           (knx.paramWord(DFA_ParamCalcIndex(DFA_ad13TTime)) & DFA_ad13TTimeMask)
+// Zeit (in Millisekunden)
+#define ParamDFA_ad13TTimeMS                         (paramDelay(knx.paramWord(DFA_ParamCalcIndex(DFA_ad13TTime))))
+// Sendeverhalten Zustand 13
+#define ParamDFA_az13o1Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az13o1Send)))
+// Ausgabewert Zustand 13 (DPT 1)
+#define ParamDFA_az13o1Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az13o1Dpt1)))
+// Ausgabewert Zustand 13 (DPT 2)
+#define ParamDFA_az13o1Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az13o1Dpt2)))
+// Ausgabewert Zustand 13 (DPT 5)
+#define ParamDFA_az13o1Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az13o1Dpt5)))
+// Ausgabewert Zustand 13 (DPT 5.001)
+#define ParamDFA_az13o1Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az13o1Dpt5001)))
+// Ausgabewert Zustand 13 (DPT 6)
+#define ParamDFA_az13o1Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az13o1Dpt6)))
+// Ausgabewert Zustand 13 (DPT 7)
+#define ParamDFA_az13o1Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az13o1Dpt7)))
+// Ausgabewert Zustand 13 (DPT 8)
+#define ParamDFA_az13o1Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az13o1Dpt8)))
+// Ausgabewert Zustand 13 (DPT 9)
+#define ParamDFA_az13o1Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az13o1Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 13 (DPT 12)
+#define ParamDFA_az13o1Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az13o1Dpt12)))
+// Ausgabewert Zustand 13 (DPT 13)
+#define ParamDFA_az13o1Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az13o1Dpt13)))
+// Ausgabewert Zustand 13 (DPT 14)
+#define ParamDFA_az13o1Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az13o1Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 13 (DPT 17)
+#define ParamDFA_az13o1Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az13o1Dpt17)))
+// Ausgabewert Zustand 13 (DPT 232)
+#define ParamDFA_az13o1Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az13o1Dpt232)) & DFA_az13o1Dpt232Mask) >> DFA_az13o1Dpt232Shift)
+// Sendeverhalten Zustand 13
+#define ParamDFA_az13o2Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az13o2Send)))
+// Ausgabewert Zustand 13 (DPT 1)
+#define ParamDFA_az13o2Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az13o2Dpt1)))
+// Ausgabewert Zustand 13 (DPT 2)
+#define ParamDFA_az13o2Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az13o2Dpt2)))
+// Ausgabewert Zustand 13 (DPT 5)
+#define ParamDFA_az13o2Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az13o2Dpt5)))
+// Ausgabewert Zustand 13 (DPT 5.001)
+#define ParamDFA_az13o2Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az13o2Dpt5001)))
+// Ausgabewert Zustand 13 (DPT 6)
+#define ParamDFA_az13o2Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az13o2Dpt6)))
+// Ausgabewert Zustand 13 (DPT 7)
+#define ParamDFA_az13o2Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az13o2Dpt7)))
+// Ausgabewert Zustand 13 (DPT 8)
+#define ParamDFA_az13o2Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az13o2Dpt8)))
+// Ausgabewert Zustand 13 (DPT 9)
+#define ParamDFA_az13o2Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az13o2Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 13 (DPT 12)
+#define ParamDFA_az13o2Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az13o2Dpt12)))
+// Ausgabewert Zustand 13 (DPT 13)
+#define ParamDFA_az13o2Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az13o2Dpt13)))
+// Ausgabewert Zustand 13 (DPT 14)
+#define ParamDFA_az13o2Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az13o2Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 13 (DPT 17)
+#define ParamDFA_az13o2Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az13o2Dpt17)))
+// Ausgabewert Zustand 13 (DPT 232)
+#define ParamDFA_az13o2Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az13o2Dpt232)) & DFA_az13o2Dpt232Mask) >> DFA_az13o2Dpt232Shift)
+// Sendeverhalten Zustand 13
+#define ParamDFA_az13o3Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az13o3Send)))
+// Ausgabewert Zustand 13 (DPT 1)
+#define ParamDFA_az13o3Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az13o3Dpt1)))
+// Ausgabewert Zustand 13 (DPT 2)
+#define ParamDFA_az13o3Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az13o3Dpt2)))
+// Ausgabewert Zustand 13 (DPT 5)
+#define ParamDFA_az13o3Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az13o3Dpt5)))
+// Ausgabewert Zustand 13 (DPT 5.001)
+#define ParamDFA_az13o3Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az13o3Dpt5001)))
+// Ausgabewert Zustand 13 (DPT 6)
+#define ParamDFA_az13o3Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az13o3Dpt6)))
+// Ausgabewert Zustand 13 (DPT 7)
+#define ParamDFA_az13o3Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az13o3Dpt7)))
+// Ausgabewert Zustand 13 (DPT 8)
+#define ParamDFA_az13o3Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az13o3Dpt8)))
+// Ausgabewert Zustand 13 (DPT 9)
+#define ParamDFA_az13o3Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az13o3Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 13 (DPT 12)
+#define ParamDFA_az13o3Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az13o3Dpt12)))
+// Ausgabewert Zustand 13 (DPT 13)
+#define ParamDFA_az13o3Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az13o3Dpt13)))
+// Ausgabewert Zustand 13 (DPT 14)
+#define ParamDFA_az13o3Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az13o3Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 13 (DPT 17)
+#define ParamDFA_az13o3Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az13o3Dpt17)))
+// Ausgabewert Zustand 13 (DPT 232)
+#define ParamDFA_az13o3Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az13o3Dpt232)) & DFA_az13o3Dpt232Mask) >> DFA_az13o3Dpt232Shift)
+// Sendeverhalten Zustand 13
+#define ParamDFA_az13o4Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az13o4Send)))
+// Ausgabewert Zustand 13 (DPT 1)
+#define ParamDFA_az13o4Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az13o4Dpt1)))
+// Ausgabewert Zustand 13 (DPT 2)
+#define ParamDFA_az13o4Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az13o4Dpt2)))
+// Ausgabewert Zustand 13 (DPT 5)
+#define ParamDFA_az13o4Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az13o4Dpt5)))
+// Ausgabewert Zustand 13 (DPT 5.001)
+#define ParamDFA_az13o4Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az13o4Dpt5001)))
+// Ausgabewert Zustand 13 (DPT 6)
+#define ParamDFA_az13o4Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az13o4Dpt6)))
+// Ausgabewert Zustand 13 (DPT 7)
+#define ParamDFA_az13o4Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az13o4Dpt7)))
+// Ausgabewert Zustand 13 (DPT 8)
+#define ParamDFA_az13o4Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az13o4Dpt8)))
+// Ausgabewert Zustand 13 (DPT 9)
+#define ParamDFA_az13o4Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az13o4Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 13 (DPT 12)
+#define ParamDFA_az13o4Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az13o4Dpt12)))
+// Ausgabewert Zustand 13 (DPT 13)
+#define ParamDFA_az13o4Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az13o4Dpt13)))
+// Ausgabewert Zustand 13 (DPT 14)
+#define ParamDFA_az13o4Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az13o4Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 13 (DPT 16)
+#define ParamDFA_az13o4Dpt16                         (knx.paramData(DFA_ParamCalcIndex(DFA_az13o4Dpt16)))
+#define ParamDFA_az13o4Dpt16Str                      (knx.paramString(DFA_ParamCalcIndex(DFA_az13o4Dpt16), DFA_az13o4Dpt16Length))
+// Ausgabewert Zustand 13 (DPT 17)
+#define ParamDFA_az13o4Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az13o4Dpt17)))
+// Ausgabewert Zustand 13 (DPT 232)
+#define ParamDFA_az13o4Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az13o4Dpt232)) & DFA_az13o4Dpt232Mask) >> DFA_az13o4Dpt232Shift)
+// trans(14,1)
+#define ParamDFA_ad14A                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad14A)))
+// trans(14,2)
+#define ParamDFA_ad14B                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad14B)))
+// trans(14,3)
+#define ParamDFA_ad14C                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad14C)))
+// trans(14,4)
+#define ParamDFA_ad14D                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad14D)))
+// trans(14,5)
+#define ParamDFA_ad14E                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad14E)))
+// trans(14,6)
+#define ParamDFA_ad14F                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad14F)))
+// trans(14,7)
+#define ParamDFA_ad14G                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad14G)))
+// trans(14,8)
+#define ParamDFA_ad14H                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad14H)))
+// trans(14,timeout)
+#define ParamDFA_ad14T                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad14T)))
+// Zeitbasis
+#define ParamDFA_ad14TBase                           ((knx.paramByte(DFA_ParamCalcIndex(DFA_ad14TBase)) & DFA_ad14TBaseMask) >> DFA_ad14TBaseShift)
+// Zeit
+#define ParamDFA_ad14TTime                           (knx.paramWord(DFA_ParamCalcIndex(DFA_ad14TTime)) & DFA_ad14TTimeMask)
+// Zeit (in Millisekunden)
+#define ParamDFA_ad14TTimeMS                         (paramDelay(knx.paramWord(DFA_ParamCalcIndex(DFA_ad14TTime))))
+// Sendeverhalten Zustand 14
+#define ParamDFA_az14o1Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az14o1Send)))
+// Ausgabewert Zustand 14 (DPT 1)
+#define ParamDFA_az14o1Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az14o1Dpt1)))
+// Ausgabewert Zustand 14 (DPT 2)
+#define ParamDFA_az14o1Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az14o1Dpt2)))
+// Ausgabewert Zustand 14 (DPT 5)
+#define ParamDFA_az14o1Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az14o1Dpt5)))
+// Ausgabewert Zustand 14 (DPT 5.001)
+#define ParamDFA_az14o1Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az14o1Dpt5001)))
+// Ausgabewert Zustand 14 (DPT 6)
+#define ParamDFA_az14o1Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az14o1Dpt6)))
+// Ausgabewert Zustand 14 (DPT 7)
+#define ParamDFA_az14o1Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az14o1Dpt7)))
+// Ausgabewert Zustand 14 (DPT 8)
+#define ParamDFA_az14o1Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az14o1Dpt8)))
+// Ausgabewert Zustand 14 (DPT 9)
+#define ParamDFA_az14o1Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az14o1Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 14 (DPT 12)
+#define ParamDFA_az14o1Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az14o1Dpt12)))
+// Ausgabewert Zustand 14 (DPT 13)
+#define ParamDFA_az14o1Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az14o1Dpt13)))
+// Ausgabewert Zustand 14 (DPT 14)
+#define ParamDFA_az14o1Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az14o1Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 14 (DPT 17)
+#define ParamDFA_az14o1Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az14o1Dpt17)))
+// Ausgabewert Zustand 14 (DPT 232)
+#define ParamDFA_az14o1Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az14o1Dpt232)) & DFA_az14o1Dpt232Mask) >> DFA_az14o1Dpt232Shift)
+// Sendeverhalten Zustand 14
+#define ParamDFA_az14o2Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az14o2Send)))
+// Ausgabewert Zustand 14 (DPT 1)
+#define ParamDFA_az14o2Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az14o2Dpt1)))
+// Ausgabewert Zustand 14 (DPT 2)
+#define ParamDFA_az14o2Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az14o2Dpt2)))
+// Ausgabewert Zustand 14 (DPT 5)
+#define ParamDFA_az14o2Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az14o2Dpt5)))
+// Ausgabewert Zustand 14 (DPT 5.001)
+#define ParamDFA_az14o2Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az14o2Dpt5001)))
+// Ausgabewert Zustand 14 (DPT 6)
+#define ParamDFA_az14o2Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az14o2Dpt6)))
+// Ausgabewert Zustand 14 (DPT 7)
+#define ParamDFA_az14o2Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az14o2Dpt7)))
+// Ausgabewert Zustand 14 (DPT 8)
+#define ParamDFA_az14o2Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az14o2Dpt8)))
+// Ausgabewert Zustand 14 (DPT 9)
+#define ParamDFA_az14o2Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az14o2Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 14 (DPT 12)
+#define ParamDFA_az14o2Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az14o2Dpt12)))
+// Ausgabewert Zustand 14 (DPT 13)
+#define ParamDFA_az14o2Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az14o2Dpt13)))
+// Ausgabewert Zustand 14 (DPT 14)
+#define ParamDFA_az14o2Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az14o2Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 14 (DPT 17)
+#define ParamDFA_az14o2Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az14o2Dpt17)))
+// Ausgabewert Zustand 14 (DPT 232)
+#define ParamDFA_az14o2Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az14o2Dpt232)) & DFA_az14o2Dpt232Mask) >> DFA_az14o2Dpt232Shift)
+// Sendeverhalten Zustand 14
+#define ParamDFA_az14o3Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az14o3Send)))
+// Ausgabewert Zustand 14 (DPT 1)
+#define ParamDFA_az14o3Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az14o3Dpt1)))
+// Ausgabewert Zustand 14 (DPT 2)
+#define ParamDFA_az14o3Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az14o3Dpt2)))
+// Ausgabewert Zustand 14 (DPT 5)
+#define ParamDFA_az14o3Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az14o3Dpt5)))
+// Ausgabewert Zustand 14 (DPT 5.001)
+#define ParamDFA_az14o3Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az14o3Dpt5001)))
+// Ausgabewert Zustand 14 (DPT 6)
+#define ParamDFA_az14o3Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az14o3Dpt6)))
+// Ausgabewert Zustand 14 (DPT 7)
+#define ParamDFA_az14o3Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az14o3Dpt7)))
+// Ausgabewert Zustand 14 (DPT 8)
+#define ParamDFA_az14o3Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az14o3Dpt8)))
+// Ausgabewert Zustand 14 (DPT 9)
+#define ParamDFA_az14o3Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az14o3Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 14 (DPT 12)
+#define ParamDFA_az14o3Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az14o3Dpt12)))
+// Ausgabewert Zustand 14 (DPT 13)
+#define ParamDFA_az14o3Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az14o3Dpt13)))
+// Ausgabewert Zustand 14 (DPT 14)
+#define ParamDFA_az14o3Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az14o3Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 14 (DPT 17)
+#define ParamDFA_az14o3Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az14o3Dpt17)))
+// Ausgabewert Zustand 14 (DPT 232)
+#define ParamDFA_az14o3Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az14o3Dpt232)) & DFA_az14o3Dpt232Mask) >> DFA_az14o3Dpt232Shift)
+// Sendeverhalten Zustand 14
+#define ParamDFA_az14o4Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az14o4Send)))
+// Ausgabewert Zustand 14 (DPT 1)
+#define ParamDFA_az14o4Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az14o4Dpt1)))
+// Ausgabewert Zustand 14 (DPT 2)
+#define ParamDFA_az14o4Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az14o4Dpt2)))
+// Ausgabewert Zustand 14 (DPT 5)
+#define ParamDFA_az14o4Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az14o4Dpt5)))
+// Ausgabewert Zustand 14 (DPT 5.001)
+#define ParamDFA_az14o4Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az14o4Dpt5001)))
+// Ausgabewert Zustand 14 (DPT 6)
+#define ParamDFA_az14o4Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az14o4Dpt6)))
+// Ausgabewert Zustand 14 (DPT 7)
+#define ParamDFA_az14o4Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az14o4Dpt7)))
+// Ausgabewert Zustand 14 (DPT 8)
+#define ParamDFA_az14o4Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az14o4Dpt8)))
+// Ausgabewert Zustand 14 (DPT 9)
+#define ParamDFA_az14o4Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az14o4Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 14 (DPT 12)
+#define ParamDFA_az14o4Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az14o4Dpt12)))
+// Ausgabewert Zustand 14 (DPT 13)
+#define ParamDFA_az14o4Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az14o4Dpt13)))
+// Ausgabewert Zustand 14 (DPT 14)
+#define ParamDFA_az14o4Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az14o4Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 14 (DPT 16)
+#define ParamDFA_az14o4Dpt16                         (knx.paramData(DFA_ParamCalcIndex(DFA_az14o4Dpt16)))
+#define ParamDFA_az14o4Dpt16Str                      (knx.paramString(DFA_ParamCalcIndex(DFA_az14o4Dpt16), DFA_az14o4Dpt16Length))
+// Ausgabewert Zustand 14 (DPT 17)
+#define ParamDFA_az14o4Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az14o4Dpt17)))
+// Ausgabewert Zustand 14 (DPT 232)
+#define ParamDFA_az14o4Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az14o4Dpt232)) & DFA_az14o4Dpt232Mask) >> DFA_az14o4Dpt232Shift)
+// trans(15,1)
+#define ParamDFA_ad15A                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad15A)))
+// trans(15,2)
+#define ParamDFA_ad15B                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad15B)))
+// trans(15,3)
+#define ParamDFA_ad15C                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad15C)))
+// trans(15,4)
+#define ParamDFA_ad15D                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad15D)))
+// trans(15,5)
+#define ParamDFA_ad15E                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad15E)))
+// trans(15,6)
+#define ParamDFA_ad15F                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad15F)))
+// trans(15,7)
+#define ParamDFA_ad15G                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad15G)))
+// trans(15,8)
+#define ParamDFA_ad15H                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad15H)))
+// trans(15,timeout)
+#define ParamDFA_ad15T                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad15T)))
+// Zeitbasis
+#define ParamDFA_ad15TBase                           ((knx.paramByte(DFA_ParamCalcIndex(DFA_ad15TBase)) & DFA_ad15TBaseMask) >> DFA_ad15TBaseShift)
+// Zeit
+#define ParamDFA_ad15TTime                           (knx.paramWord(DFA_ParamCalcIndex(DFA_ad15TTime)) & DFA_ad15TTimeMask)
+// Zeit (in Millisekunden)
+#define ParamDFA_ad15TTimeMS                         (paramDelay(knx.paramWord(DFA_ParamCalcIndex(DFA_ad15TTime))))
+// Sendeverhalten Zustand 15
+#define ParamDFA_az15o1Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az15o1Send)))
+// Ausgabewert Zustand 15 (DPT 1)
+#define ParamDFA_az15o1Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az15o1Dpt1)))
+// Ausgabewert Zustand 15 (DPT 2)
+#define ParamDFA_az15o1Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az15o1Dpt2)))
+// Ausgabewert Zustand 15 (DPT 5)
+#define ParamDFA_az15o1Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az15o1Dpt5)))
+// Ausgabewert Zustand 15 (DPT 5.001)
+#define ParamDFA_az15o1Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az15o1Dpt5001)))
+// Ausgabewert Zustand 15 (DPT 6)
+#define ParamDFA_az15o1Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az15o1Dpt6)))
+// Ausgabewert Zustand 15 (DPT 7)
+#define ParamDFA_az15o1Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az15o1Dpt7)))
+// Ausgabewert Zustand 15 (DPT 8)
+#define ParamDFA_az15o1Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az15o1Dpt8)))
+// Ausgabewert Zustand 15 (DPT 9)
+#define ParamDFA_az15o1Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az15o1Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 15 (DPT 12)
+#define ParamDFA_az15o1Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az15o1Dpt12)))
+// Ausgabewert Zustand 15 (DPT 13)
+#define ParamDFA_az15o1Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az15o1Dpt13)))
+// Ausgabewert Zustand 15 (DPT 14)
+#define ParamDFA_az15o1Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az15o1Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 15 (DPT 17)
+#define ParamDFA_az15o1Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az15o1Dpt17)))
+// Ausgabewert Zustand 15 (DPT 232)
+#define ParamDFA_az15o1Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az15o1Dpt232)) & DFA_az15o1Dpt232Mask) >> DFA_az15o1Dpt232Shift)
+// Sendeverhalten Zustand 15
+#define ParamDFA_az15o2Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az15o2Send)))
+// Ausgabewert Zustand 15 (DPT 1)
+#define ParamDFA_az15o2Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az15o2Dpt1)))
+// Ausgabewert Zustand 15 (DPT 2)
+#define ParamDFA_az15o2Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az15o2Dpt2)))
+// Ausgabewert Zustand 15 (DPT 5)
+#define ParamDFA_az15o2Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az15o2Dpt5)))
+// Ausgabewert Zustand 15 (DPT 5.001)
+#define ParamDFA_az15o2Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az15o2Dpt5001)))
+// Ausgabewert Zustand 15 (DPT 6)
+#define ParamDFA_az15o2Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az15o2Dpt6)))
+// Ausgabewert Zustand 15 (DPT 7)
+#define ParamDFA_az15o2Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az15o2Dpt7)))
+// Ausgabewert Zustand 15 (DPT 8)
+#define ParamDFA_az15o2Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az15o2Dpt8)))
+// Ausgabewert Zustand 15 (DPT 9)
+#define ParamDFA_az15o2Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az15o2Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 15 (DPT 12)
+#define ParamDFA_az15o2Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az15o2Dpt12)))
+// Ausgabewert Zustand 15 (DPT 13)
+#define ParamDFA_az15o2Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az15o2Dpt13)))
+// Ausgabewert Zustand 15 (DPT 14)
+#define ParamDFA_az15o2Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az15o2Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 15 (DPT 17)
+#define ParamDFA_az15o2Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az15o2Dpt17)))
+// Ausgabewert Zustand 15 (DPT 232)
+#define ParamDFA_az15o2Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az15o2Dpt232)) & DFA_az15o2Dpt232Mask) >> DFA_az15o2Dpt232Shift)
+// Sendeverhalten Zustand 15
+#define ParamDFA_az15o3Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az15o3Send)))
+// Ausgabewert Zustand 15 (DPT 1)
+#define ParamDFA_az15o3Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az15o3Dpt1)))
+// Ausgabewert Zustand 15 (DPT 2)
+#define ParamDFA_az15o3Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az15o3Dpt2)))
+// Ausgabewert Zustand 15 (DPT 5)
+#define ParamDFA_az15o3Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az15o3Dpt5)))
+// Ausgabewert Zustand 15 (DPT 5.001)
+#define ParamDFA_az15o3Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az15o3Dpt5001)))
+// Ausgabewert Zustand 15 (DPT 6)
+#define ParamDFA_az15o3Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az15o3Dpt6)))
+// Ausgabewert Zustand 15 (DPT 7)
+#define ParamDFA_az15o3Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az15o3Dpt7)))
+// Ausgabewert Zustand 15 (DPT 8)
+#define ParamDFA_az15o3Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az15o3Dpt8)))
+// Ausgabewert Zustand 15 (DPT 9)
+#define ParamDFA_az15o3Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az15o3Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 15 (DPT 12)
+#define ParamDFA_az15o3Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az15o3Dpt12)))
+// Ausgabewert Zustand 15 (DPT 13)
+#define ParamDFA_az15o3Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az15o3Dpt13)))
+// Ausgabewert Zustand 15 (DPT 14)
+#define ParamDFA_az15o3Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az15o3Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 15 (DPT 17)
+#define ParamDFA_az15o3Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az15o3Dpt17)))
+// Ausgabewert Zustand 15 (DPT 232)
+#define ParamDFA_az15o3Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az15o3Dpt232)) & DFA_az15o3Dpt232Mask) >> DFA_az15o3Dpt232Shift)
+// Sendeverhalten Zustand 15
+#define ParamDFA_az15o4Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az15o4Send)))
+// Ausgabewert Zustand 15 (DPT 1)
+#define ParamDFA_az15o4Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az15o4Dpt1)))
+// Ausgabewert Zustand 15 (DPT 2)
+#define ParamDFA_az15o4Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az15o4Dpt2)))
+// Ausgabewert Zustand 15 (DPT 5)
+#define ParamDFA_az15o4Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az15o4Dpt5)))
+// Ausgabewert Zustand 15 (DPT 5.001)
+#define ParamDFA_az15o4Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az15o4Dpt5001)))
+// Ausgabewert Zustand 15 (DPT 6)
+#define ParamDFA_az15o4Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az15o4Dpt6)))
+// Ausgabewert Zustand 15 (DPT 7)
+#define ParamDFA_az15o4Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az15o4Dpt7)))
+// Ausgabewert Zustand 15 (DPT 8)
+#define ParamDFA_az15o4Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az15o4Dpt8)))
+// Ausgabewert Zustand 15 (DPT 9)
+#define ParamDFA_az15o4Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az15o4Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 15 (DPT 12)
+#define ParamDFA_az15o4Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az15o4Dpt12)))
+// Ausgabewert Zustand 15 (DPT 13)
+#define ParamDFA_az15o4Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az15o4Dpt13)))
+// Ausgabewert Zustand 15 (DPT 14)
+#define ParamDFA_az15o4Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az15o4Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 15 (DPT 16)
+#define ParamDFA_az15o4Dpt16                         (knx.paramData(DFA_ParamCalcIndex(DFA_az15o4Dpt16)))
+#define ParamDFA_az15o4Dpt16Str                      (knx.paramString(DFA_ParamCalcIndex(DFA_az15o4Dpt16), DFA_az15o4Dpt16Length))
+// Ausgabewert Zustand 15 (DPT 17)
+#define ParamDFA_az15o4Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az15o4Dpt17)))
+// Ausgabewert Zustand 15 (DPT 232)
+#define ParamDFA_az15o4Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az15o4Dpt232)) & DFA_az15o4Dpt232Mask) >> DFA_az15o4Dpt232Shift)
+// trans(16,1)
+#define ParamDFA_ad16A                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad16A)))
+// trans(16,2)
+#define ParamDFA_ad16B                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad16B)))
+// trans(16,3)
+#define ParamDFA_ad16C                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad16C)))
+// trans(16,4)
+#define ParamDFA_ad16D                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad16D)))
+// trans(16,5)
+#define ParamDFA_ad16E                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad16E)))
+// trans(16,6)
+#define ParamDFA_ad16F                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad16F)))
+// trans(16,7)
+#define ParamDFA_ad16G                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad16G)))
+// trans(16,8)
+#define ParamDFA_ad16H                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad16H)))
+// trans(16,timeout)
+#define ParamDFA_ad16T                               (knx.paramByte(DFA_ParamCalcIndex(DFA_ad16T)))
+// Zeitbasis
+#define ParamDFA_ad16TBase                           ((knx.paramByte(DFA_ParamCalcIndex(DFA_ad16TBase)) & DFA_ad16TBaseMask) >> DFA_ad16TBaseShift)
+// Zeit
+#define ParamDFA_ad16TTime                           (knx.paramWord(DFA_ParamCalcIndex(DFA_ad16TTime)) & DFA_ad16TTimeMask)
+// Zeit (in Millisekunden)
+#define ParamDFA_ad16TTimeMS                         (paramDelay(knx.paramWord(DFA_ParamCalcIndex(DFA_ad16TTime))))
+// Sendeverhalten Zustand 16
+#define ParamDFA_az16o1Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az16o1Send)))
+// Ausgabewert Zustand 16 (DPT 1)
+#define ParamDFA_az16o1Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az16o1Dpt1)))
+// Ausgabewert Zustand 16 (DPT 2)
+#define ParamDFA_az16o1Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az16o1Dpt2)))
+// Ausgabewert Zustand 16 (DPT 5)
+#define ParamDFA_az16o1Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az16o1Dpt5)))
+// Ausgabewert Zustand 16 (DPT 5.001)
+#define ParamDFA_az16o1Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az16o1Dpt5001)))
+// Ausgabewert Zustand 16 (DPT 6)
+#define ParamDFA_az16o1Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az16o1Dpt6)))
+// Ausgabewert Zustand 16 (DPT 7)
+#define ParamDFA_az16o1Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az16o1Dpt7)))
+// Ausgabewert Zustand 16 (DPT 8)
+#define ParamDFA_az16o1Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az16o1Dpt8)))
+// Ausgabewert Zustand 16 (DPT 9)
+#define ParamDFA_az16o1Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az16o1Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 16 (DPT 12)
+#define ParamDFA_az16o1Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az16o1Dpt12)))
+// Ausgabewert Zustand 16 (DPT 13)
+#define ParamDFA_az16o1Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az16o1Dpt13)))
+// Ausgabewert Zustand 16 (DPT 14)
+#define ParamDFA_az16o1Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az16o1Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 16 (DPT 17)
+#define ParamDFA_az16o1Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az16o1Dpt17)))
+// Ausgabewert Zustand 16 (DPT 232)
+#define ParamDFA_az16o1Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az16o1Dpt232)) & DFA_az16o1Dpt232Mask) >> DFA_az16o1Dpt232Shift)
+// Sendeverhalten Zustand 16
+#define ParamDFA_az16o2Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az16o2Send)))
+// Ausgabewert Zustand 16 (DPT 1)
+#define ParamDFA_az16o2Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az16o2Dpt1)))
+// Ausgabewert Zustand 16 (DPT 2)
+#define ParamDFA_az16o2Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az16o2Dpt2)))
+// Ausgabewert Zustand 16 (DPT 5)
+#define ParamDFA_az16o2Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az16o2Dpt5)))
+// Ausgabewert Zustand 16 (DPT 5.001)
+#define ParamDFA_az16o2Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az16o2Dpt5001)))
+// Ausgabewert Zustand 16 (DPT 6)
+#define ParamDFA_az16o2Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az16o2Dpt6)))
+// Ausgabewert Zustand 16 (DPT 7)
+#define ParamDFA_az16o2Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az16o2Dpt7)))
+// Ausgabewert Zustand 16 (DPT 8)
+#define ParamDFA_az16o2Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az16o2Dpt8)))
+// Ausgabewert Zustand 16 (DPT 9)
+#define ParamDFA_az16o2Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az16o2Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 16 (DPT 12)
+#define ParamDFA_az16o2Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az16o2Dpt12)))
+// Ausgabewert Zustand 16 (DPT 13)
+#define ParamDFA_az16o2Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az16o2Dpt13)))
+// Ausgabewert Zustand 16 (DPT 14)
+#define ParamDFA_az16o2Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az16o2Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 16 (DPT 17)
+#define ParamDFA_az16o2Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az16o2Dpt17)))
+// Ausgabewert Zustand 16 (DPT 232)
+#define ParamDFA_az16o2Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az16o2Dpt232)) & DFA_az16o2Dpt232Mask) >> DFA_az16o2Dpt232Shift)
+// Sendeverhalten Zustand 16
+#define ParamDFA_az16o3Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az16o3Send)))
+// Ausgabewert Zustand 16 (DPT 1)
+#define ParamDFA_az16o3Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az16o3Dpt1)))
+// Ausgabewert Zustand 16 (DPT 2)
+#define ParamDFA_az16o3Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az16o3Dpt2)))
+// Ausgabewert Zustand 16 (DPT 5)
+#define ParamDFA_az16o3Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az16o3Dpt5)))
+// Ausgabewert Zustand 16 (DPT 5.001)
+#define ParamDFA_az16o3Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az16o3Dpt5001)))
+// Ausgabewert Zustand 16 (DPT 6)
+#define ParamDFA_az16o3Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az16o3Dpt6)))
+// Ausgabewert Zustand 16 (DPT 7)
+#define ParamDFA_az16o3Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az16o3Dpt7)))
+// Ausgabewert Zustand 16 (DPT 8)
+#define ParamDFA_az16o3Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az16o3Dpt8)))
+// Ausgabewert Zustand 16 (DPT 9)
+#define ParamDFA_az16o3Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az16o3Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 16 (DPT 12)
+#define ParamDFA_az16o3Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az16o3Dpt12)))
+// Ausgabewert Zustand 16 (DPT 13)
+#define ParamDFA_az16o3Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az16o3Dpt13)))
+// Ausgabewert Zustand 16 (DPT 14)
+#define ParamDFA_az16o3Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az16o3Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 16 (DPT 17)
+#define ParamDFA_az16o3Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az16o3Dpt17)))
+// Ausgabewert Zustand 16 (DPT 232)
+#define ParamDFA_az16o3Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az16o3Dpt232)) & DFA_az16o3Dpt232Mask) >> DFA_az16o3Dpt232Shift)
+// Sendeverhalten Zustand 16
+#define ParamDFA_az16o4Send                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az16o4Send)))
+// Ausgabewert Zustand 16 (DPT 1)
+#define ParamDFA_az16o4Dpt1                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az16o4Dpt1)))
+// Ausgabewert Zustand 16 (DPT 2)
+#define ParamDFA_az16o4Dpt2                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az16o4Dpt2)))
+// Ausgabewert Zustand 16 (DPT 5)
+#define ParamDFA_az16o4Dpt5                          (knx.paramByte(DFA_ParamCalcIndex(DFA_az16o4Dpt5)))
+// Ausgabewert Zustand 16 (DPT 5.001)
+#define ParamDFA_az16o4Dpt5001                       (knx.paramByte(DFA_ParamCalcIndex(DFA_az16o4Dpt5001)))
+// Ausgabewert Zustand 16 (DPT 6)
+#define ParamDFA_az16o4Dpt6                          ((int8_t)knx.paramByte(DFA_ParamCalcIndex(DFA_az16o4Dpt6)))
+// Ausgabewert Zustand 16 (DPT 7)
+#define ParamDFA_az16o4Dpt7                          (knx.paramWord(DFA_ParamCalcIndex(DFA_az16o4Dpt7)))
+// Ausgabewert Zustand 16 (DPT 8)
+#define ParamDFA_az16o4Dpt8                          ((int16_t)knx.paramWord(DFA_ParamCalcIndex(DFA_az16o4Dpt8)))
+// Ausgabewert Zustand 16 (DPT 9)
+#define ParamDFA_az16o4Dpt9                          (knx.paramFloat(DFA_ParamCalcIndex(DFA_az16o4Dpt9), Float_Enc_DPT9))
+// Ausgabewert Zustand 16 (DPT 12)
+#define ParamDFA_az16o4Dpt12                         (knx.paramInt(DFA_ParamCalcIndex(DFA_az16o4Dpt12)))
+// Ausgabewert Zustand 16 (DPT 13)
+#define ParamDFA_az16o4Dpt13                         ((int32_t)knx.paramInt(DFA_ParamCalcIndex(DFA_az16o4Dpt13)))
+// Ausgabewert Zustand 16 (DPT 14)
+#define ParamDFA_az16o4Dpt14                         (knx.paramFloat(DFA_ParamCalcIndex(DFA_az16o4Dpt14), Float_Enc_IEEE754Single))
+// Ausgabewert Zustand 16 (DPT 16)
+#define ParamDFA_az16o4Dpt16                         (knx.paramData(DFA_ParamCalcIndex(DFA_az16o4Dpt16)))
+#define ParamDFA_az16o4Dpt16Str                      (knx.paramString(DFA_ParamCalcIndex(DFA_az16o4Dpt16), DFA_az16o4Dpt16Length))
+// Ausgabewert Zustand 16 (DPT 17)
+#define ParamDFA_az16o4Dpt17                         (knx.paramByte(DFA_ParamCalcIndex(DFA_az16o4Dpt17)))
+// Ausgabewert Zustand 16 (DPT 232)
+#define ParamDFA_az16o4Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az16o4Dpt232)) & DFA_az16o4Dpt232Mask) >> DFA_az16o4Dpt232Shift)
+
+// deprecated
+#define DFA_KoOffset 720
+
+// Communication objects per channel (multiple occurrence)
+#define DFA_KoBlockOffset 720
+#define DFA_KoBlockSize 30
+
+#define DFA_KoCalcNumber(index) (index + DFA_KoBlockOffset + _channelIndex * DFA_KoBlockSize)
+#define DFA_KoCalcIndex(number) ((number >= DFA_KoCalcNumber(0) && number < DFA_KoCalcNumber(DFA_KoBlockSize)) ? (number - DFA_KoBlockOffset) % DFA_KoBlockSize : -1)
+#define DFA_KoCalcChannel(number) ((number >= DFA_KoBlockOffset && number < DFA_KoBlockOffset + DFA_ChannelCount * DFA_KoBlockSize) ? (number - DFA_KoBlockOffset) / DFA_KoBlockSize : -1)
+
+#define DFA_KoKOaRunning 0
+#define DFA_KoKOaRunSet 1
+#define DFA_KoKOaState 2
+#define DFA_KoKOaStateI 3
+#define DFA_KoKOaInput1 11
+#define DFA_KoKOaInput2 12
+#define DFA_KoKOaInput3 13
+#define DFA_KoKOaInput4 14
+#define DFA_KoKOaInput5 15
+#define DFA_KoKOaInput6 16
+#define DFA_KoKOaInput7 17
+#define DFA_KoKOaInput8 18
+#define DFA_KoKOaInputT 19
+#define DFA_KoKOaOutput1 21
+#define DFA_KoKOaOutput2 22
+#define DFA_KoKOaOutput3 23
+#define DFA_KoKOaOutput4 24
+#define DFA_KoKOaDummy14 29
+
+// läuft?
+#define KoDFA_KOaRunning                          (knx.getGroupObject(DFA_KoCalcNumber(DFA_KoKOaRunning)))
+// starten/pausieren
+#define KoDFA_KOaRunSet                           (knx.getGroupObject(DFA_KoCalcNumber(DFA_KoKOaRunSet)))
+// Zustand
+#define KoDFA_KOaState                            (knx.getGroupObject(DFA_KoCalcNumber(DFA_KoKOaState)))
+// Zustand setzen
+#define KoDFA_KOaStateI                           (knx.getGroupObject(DFA_KoCalcNumber(DFA_KoKOaStateI)))
+// Eingang 1
+#define KoDFA_KOaInput1                           (knx.getGroupObject(DFA_KoCalcNumber(DFA_KoKOaInput1)))
+// Eingang 2
+#define KoDFA_KOaInput2                           (knx.getGroupObject(DFA_KoCalcNumber(DFA_KoKOaInput2)))
+// Eingang 3
+#define KoDFA_KOaInput3                           (knx.getGroupObject(DFA_KoCalcNumber(DFA_KoKOaInput3)))
+// Eingang 4
+#define KoDFA_KOaInput4                           (knx.getGroupObject(DFA_KoCalcNumber(DFA_KoKOaInput4)))
+// Eingang 5
+#define KoDFA_KOaInput5                           (knx.getGroupObject(DFA_KoCalcNumber(DFA_KoKOaInput5)))
+// Eingang 6
+#define KoDFA_KOaInput6                           (knx.getGroupObject(DFA_KoCalcNumber(DFA_KoKOaInput6)))
+// Eingang 7
+#define KoDFA_KOaInput7                           (knx.getGroupObject(DFA_KoCalcNumber(DFA_KoKOaInput7)))
+// Eingang 8
+#define KoDFA_KOaInput8                           (knx.getGroupObject(DFA_KoCalcNumber(DFA_KoKOaInput8)))
+// Timeout auslösen
+#define KoDFA_KOaInputT                           (knx.getGroupObject(DFA_KoCalcNumber(DFA_KoKOaInputT)))
+// Wertausgang 1
+#define KoDFA_KOaOutput1                          (knx.getGroupObject(DFA_KoCalcNumber(DFA_KoKOaOutput1)))
+// Wertausgang 2
+#define KoDFA_KOaOutput2                          (knx.getGroupObject(DFA_KoCalcNumber(DFA_KoKOaOutput2)))
+// Wertausgang 3
+#define KoDFA_KOaOutput3                          (knx.getGroupObject(DFA_KoCalcNumber(DFA_KoKOaOutput3)))
+// Wertausgang 4
+#define KoDFA_KOaOutput4                          (knx.getGroupObject(DFA_KoCalcNumber(DFA_KoKOaOutput4)))
+// Dummy14
+#define KoDFA_KOaDummy14                          (knx.getGroupObject(DFA_KoCalcNumber(DFA_KoKOaDummy14)))
+
+#define IRR_VisibleChannels                     15957      // uint8_t
+#define IRR_KompatibelZone1Zone2                15957      // 1 Bit, Bit 7
 #define     IRR_KompatibelZone1Zone2Mask 0x80
 #define     IRR_KompatibelZone1Zone2Shift 7
-#define IRR_KompatibelZone1Zone3                12795      // 1 Bit, Bit 6
+#define IRR_KompatibelZone1Zone3                15957      // 1 Bit, Bit 6
 #define     IRR_KompatibelZone1Zone3Mask 0x40
 #define     IRR_KompatibelZone1Zone3Shift 6
-#define IRR_KompatibelZone1Zone4                12795      // 1 Bit, Bit 5
+#define IRR_KompatibelZone1Zone4                15957      // 1 Bit, Bit 5
 #define     IRR_KompatibelZone1Zone4Mask 0x20
 #define     IRR_KompatibelZone1Zone4Shift 5
-#define IRR_KompatibelZone1Zone5                12795      // 1 Bit, Bit 4
+#define IRR_KompatibelZone1Zone5                15957      // 1 Bit, Bit 4
 #define     IRR_KompatibelZone1Zone5Mask 0x10
 #define     IRR_KompatibelZone1Zone5Shift 4
-#define IRR_KompatibelZone1Zone6                12795      // 1 Bit, Bit 3
+#define IRR_KompatibelZone1Zone6                15957      // 1 Bit, Bit 3
 #define     IRR_KompatibelZone1Zone6Mask 0x08
 #define     IRR_KompatibelZone1Zone6Shift 3
-#define IRR_KompatibelZone2Zone3                12795      // 1 Bit, Bit 2
+#define IRR_KompatibelZone2Zone3                15957      // 1 Bit, Bit 2
 #define     IRR_KompatibelZone2Zone3Mask 0x04
 #define     IRR_KompatibelZone2Zone3Shift 2
-#define IRR_KompatibelZone2Zone4                12795      // 1 Bit, Bit 1
+#define IRR_KompatibelZone2Zone4                15957      // 1 Bit, Bit 1
 #define     IRR_KompatibelZone2Zone4Mask 0x02
 #define     IRR_KompatibelZone2Zone4Shift 1
-#define IRR_KompatibelZone2Zone5                12795      // 1 Bit, Bit 0
+#define IRR_KompatibelZone2Zone5                15957      // 1 Bit, Bit 0
 #define     IRR_KompatibelZone2Zone5Mask 0x01
 #define     IRR_KompatibelZone2Zone5Shift 0
-#define IRR_KompatibelZone2Zone6                12795      // 1 Bit, Bit 7
+#define IRR_KompatibelZone2Zone6                15957      // 1 Bit, Bit 7
 #define     IRR_KompatibelZone2Zone6Mask 0x80
 #define     IRR_KompatibelZone2Zone6Shift 7
-#define IRR_KompatibelZone3Zone4                12795      // 1 Bit, Bit 6
+#define IRR_KompatibelZone3Zone4                15957      // 1 Bit, Bit 6
 #define     IRR_KompatibelZone3Zone4Mask 0x40
 #define     IRR_KompatibelZone3Zone4Shift 6
-#define IRR_KompatibelZone3Zone5                12795      // 1 Bit, Bit 5
+#define IRR_KompatibelZone3Zone5                15957      // 1 Bit, Bit 5
 #define     IRR_KompatibelZone3Zone5Mask 0x20
 #define     IRR_KompatibelZone3Zone5Shift 5
-#define IRR_KompatibelZone3Zone6                12795      // 1 Bit, Bit 4
+#define IRR_KompatibelZone3Zone6                15957      // 1 Bit, Bit 4
 #define     IRR_KompatibelZone3Zone6Mask 0x10
 #define     IRR_KompatibelZone3Zone6Shift 4
-#define IRR_KompatibelZone4Zone5                12795      // 1 Bit, Bit 3
+#define IRR_KompatibelZone4Zone5                15957      // 1 Bit, Bit 3
 #define     IRR_KompatibelZone4Zone5Mask 0x08
 #define     IRR_KompatibelZone4Zone5Shift 3
-#define IRR_KompatibelZone4Zone6                12795      // 1 Bit, Bit 2
+#define IRR_KompatibelZone4Zone6                15957      // 1 Bit, Bit 2
 #define     IRR_KompatibelZone4Zone6Mask 0x04
 #define     IRR_KompatibelZone4Zone6Shift 2
-#define IRR_KompatibelZone5Zone6                12795      // 1 Bit, Bit 1
+#define IRR_KompatibelZone5Zone6                15957      // 1 Bit, Bit 1
 #define     IRR_KompatibelZone5Zone6Mask 0x02
 #define     IRR_KompatibelZone5Zone6Shift 1
-#define IRR_BewaesserungsstartStunde            12795      // uint8_t
-#define IRR_BewaesserungsstartMinute            12796      // uint8_t
+#define IRR_BewaesserungsstartStunde            15957      // uint8_t
+#define IRR_BewaesserungsstartMinute            15958      // uint8_t
 
 // Verfügbare Kanäle
 #define ParamIRR_VisibleChannels                     (knx.paramByte(IRR_VisibleChannels))
@@ -3157,7 +7247,7 @@
 #define IRR_ChannelCount 6
 
 // Parameter per channel
-#define IRR_ParamBlockOffset 12797
+#define IRR_ParamBlockOffset 15959
 #define IRR_ParamBlockSize 6
 #define IRR_ParamCalcIndex(index) (index + IRR_ParamBlockOffset + _channelIndex * IRR_ParamBlockSize)
 
