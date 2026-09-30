@@ -9,3 +9,4 @@
 release/*
 platformio.ini.full.txt
 **/*.baggages
+include/buildtime.h
