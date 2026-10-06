@@ -20,12 +20,12 @@
 #define ETS_ModuleId_LOG 9
 #define ETS_ModuleId_DFA 10
 #define ETS_ModuleId_IRR 11
-#define MAIN_FirmwareName "GardenControl"
+#define MAIN_FirmwareName "GardenControl (Dev)"
 #define MAIN_OpenKnxId 0xAF
 #define MAIN_ApplicationNumber 16
 #define MAIN_ApplicationVersion 19
 #define MAIN_ApplicationEncoding iso-8859-15
-#define MAIN_ParameterSize 15995
+#define MAIN_ParameterSize 16044
 #define MAIN_MaxKoNumber 1009
 #define MAIN_OrderNumber "SmartMF-GardenControl"
 #define BASE_ModuleVersion 25
@@ -34,6 +34,7 @@
 #define MTR_ModuleVersion 16
 #define LOG_ModuleVersion 68
 #define DFA_ModuleVersion 8
+#define IRR_ModuleVersion 1
 // Parameter with single occurrence
 
 
@@ -3022,10 +3023,10 @@
 #define ParamLOG_fOOffKOSendNumberRel                ((int16_t)knx.paramWord(LOG_ParamCalcIndex(LOG_fOOffKOSendNumberRel)))
 
 // deprecated
-#define LOG_KoOffset 420
+#define LOG_KoOffset 520
 
 // Communication objects per channel (multiple occurrence)
-#define LOG_KoBlockOffset 420
+#define LOG_KoBlockOffset 520
 #define LOG_KoBlockSize 3
 
 #define LOG_KoCalcNumber(index) (index + LOG_KoBlockOffset + _channelIndex * LOG_KoBlockSize)
@@ -7060,10 +7061,10 @@
 #define ParamDFA_az16o4Dpt232                        ((knx.paramInt(DFA_ParamCalcIndex(DFA_az16o4Dpt232)) & DFA_az16o4Dpt232Mask) >> DFA_az16o4Dpt232Shift)
 
 // deprecated
-#define DFA_KoOffset 720
+#define DFA_KoOffset 820
 
 // Communication objects per channel (multiple occurrence)
-#define DFA_KoBlockOffset 720
+#define DFA_KoBlockOffset 820
 #define DFA_KoBlockSize 30
 
 #define DFA_KoCalcNumber(index) (index + DFA_KoBlockOffset + _channelIndex * DFA_KoBlockSize)
@@ -7126,57 +7127,212 @@
 // Dummy14
 #define KoDFA_KOaDummy14                          (knx.getGroupObject(DFA_KoCalcNumber(DFA_KoKOaDummy14)))
 
-#define IRR_VisibleChannels                     15957      // uint8_t
-#define IRR_KompatibelZone1Zone2                15957      // 1 Bit, Bit 7
+#define IRR_KompatibelZone1Zone2                15958      // 1 Bit, Bit 7
 #define     IRR_KompatibelZone1Zone2Mask 0x80
 #define     IRR_KompatibelZone1Zone2Shift 7
-#define IRR_KompatibelZone1Zone3                15957      // 1 Bit, Bit 6
+#define IRR_KompatibelZone1Zone3                15958      // 1 Bit, Bit 6
 #define     IRR_KompatibelZone1Zone3Mask 0x40
 #define     IRR_KompatibelZone1Zone3Shift 6
-#define IRR_KompatibelZone1Zone4                15957      // 1 Bit, Bit 5
+#define IRR_KompatibelZone1Zone4                15958      // 1 Bit, Bit 5
 #define     IRR_KompatibelZone1Zone4Mask 0x20
 #define     IRR_KompatibelZone1Zone4Shift 5
-#define IRR_KompatibelZone1Zone5                15957      // 1 Bit, Bit 4
+#define IRR_KompatibelZone1Zone5                15958      // 1 Bit, Bit 4
 #define     IRR_KompatibelZone1Zone5Mask 0x10
 #define     IRR_KompatibelZone1Zone5Shift 4
-#define IRR_KompatibelZone1Zone6                15957      // 1 Bit, Bit 3
+#define IRR_KompatibelZone1Zone6                15958      // 1 Bit, Bit 3
 #define     IRR_KompatibelZone1Zone6Mask 0x08
 #define     IRR_KompatibelZone1Zone6Shift 3
-#define IRR_KompatibelZone2Zone3                15957      // 1 Bit, Bit 2
+#define IRR_KompatibelZone1Zone7                15959      // 1 Bit, Bit 0
+#define     IRR_KompatibelZone1Zone7Mask 0x01
+#define     IRR_KompatibelZone1Zone7Shift 0
+#define IRR_KompatibelZone1Zone8                15960      // 1 Bit, Bit 7
+#define     IRR_KompatibelZone1Zone8Mask 0x80
+#define     IRR_KompatibelZone1Zone8Shift 7
+#define IRR_KompatibelZone1Zone9                15960      // 1 Bit, Bit 6
+#define     IRR_KompatibelZone1Zone9Mask 0x40
+#define     IRR_KompatibelZone1Zone9Shift 6
+#define IRR_KompatibelZone1Zone10               15960      // 1 Bit, Bit 5
+#define     IRR_KompatibelZone1Zone10Mask 0x20
+#define     IRR_KompatibelZone1Zone10Shift 5
+#define IRR_KompatibelZone1Zone11               15960      // 1 Bit, Bit 4
+#define     IRR_KompatibelZone1Zone11Mask 0x10
+#define     IRR_KompatibelZone1Zone11Shift 4
+#define IRR_KompatibelZone1Zone12               15960      // 1 Bit, Bit 3
+#define     IRR_KompatibelZone1Zone12Mask 0x08
+#define     IRR_KompatibelZone1Zone12Shift 3
+#define IRR_KompatibelZone2Zone3                15958      // 1 Bit, Bit 2
 #define     IRR_KompatibelZone2Zone3Mask 0x04
 #define     IRR_KompatibelZone2Zone3Shift 2
-#define IRR_KompatibelZone2Zone4                15957      // 1 Bit, Bit 1
+#define IRR_KompatibelZone2Zone4                15958      // 1 Bit, Bit 1
 #define     IRR_KompatibelZone2Zone4Mask 0x02
 #define     IRR_KompatibelZone2Zone4Shift 1
-#define IRR_KompatibelZone2Zone5                15957      // 1 Bit, Bit 0
+#define IRR_KompatibelZone2Zone5                15958      // 1 Bit, Bit 0
 #define     IRR_KompatibelZone2Zone5Mask 0x01
 #define     IRR_KompatibelZone2Zone5Shift 0
-#define IRR_KompatibelZone2Zone6                15957      // 1 Bit, Bit 7
+#define IRR_KompatibelZone2Zone6                15959      // 1 Bit, Bit 7
 #define     IRR_KompatibelZone2Zone6Mask 0x80
 #define     IRR_KompatibelZone2Zone6Shift 7
-#define IRR_KompatibelZone3Zone4                15957      // 1 Bit, Bit 6
+#define IRR_KompatibelZone2Zone7                15960      // 1 Bit, Bit 2
+#define     IRR_KompatibelZone2Zone7Mask 0x04
+#define     IRR_KompatibelZone2Zone7Shift 2
+#define IRR_KompatibelZone2Zone8                15960      // 1 Bit, Bit 1
+#define     IRR_KompatibelZone2Zone8Mask 0x02
+#define     IRR_KompatibelZone2Zone8Shift 1
+#define IRR_KompatibelZone2Zone9                15960      // 1 Bit, Bit 0
+#define     IRR_KompatibelZone2Zone9Mask 0x01
+#define     IRR_KompatibelZone2Zone9Shift 0
+#define IRR_KompatibelZone2Zone10               15961      // 1 Bit, Bit 7
+#define     IRR_KompatibelZone2Zone10Mask 0x80
+#define     IRR_KompatibelZone2Zone10Shift 7
+#define IRR_KompatibelZone2Zone11               15961      // 1 Bit, Bit 6
+#define     IRR_KompatibelZone2Zone11Mask 0x40
+#define     IRR_KompatibelZone2Zone11Shift 6
+#define IRR_KompatibelZone2Zone12               15961      // 1 Bit, Bit 5
+#define     IRR_KompatibelZone2Zone12Mask 0x20
+#define     IRR_KompatibelZone2Zone12Shift 5
+#define IRR_KompatibelZone3Zone4                15959      // 1 Bit, Bit 6
 #define     IRR_KompatibelZone3Zone4Mask 0x40
 #define     IRR_KompatibelZone3Zone4Shift 6
-#define IRR_KompatibelZone3Zone5                15957      // 1 Bit, Bit 5
+#define IRR_KompatibelZone3Zone5                15959      // 1 Bit, Bit 5
 #define     IRR_KompatibelZone3Zone5Mask 0x20
 #define     IRR_KompatibelZone3Zone5Shift 5
-#define IRR_KompatibelZone3Zone6                15957      // 1 Bit, Bit 4
+#define IRR_KompatibelZone3Zone6                15959      // 1 Bit, Bit 4
 #define     IRR_KompatibelZone3Zone6Mask 0x10
 #define     IRR_KompatibelZone3Zone6Shift 4
-#define IRR_KompatibelZone4Zone5                15957      // 1 Bit, Bit 3
+#define IRR_KompatibelZone3Zone7                15961      // 1 Bit, Bit 4
+#define     IRR_KompatibelZone3Zone7Mask 0x10
+#define     IRR_KompatibelZone3Zone7Shift 4
+#define IRR_KompatibelZone3Zone8                15961      // 1 Bit, Bit 3
+#define     IRR_KompatibelZone3Zone8Mask 0x08
+#define     IRR_KompatibelZone3Zone8Shift 3
+#define IRR_KompatibelZone3Zone9                15961      // 1 Bit, Bit 2
+#define     IRR_KompatibelZone3Zone9Mask 0x04
+#define     IRR_KompatibelZone3Zone9Shift 2
+#define IRR_KompatibelZone3Zone10               15961      // 1 Bit, Bit 1
+#define     IRR_KompatibelZone3Zone10Mask 0x02
+#define     IRR_KompatibelZone3Zone10Shift 1
+#define IRR_KompatibelZone3Zone11               15961      // 1 Bit, Bit 0
+#define     IRR_KompatibelZone3Zone11Mask 0x01
+#define     IRR_KompatibelZone3Zone11Shift 0
+#define IRR_KompatibelZone3Zone12               15962      // 1 Bit, Bit 7
+#define     IRR_KompatibelZone3Zone12Mask 0x80
+#define     IRR_KompatibelZone3Zone12Shift 7
+#define IRR_KompatibelZone4Zone5                15959      // 1 Bit, Bit 3
 #define     IRR_KompatibelZone4Zone5Mask 0x08
 #define     IRR_KompatibelZone4Zone5Shift 3
-#define IRR_KompatibelZone4Zone6                15957      // 1 Bit, Bit 2
+#define IRR_KompatibelZone4Zone6                15959      // 1 Bit, Bit 2
 #define     IRR_KompatibelZone4Zone6Mask 0x04
 #define     IRR_KompatibelZone4Zone6Shift 2
-#define IRR_KompatibelZone5Zone6                15957      // 1 Bit, Bit 1
+#define IRR_KompatibelZone4Zone7                15962      // 1 Bit, Bit 6
+#define     IRR_KompatibelZone4Zone7Mask 0x40
+#define     IRR_KompatibelZone4Zone7Shift 6
+#define IRR_KompatibelZone4Zone8                15962      // 1 Bit, Bit 5
+#define     IRR_KompatibelZone4Zone8Mask 0x20
+#define     IRR_KompatibelZone4Zone8Shift 5
+#define IRR_KompatibelZone4Zone9                15962      // 1 Bit, Bit 4
+#define     IRR_KompatibelZone4Zone9Mask 0x10
+#define     IRR_KompatibelZone4Zone9Shift 4
+#define IRR_KompatibelZone4Zone10               15962      // 1 Bit, Bit 3
+#define     IRR_KompatibelZone4Zone10Mask 0x08
+#define     IRR_KompatibelZone4Zone10Shift 3
+#define IRR_KompatibelZone4Zone11               15962      // 1 Bit, Bit 2
+#define     IRR_KompatibelZone4Zone11Mask 0x04
+#define     IRR_KompatibelZone4Zone11Shift 2
+#define IRR_KompatibelZone4Zone12               15962      // 1 Bit, Bit 1
+#define     IRR_KompatibelZone4Zone12Mask 0x02
+#define     IRR_KompatibelZone4Zone12Shift 1
+#define IRR_KompatibelZone5Zone6                15959      // 1 Bit, Bit 1
 #define     IRR_KompatibelZone5Zone6Mask 0x02
 #define     IRR_KompatibelZone5Zone6Shift 1
-#define IRR_BewaesserungsstartStunde            15957      // uint8_t
-#define IRR_BewaesserungsstartMinute            15958      // uint8_t
+#define IRR_KompatibelZone5Zone7                15962      // 1 Bit, Bit 0
+#define     IRR_KompatibelZone5Zone7Mask 0x01
+#define     IRR_KompatibelZone5Zone7Shift 0
+#define IRR_KompatibelZone5Zone8                15963      // 1 Bit, Bit 7
+#define     IRR_KompatibelZone5Zone8Mask 0x80
+#define     IRR_KompatibelZone5Zone8Shift 7
+#define IRR_KompatibelZone5Zone9                15963      // 1 Bit, Bit 6
+#define     IRR_KompatibelZone5Zone9Mask 0x40
+#define     IRR_KompatibelZone5Zone9Shift 6
+#define IRR_KompatibelZone5Zone10               15963      // 1 Bit, Bit 5
+#define     IRR_KompatibelZone5Zone10Mask 0x20
+#define     IRR_KompatibelZone5Zone10Shift 5
+#define IRR_KompatibelZone5Zone11               15963      // 1 Bit, Bit 4
+#define     IRR_KompatibelZone5Zone11Mask 0x10
+#define     IRR_KompatibelZone5Zone11Shift 4
+#define IRR_KompatibelZone5Zone12               15963      // 1 Bit, Bit 3
+#define     IRR_KompatibelZone5Zone12Mask 0x08
+#define     IRR_KompatibelZone5Zone12Shift 3
+#define IRR_KompatibelZone6Zone7                15963      // 1 Bit, Bit 2
+#define     IRR_KompatibelZone6Zone7Mask 0x04
+#define     IRR_KompatibelZone6Zone7Shift 2
+#define IRR_KompatibelZone6Zone8                15963      // 1 Bit, Bit 1
+#define     IRR_KompatibelZone6Zone8Mask 0x02
+#define     IRR_KompatibelZone6Zone8Shift 1
+#define IRR_KompatibelZone6Zone9                15963      // 1 Bit, Bit 0
+#define     IRR_KompatibelZone6Zone9Mask 0x01
+#define     IRR_KompatibelZone6Zone9Shift 0
+#define IRR_KompatibelZone6Zone10               15964      // 1 Bit, Bit 7
+#define     IRR_KompatibelZone6Zone10Mask 0x80
+#define     IRR_KompatibelZone6Zone10Shift 7
+#define IRR_KompatibelZone6Zone11               15964      // 1 Bit, Bit 6
+#define     IRR_KompatibelZone6Zone11Mask 0x40
+#define     IRR_KompatibelZone6Zone11Shift 6
+#define IRR_KompatibelZone6Zone12               15964      // 1 Bit, Bit 5
+#define     IRR_KompatibelZone6Zone12Mask 0x20
+#define     IRR_KompatibelZone6Zone12Shift 5
+#define IRR_KompatibelZone7Zone8                15964      // 1 Bit, Bit 4
+#define     IRR_KompatibelZone7Zone8Mask 0x10
+#define     IRR_KompatibelZone7Zone8Shift 4
+#define IRR_KompatibelZone7Zone9                15964      // 1 Bit, Bit 3
+#define     IRR_KompatibelZone7Zone9Mask 0x08
+#define     IRR_KompatibelZone7Zone9Shift 3
+#define IRR_KompatibelZone7Zone10               15964      // 1 Bit, Bit 2
+#define     IRR_KompatibelZone7Zone10Mask 0x04
+#define     IRR_KompatibelZone7Zone10Shift 2
+#define IRR_KompatibelZone7Zone11               15964      // 1 Bit, Bit 1
+#define     IRR_KompatibelZone7Zone11Mask 0x02
+#define     IRR_KompatibelZone7Zone11Shift 1
+#define IRR_KompatibelZone7Zone12               15964      // 1 Bit, Bit 0
+#define     IRR_KompatibelZone7Zone12Mask 0x01
+#define     IRR_KompatibelZone7Zone12Shift 0
+#define IRR_KompatibelZone8Zone9                15965      // 1 Bit, Bit 7
+#define     IRR_KompatibelZone8Zone9Mask 0x80
+#define     IRR_KompatibelZone8Zone9Shift 7
+#define IRR_KompatibelZone8Zone10               15965      // 1 Bit, Bit 6
+#define     IRR_KompatibelZone8Zone10Mask 0x40
+#define     IRR_KompatibelZone8Zone10Shift 6
+#define IRR_KompatibelZone8Zone11               15965      // 1 Bit, Bit 5
+#define     IRR_KompatibelZone8Zone11Mask 0x20
+#define     IRR_KompatibelZone8Zone11Shift 5
+#define IRR_KompatibelZone8Zone12               15965      // 1 Bit, Bit 4
+#define     IRR_KompatibelZone8Zone12Mask 0x10
+#define     IRR_KompatibelZone8Zone12Shift 4
+#define IRR_KompatibelZone9Zone10               15965      // 1 Bit, Bit 3
+#define     IRR_KompatibelZone9Zone10Mask 0x08
+#define     IRR_KompatibelZone9Zone10Shift 3
+#define IRR_KompatibelZone9Zone11               15965      // 1 Bit, Bit 2
+#define     IRR_KompatibelZone9Zone11Mask 0x04
+#define     IRR_KompatibelZone9Zone11Shift 2
+#define IRR_KompatibelZone9Zone12               15965      // 1 Bit, Bit 1
+#define     IRR_KompatibelZone9Zone12Mask 0x02
+#define     IRR_KompatibelZone9Zone12Shift 1
+#define IRR_KompatibelZone10Zone11              15965      // 1 Bit, Bit 0
+#define     IRR_KompatibelZone10Zone11Mask 0x01
+#define     IRR_KompatibelZone10Zone11Shift 0
+#define IRR_KompatibelZone10Zone12              15966      // 1 Bit, Bit 7
+#define     IRR_KompatibelZone10Zone12Mask 0x80
+#define     IRR_KompatibelZone10Zone12Shift 7
+#define IRR_KompatibelZone11Zone12              15966      // 1 Bit, Bit 6
+#define     IRR_KompatibelZone11Zone12Mask 0x40
+#define     IRR_KompatibelZone11Zone12Shift 6
+#define IRR_BewaesserungsstartStunde            15967      // uint8_t
+#define IRR_BewaesserungsstartMinute            15968      // uint8_t
+#define IRR_BewaesserungsendeStunde             15969      // uint8_t
+#define IRR_BewaesserungsendeMinute             15970      // uint8_t
+#define IRR_RegenmengeDpt                       15971      // 4 Bits, Bit 7-4
+#define     IRR_RegenmengeDptMask 0xF0
+#define     IRR_RegenmengeDptShift 4
 
-// Verfügbare Kanäle
-#define ParamIRR_VisibleChannels                     (knx.paramByte(IRR_VisibleChannels))
 // Zone 1 + Zone 2
 #define ParamIRR_KompatibelZone1Zone2                ((bool)(knx.paramByte(IRR_KompatibelZone1Zone2) & IRR_KompatibelZone1Zone2Mask))
 // Zone 1 + Zone 3
@@ -7187,6 +7343,18 @@
 #define ParamIRR_KompatibelZone1Zone5                ((bool)(knx.paramByte(IRR_KompatibelZone1Zone5) & IRR_KompatibelZone1Zone5Mask))
 // Zone 1 + Zone 6
 #define ParamIRR_KompatibelZone1Zone6                ((bool)(knx.paramByte(IRR_KompatibelZone1Zone6) & IRR_KompatibelZone1Zone6Mask))
+// Zone 1 + Zone 7
+#define ParamIRR_KompatibelZone1Zone7                ((bool)(knx.paramByte(IRR_KompatibelZone1Zone7) & IRR_KompatibelZone1Zone7Mask))
+// Zone 1 + Zone 8
+#define ParamIRR_KompatibelZone1Zone8                ((bool)(knx.paramByte(IRR_KompatibelZone1Zone8) & IRR_KompatibelZone1Zone8Mask))
+// Zone 1 + Zone 9
+#define ParamIRR_KompatibelZone1Zone9                ((bool)(knx.paramByte(IRR_KompatibelZone1Zone9) & IRR_KompatibelZone1Zone9Mask))
+// Zone 1 + Zone 10
+#define ParamIRR_KompatibelZone1Zone10               ((bool)(knx.paramByte(IRR_KompatibelZone1Zone10) & IRR_KompatibelZone1Zone10Mask))
+// Zone 1 + Zone 11
+#define ParamIRR_KompatibelZone1Zone11               ((bool)(knx.paramByte(IRR_KompatibelZone1Zone11) & IRR_KompatibelZone1Zone11Mask))
+// Zone 1 + Zone 12
+#define ParamIRR_KompatibelZone1Zone12               ((bool)(knx.paramByte(IRR_KompatibelZone1Zone12) & IRR_KompatibelZone1Zone12Mask))
 // Zone 2 + Zone 3
 #define ParamIRR_KompatibelZone2Zone3                ((bool)(knx.paramByte(IRR_KompatibelZone2Zone3) & IRR_KompatibelZone2Zone3Mask))
 // Zone 2 + Zone 4
@@ -7195,22 +7363,118 @@
 #define ParamIRR_KompatibelZone2Zone5                ((bool)(knx.paramByte(IRR_KompatibelZone2Zone5) & IRR_KompatibelZone2Zone5Mask))
 // Zone 2 + Zone 6
 #define ParamIRR_KompatibelZone2Zone6                ((bool)(knx.paramByte(IRR_KompatibelZone2Zone6) & IRR_KompatibelZone2Zone6Mask))
+// Zone 2 + Zone 7
+#define ParamIRR_KompatibelZone2Zone7                ((bool)(knx.paramByte(IRR_KompatibelZone2Zone7) & IRR_KompatibelZone2Zone7Mask))
+// Zone 2 + Zone 8
+#define ParamIRR_KompatibelZone2Zone8                ((bool)(knx.paramByte(IRR_KompatibelZone2Zone8) & IRR_KompatibelZone2Zone8Mask))
+// Zone 2 + Zone 9
+#define ParamIRR_KompatibelZone2Zone9                ((bool)(knx.paramByte(IRR_KompatibelZone2Zone9) & IRR_KompatibelZone2Zone9Mask))
+// Zone 2 + Zone 10
+#define ParamIRR_KompatibelZone2Zone10               ((bool)(knx.paramByte(IRR_KompatibelZone2Zone10) & IRR_KompatibelZone2Zone10Mask))
+// Zone 2 + Zone 11
+#define ParamIRR_KompatibelZone2Zone11               ((bool)(knx.paramByte(IRR_KompatibelZone2Zone11) & IRR_KompatibelZone2Zone11Mask))
+// Zone 2 + Zone 12
+#define ParamIRR_KompatibelZone2Zone12               ((bool)(knx.paramByte(IRR_KompatibelZone2Zone12) & IRR_KompatibelZone2Zone12Mask))
 // Zone 3 + Zone 4
 #define ParamIRR_KompatibelZone3Zone4                ((bool)(knx.paramByte(IRR_KompatibelZone3Zone4) & IRR_KompatibelZone3Zone4Mask))
 // Zone 3 + Zone 5
 #define ParamIRR_KompatibelZone3Zone5                ((bool)(knx.paramByte(IRR_KompatibelZone3Zone5) & IRR_KompatibelZone3Zone5Mask))
 // Zone 3 + Zone 6
 #define ParamIRR_KompatibelZone3Zone6                ((bool)(knx.paramByte(IRR_KompatibelZone3Zone6) & IRR_KompatibelZone3Zone6Mask))
+// Zone 3 + Zone 7
+#define ParamIRR_KompatibelZone3Zone7                ((bool)(knx.paramByte(IRR_KompatibelZone3Zone7) & IRR_KompatibelZone3Zone7Mask))
+// Zone 3 + Zone 8
+#define ParamIRR_KompatibelZone3Zone8                ((bool)(knx.paramByte(IRR_KompatibelZone3Zone8) & IRR_KompatibelZone3Zone8Mask))
+// Zone 3 + Zone 9
+#define ParamIRR_KompatibelZone3Zone9                ((bool)(knx.paramByte(IRR_KompatibelZone3Zone9) & IRR_KompatibelZone3Zone9Mask))
+// Zone 3 + Zone 10
+#define ParamIRR_KompatibelZone3Zone10               ((bool)(knx.paramByte(IRR_KompatibelZone3Zone10) & IRR_KompatibelZone3Zone10Mask))
+// Zone 3 + Zone 11
+#define ParamIRR_KompatibelZone3Zone11               ((bool)(knx.paramByte(IRR_KompatibelZone3Zone11) & IRR_KompatibelZone3Zone11Mask))
+// Zone 3 + Zone 12
+#define ParamIRR_KompatibelZone3Zone12               ((bool)(knx.paramByte(IRR_KompatibelZone3Zone12) & IRR_KompatibelZone3Zone12Mask))
 // Zone 4 + Zone 5
 #define ParamIRR_KompatibelZone4Zone5                ((bool)(knx.paramByte(IRR_KompatibelZone4Zone5) & IRR_KompatibelZone4Zone5Mask))
 // Zone 4 + Zone 6
 #define ParamIRR_KompatibelZone4Zone6                ((bool)(knx.paramByte(IRR_KompatibelZone4Zone6) & IRR_KompatibelZone4Zone6Mask))
+// Zone 4 + Zone 7
+#define ParamIRR_KompatibelZone4Zone7                ((bool)(knx.paramByte(IRR_KompatibelZone4Zone7) & IRR_KompatibelZone4Zone7Mask))
+// Zone 4 + Zone 8
+#define ParamIRR_KompatibelZone4Zone8                ((bool)(knx.paramByte(IRR_KompatibelZone4Zone8) & IRR_KompatibelZone4Zone8Mask))
+// Zone 4 + Zone 9
+#define ParamIRR_KompatibelZone4Zone9                ((bool)(knx.paramByte(IRR_KompatibelZone4Zone9) & IRR_KompatibelZone4Zone9Mask))
+// Zone 4 + Zone 10
+#define ParamIRR_KompatibelZone4Zone10               ((bool)(knx.paramByte(IRR_KompatibelZone4Zone10) & IRR_KompatibelZone4Zone10Mask))
+// Zone 4 + Zone 11
+#define ParamIRR_KompatibelZone4Zone11               ((bool)(knx.paramByte(IRR_KompatibelZone4Zone11) & IRR_KompatibelZone4Zone11Mask))
+// Zone 4 + Zone 12
+#define ParamIRR_KompatibelZone4Zone12               ((bool)(knx.paramByte(IRR_KompatibelZone4Zone12) & IRR_KompatibelZone4Zone12Mask))
 // Zone 5 + Zone 6
 #define ParamIRR_KompatibelZone5Zone6                ((bool)(knx.paramByte(IRR_KompatibelZone5Zone6) & IRR_KompatibelZone5Zone6Mask))
+// Zone 5 + Zone 7
+#define ParamIRR_KompatibelZone5Zone7                ((bool)(knx.paramByte(IRR_KompatibelZone5Zone7) & IRR_KompatibelZone5Zone7Mask))
+// Zone 5 + Zone 8
+#define ParamIRR_KompatibelZone5Zone8                ((bool)(knx.paramByte(IRR_KompatibelZone5Zone8) & IRR_KompatibelZone5Zone8Mask))
+// Zone 5 + Zone 9
+#define ParamIRR_KompatibelZone5Zone9                ((bool)(knx.paramByte(IRR_KompatibelZone5Zone9) & IRR_KompatibelZone5Zone9Mask))
+// Zone 5 + Zone 10
+#define ParamIRR_KompatibelZone5Zone10               ((bool)(knx.paramByte(IRR_KompatibelZone5Zone10) & IRR_KompatibelZone5Zone10Mask))
+// Zone 5 + Zone 11
+#define ParamIRR_KompatibelZone5Zone11               ((bool)(knx.paramByte(IRR_KompatibelZone5Zone11) & IRR_KompatibelZone5Zone11Mask))
+// Zone 5 + Zone 12
+#define ParamIRR_KompatibelZone5Zone12               ((bool)(knx.paramByte(IRR_KompatibelZone5Zone12) & IRR_KompatibelZone5Zone12Mask))
+// Zone 6 + Zone 7
+#define ParamIRR_KompatibelZone6Zone7                ((bool)(knx.paramByte(IRR_KompatibelZone6Zone7) & IRR_KompatibelZone6Zone7Mask))
+// Zone 6 + Zone 8
+#define ParamIRR_KompatibelZone6Zone8                ((bool)(knx.paramByte(IRR_KompatibelZone6Zone8) & IRR_KompatibelZone6Zone8Mask))
+// Zone 6 + Zone 9
+#define ParamIRR_KompatibelZone6Zone9                ((bool)(knx.paramByte(IRR_KompatibelZone6Zone9) & IRR_KompatibelZone6Zone9Mask))
+// Zone 6 + Zone 10
+#define ParamIRR_KompatibelZone6Zone10               ((bool)(knx.paramByte(IRR_KompatibelZone6Zone10) & IRR_KompatibelZone6Zone10Mask))
+// Zone 6 + Zone 11
+#define ParamIRR_KompatibelZone6Zone11               ((bool)(knx.paramByte(IRR_KompatibelZone6Zone11) & IRR_KompatibelZone6Zone11Mask))
+// Zone 6 + Zone 12
+#define ParamIRR_KompatibelZone6Zone12               ((bool)(knx.paramByte(IRR_KompatibelZone6Zone12) & IRR_KompatibelZone6Zone12Mask))
+// Zone 7 + Zone 8
+#define ParamIRR_KompatibelZone7Zone8                ((bool)(knx.paramByte(IRR_KompatibelZone7Zone8) & IRR_KompatibelZone7Zone8Mask))
+// Zone 7 + Zone 9
+#define ParamIRR_KompatibelZone7Zone9                ((bool)(knx.paramByte(IRR_KompatibelZone7Zone9) & IRR_KompatibelZone7Zone9Mask))
+// Zone 7 + Zone 10
+#define ParamIRR_KompatibelZone7Zone10               ((bool)(knx.paramByte(IRR_KompatibelZone7Zone10) & IRR_KompatibelZone7Zone10Mask))
+// Zone 7 + Zone 11
+#define ParamIRR_KompatibelZone7Zone11               ((bool)(knx.paramByte(IRR_KompatibelZone7Zone11) & IRR_KompatibelZone7Zone11Mask))
+// Zone 7 + Zone 12
+#define ParamIRR_KompatibelZone7Zone12               ((bool)(knx.paramByte(IRR_KompatibelZone7Zone12) & IRR_KompatibelZone7Zone12Mask))
+// Zone 8 + Zone 9
+#define ParamIRR_KompatibelZone8Zone9                ((bool)(knx.paramByte(IRR_KompatibelZone8Zone9) & IRR_KompatibelZone8Zone9Mask))
+// Zone 8 + Zone 10
+#define ParamIRR_KompatibelZone8Zone10               ((bool)(knx.paramByte(IRR_KompatibelZone8Zone10) & IRR_KompatibelZone8Zone10Mask))
+// Zone 8 + Zone 11
+#define ParamIRR_KompatibelZone8Zone11               ((bool)(knx.paramByte(IRR_KompatibelZone8Zone11) & IRR_KompatibelZone8Zone11Mask))
+// Zone 8 + Zone 12
+#define ParamIRR_KompatibelZone8Zone12               ((bool)(knx.paramByte(IRR_KompatibelZone8Zone12) & IRR_KompatibelZone8Zone12Mask))
+// Zone 9 + Zone 10
+#define ParamIRR_KompatibelZone9Zone10               ((bool)(knx.paramByte(IRR_KompatibelZone9Zone10) & IRR_KompatibelZone9Zone10Mask))
+// Zone 9 + Zone 11
+#define ParamIRR_KompatibelZone9Zone11               ((bool)(knx.paramByte(IRR_KompatibelZone9Zone11) & IRR_KompatibelZone9Zone11Mask))
+// Zone 9 + Zone 12
+#define ParamIRR_KompatibelZone9Zone12               ((bool)(knx.paramByte(IRR_KompatibelZone9Zone12) & IRR_KompatibelZone9Zone12Mask))
+// Zone 10 + Zone 11
+#define ParamIRR_KompatibelZone10Zone11              ((bool)(knx.paramByte(IRR_KompatibelZone10Zone11) & IRR_KompatibelZone10Zone11Mask))
+// Zone 10 + Zone 12
+#define ParamIRR_KompatibelZone10Zone12              ((bool)(knx.paramByte(IRR_KompatibelZone10Zone12) & IRR_KompatibelZone10Zone12Mask))
+// Zone 11 + Zone 12
+#define ParamIRR_KompatibelZone11Zone12              ((bool)(knx.paramByte(IRR_KompatibelZone11Zone12) & IRR_KompatibelZone11Zone12Mask))
 // Bewässerungsfenster: Startstunde
 #define ParamIRR_BewaesserungsstartStunde            (knx.paramByte(IRR_BewaesserungsstartStunde))
 // Bewässerungsfenster: Startminute
 #define ParamIRR_BewaesserungsstartMinute            (knx.paramByte(IRR_BewaesserungsstartMinute))
+// Bewässerungsfenster: Endstunde
+#define ParamIRR_BewaesserungsendeStunde             (knx.paramByte(IRR_BewaesserungsendeStunde))
+// Bewässerungsfenster: Endminute
+#define ParamIRR_BewaesserungsendeMinute             (knx.paramByte(IRR_BewaesserungsendeMinute))
+// Datentyp Regenmenge
+#define ParamIRR_RegenmengeDpt                       (PT_RainDpt)((knx.paramByte(IRR_RegenmengeDpt) & IRR_RegenmengeDptMask) >> IRR_RegenmengeDptShift)
 
 #define IRR_KoBerechnung_ET0 1000
 #define IRR_KoTemperatur_Wetterstation 1001
@@ -7244,16 +7508,19 @@
 // Berechnung Temperatur min gestern
 #define KoIRR_TMinGestern                         (knx.getGroupObject(IRR_KoTMinGestern))
 
-#define IRR_ChannelCount 6
+#define IRR_ChannelCount 12
 
 // Parameter per channel
-#define IRR_ParamBlockOffset 15959
+#define IRR_ParamBlockOffset 15972
 #define IRR_ParamBlockSize 6
 #define IRR_ParamCalcIndex(index) (index + IRR_ParamBlockOffset + _channelIndex * IRR_ParamBlockSize)
 
-#define IRR_ChActive                             0      // 2 Bits, Bit 7-6
-#define     IRR_ChActiveMask 0xC0
-#define     IRR_ChActiveShift 6
+#define IRR_ChActive                             0      // 1 Bit, Bit 7
+#define     IRR_ChActiveMask 0x80
+#define     IRR_ChActiveShift 7
+#define IRR_ChSuspended                          0      // 1 Bit, Bit 6
+#define     IRR_ChSuspendedMask 0x40
+#define     IRR_ChSuspendedShift 6
 #define IRR_CHNiederschlagsrateViaKO             0      // 1 Bit, Bit 5
 #define     IRR_CHNiederschlagsrateViaKOMask 0x20
 #define     IRR_CHNiederschlagsrateViaKOShift 5
@@ -7276,7 +7543,9 @@
 #define IRR_ChSperrschwelleBodenfeuchte          5      // uint8_t
 
 // Kanalaktivität
-#define ParamIRR_ChActive                            ((knx.paramByte(IRR_ParamCalcIndex(IRR_ChActive)) & IRR_ChActiveMask) >> IRR_ChActiveShift)
+#define ParamIRR_ChActive                            ((bool)(knx.paramByte(IRR_ParamCalcIndex(IRR_ChActive)) & IRR_ChActiveMask))
+// Suspendiert
+#define ParamIRR_ChSuspended                         ((bool)(knx.paramByte(IRR_ParamCalcIndex(IRR_ChSuspended)) & IRR_ChSuspendedMask))
 // Niederschlagsrate über KO vorgeben?
 #define ParamIRR_CHNiederschlagsrateViaKO            ((bool)(knx.paramByte(IRR_ParamCalcIndex(IRR_CHNiederschlagsrateViaKO)) & IRR_CHNiederschlagsrateViaKOMask))
 // Schwellwert über KO vorgeben?
@@ -7544,6 +7813,12 @@ enum class PT_InternalInputType
 {
     Anderen_Logikkanal = 0,
     Statuskanal = 1
+};
+
+enum class PT_RainDpt
+{
+    Dpt9 = 0,
+    Dpt14 = 1
 };
 
 enum class PT_BodenfeuchteVerwendung

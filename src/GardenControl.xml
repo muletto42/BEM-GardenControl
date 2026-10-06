@@ -14,7 +14,7 @@
   <op:config name="%LOG_NumChannels%" value="99" /><!-- Required for DFA! -->
   <op:config name="%DFA_NumChannels%" value="4" />
   <op:config name="%DFA_NumChannelsDefault%" value="2" />
-  <op:config name="%IRR_NumChannels%" value="6" />
+  <op:config name="%IRR_NumChannels%" value="12" />
   <op:config name="%IRR_NumChannelsDefault%"  value="4" />
 
   <op:ETS OpenKnxId="0xAF"
@@ -23,6 +23,8 @@
     ReplacesVersions="%ReplacesVersions%"
     ApplicationRevision="0"
     ProductName="GardenControl"
+    BuildSuffix="-Dev"
+    BuildSuffixText=" (Dev)"
     ApplicationName="GardenControl"
     BusCurrent="10"
     SerialNumber="GardenControlV1"
@@ -84,7 +86,7 @@
     ModuleType="70">
     <op:verify File="../lib/OFM-Meter/library.json" ModuleVersion="1.0" />
   </op:define>
-  <op:define prefix="LOG" NumChannels="%LOG_NumChannels%" KoOffset="420"
+  <op:define prefix="LOG" NumChannels="%LOG_NumChannels%" KoOffset="520"
     share="../lib/OFM-LogicModule/src/Logikmodul.share.xml"
     template="../lib/OFM-LogicModule/src/Logikmodul.templ.xml"
     ModuleType="10">
@@ -96,7 +98,7 @@
     share="../lib/OFM-DFA/src/DfaModule.share.xml"
     template="../lib/OFM-DFA/src/DfaModule.templ.xml"
     NumChannels="%DFA_NumChannels%"
-    KoOffset="720"
+    KoOffset="820"
     ModuleType="8">
     <op:verify File="../lib/OFM-DFA/library.json" ModuleVersion="0.8" />
   </op:define>
@@ -107,7 +109,7 @@
     NumChannels="%IRR_NumChannels%"
     KoOffset="200"
     ModuleType="90">
-    
+    <op:verify File="../lib/OFM-Irrigation/library.json" ModuleVersion="0.1" />
   </op:define>
 
   <generate>
