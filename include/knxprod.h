@@ -23,10 +23,10 @@
 #define MAIN_FirmwareName "GardenControl (Dev)"
 #define MAIN_OpenKnxId 0xAF
 #define MAIN_ApplicationNumber 16
-#define MAIN_ApplicationVersion 1
+#define MAIN_ApplicationVersion 19
 #define MAIN_ApplicationEncoding iso-8859-15
 #define MAIN_ParameterSize 16044
-#define MAIN_MaxKoNumber 1009
+#define MAIN_MaxKoNumber 939
 #define MAIN_OrderNumber "SmartMF-GardenControl"
 #define BASE_ModuleVersion 25
 #define UCT_ModuleVersion 5
@@ -7476,16 +7476,16 @@
 // Datentyp Regenmenge
 #define ParamIRR_RegenmengeDpt                       (PT_RainDpt)((knx.paramByte(IRR_RegenmengeDpt) & IRR_RegenmengeDptMask) >> IRR_RegenmengeDptShift)
 
-#define IRR_KoBerechnung_ET0 1000
-#define IRR_KoTemperatur_Wetterstation 1001
-#define IRR_KoRegenmenge_Wetterstation 1002
-#define IRR_KoGlobaleSperre 1003
-#define IRR_KoTDurchschnittHeute 1004
-#define IRR_KoTDurchschnittGestern 1005
-#define IRR_KoTMaxHeute 1006
-#define IRR_KoTMinHeute 1007
-#define IRR_KoTMaxGestern 1008
-#define IRR_KoTMinGestern 1009
+#define IRR_KoBerechnung_ET0 200
+#define IRR_KoTemperatur_Wetterstation 201
+#define IRR_KoRegenmenge_Wetterstation 202
+#define IRR_KoGlobaleSperre 203
+#define IRR_KoTDurchschnittHeute 204
+#define IRR_KoTDurchschnittGestern 205
+#define IRR_KoTMaxHeute 206
+#define IRR_KoTMinHeute 207
+#define IRR_KoTMaxGestern 208
+#define IRR_KoTMinGestern 209
 
 // Berechnung ET0 [mm/Tag]
 #define KoIRR_Berechnung_ET0                      (knx.getGroupObject(IRR_KoBerechnung_ET0))
@@ -7554,7 +7554,7 @@
 #define ParamIRR_CHnFKViaKO                          ((bool)(knx.paramByte(IRR_ParamCalcIndex(IRR_CHnFKViaKO)) & IRR_CHnFKViaKOMask))
 // Kc über KO vorgeben?
 #define ParamIRR_CHKcViaKO                           ((bool)(knx.paramByte(IRR_ParamCalcIndex(IRR_CHKcViaKO)) & IRR_CHKcViaKOMask))
-// Bodenfeuchtesensor verwenden als
+// Verwendung Bodenfeuchtesensor
 #define ParamIRR_ChBodenfeuchteVerwendung            (PT_BodenfeuchteVerwendung)(knx.paramByte(IRR_ParamCalcIndex(IRR_ChBodenfeuchteVerwendung)) & IRR_ChBodenfeuchteVerwendungMask)
 // Niederschlagsrate der Zone [mm/h]
 #define ParamIRR_CHNiederschlagsrateValue            (knx.paramByte(IRR_ParamCalcIndex(IRR_CHNiederschlagsrateValue)))
@@ -7572,7 +7572,7 @@
 
 // Communication objects per channel (multiple occurrence)
 #define IRR_KoBlockOffset 200
-#define IRR_KoBlockSize 26
+#define IRR_KoBlockSize 25
 
 #define IRR_KoCalcNumber(index) (index + IRR_KoBlockOffset + _channelIndex * IRR_KoBlockSize)
 #define IRR_KoCalcIndex(number) ((number >= IRR_KoCalcNumber(0) && number < IRR_KoCalcNumber(IRR_KoBlockSize)) ? (number - IRR_KoBlockOffset) % IRR_KoBlockSize : -1)
@@ -7588,10 +7588,10 @@
 #define IRR_KoChFehlmenge 18
 #define IRR_KoChLaufzeit 19
 #define IRR_KoChWasserbilanzkonto 20
-#define IRR_KoChDiagnoseBewaesserunggesperrt 22
-#define IRR_KoChVentilansteuerung 23
-#define IRR_KoChBodenfeuchte 24
-#define IRR_KoChZonenStatus 25
+#define IRR_KoChDiagnoseBewaesserunggesperrt 21
+#define IRR_KoChVentilansteuerung 22
+#define IRR_KoChBodenfeuchte 23
+#define IRR_KoChZonenStatus 24
 
 // Zone %C%: Niederschlagsrate[mm/h]
 #define KoIRR_ChNiederschlagsrate                 (knx.getGroupObject(IRR_KoCalcNumber(IRR_KoChNiederschlagsrate)))
