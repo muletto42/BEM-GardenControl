@@ -23,7 +23,7 @@
 #define MAIN_FirmwareName "GardenControl (Dev)"
 #define MAIN_OpenKnxId 0xAF
 #define MAIN_ApplicationNumber 16
-#define MAIN_ApplicationVersion 19
+#define MAIN_ApplicationVersion 16
 #define MAIN_ApplicationEncoding iso-8859-15
 #define MAIN_ParameterSize 16044
 #define MAIN_MaxKoNumber 939
@@ -7546,25 +7546,25 @@
 #define ParamIRR_ChActive                            ((bool)(knx.paramByte(IRR_ParamCalcIndex(IRR_ChActive)) & IRR_ChActiveMask))
 // Suspendiert
 #define ParamIRR_ChSuspended                         ((bool)(knx.paramByte(IRR_ParamCalcIndex(IRR_ChSuspended)) & IRR_ChSuspendedMask))
-// Niederschlagsrate über KO vorgeben?
+// über KO vorgeben?
 #define ParamIRR_CHNiederschlagsrateViaKO            ((bool)(knx.paramByte(IRR_ParamCalcIndex(IRR_CHNiederschlagsrateViaKO)) & IRR_CHNiederschlagsrateViaKOMask))
 // Schwellwert über KO vorgeben?
 #define ParamIRR_CHSchwellwertViaKO                  ((bool)(knx.paramByte(IRR_ParamCalcIndex(IRR_CHSchwellwertViaKO)) & IRR_CHSchwellwertViaKOMask))
-// nFK über KO vorgeben?
+// über KO vorgeben?
 #define ParamIRR_CHnFKViaKO                          ((bool)(knx.paramByte(IRR_ParamCalcIndex(IRR_CHnFKViaKO)) & IRR_CHnFKViaKOMask))
-// Kc über KO vorgeben?
+// über KO vorgeben?
 #define ParamIRR_CHKcViaKO                           ((bool)(knx.paramByte(IRR_ParamCalcIndex(IRR_CHKcViaKO)) & IRR_CHKcViaKOMask))
 // Verwendung Bodenfeuchtesensor
 #define ParamIRR_ChBodenfeuchteVerwendung            (PT_BodenfeuchteVerwendung)(knx.paramByte(IRR_ParamCalcIndex(IRR_ChBodenfeuchteVerwendung)) & IRR_ChBodenfeuchteVerwendungMask)
-// Niederschlagsrate der Zone [mm/h]
+// Niederschlagsrate der Zone
 #define ParamIRR_CHNiederschlagsrateValue            (knx.paramByte(IRR_ParamCalcIndex(IRR_CHNiederschlagsrateValue)))
-// Bewässerungsschwelle [%]
+// Bewässerungsschwelle
 #define ParamIRR_CHSchwellwertValue                  (knx.paramByte(IRR_ParamCalcIndex(IRR_CHSchwellwertValue)))
-// Nutzbare Feldkapazität (nFK) [mm]
+// Nutzbare Feldkapazität (nFK)
 #define ParamIRR_CHnFKValue                          (knx.paramByte(IRR_ParamCalcIndex(IRR_CHnFKValue)))
 // Kc-Faktor der Zone
 #define ParamIRR_CHKcValue                           (knx.paramByte(IRR_ParamCalcIndex(IRR_CHKcValue)))
-// Sperrschwelle Bodenfeuchte [%]
+// Sperrschwelle Bodenfeuchte
 #define ParamIRR_ChSperrschwelleBodenfeuchte         (knx.paramByte(IRR_ParamCalcIndex(IRR_ChSperrschwelleBodenfeuchte)))
 
 // deprecated
