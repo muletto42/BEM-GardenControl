@@ -107,7 +107,7 @@
     share="../lib/OFM-Irrigation/src/Irrigation.share.xml"
     template="../lib/OFM-Irrigation/src/Irrigation.templ.xml"
     NumChannels="%IRR_NumChannels%"
-    KoOffset="200"
+    KoOffset="210"
     KoSingleOffset="200"
     ModuleType="90">
     <op:verify File="../lib/OFM-Irrigation/library.json" ModuleVersion="0.1" />

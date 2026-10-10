@@ -7568,30 +7568,30 @@
 #define ParamIRR_ChSperrschwelleBodenfeuchte         (knx.paramByte(IRR_ParamCalcIndex(IRR_ChSperrschwelleBodenfeuchte)))
 
 // deprecated
-#define IRR_KoOffset 200
+#define IRR_KoOffset 210
 
 // Communication objects per channel (multiple occurrence)
-#define IRR_KoBlockOffset 200
-#define IRR_KoBlockSize 25
+#define IRR_KoBlockOffset 210
+#define IRR_KoBlockSize 15
 
 #define IRR_KoCalcNumber(index) (index + IRR_KoBlockOffset + _channelIndex * IRR_KoBlockSize)
 #define IRR_KoCalcIndex(number) ((number >= IRR_KoCalcNumber(0) && number < IRR_KoCalcNumber(IRR_KoBlockSize)) ? (number - IRR_KoBlockOffset) % IRR_KoBlockSize : -1)
 #define IRR_KoCalcChannel(number) ((number >= IRR_KoBlockOffset && number < IRR_KoBlockOffset + IRR_ChannelCount * IRR_KoBlockSize) ? (number - IRR_KoBlockOffset) / IRR_KoBlockSize : -1)
 
-#define IRR_KoChNiederschlagsrate 10
-#define IRR_KoChSchwellwert 11
-#define IRR_KoChnFK 12
-#define IRR_KoChKc 13
-#define IRR_KoChZonenSperre 14
-#define IRR_KoChStatusMagnetventil 15
-#define IRR_KoChBedarf 17
-#define IRR_KoChFehlmenge 18
-#define IRR_KoChLaufzeit 19
-#define IRR_KoChWasserbilanzkonto 20
-#define IRR_KoChDiagnoseBewaesserunggesperrt 21
-#define IRR_KoChVentilansteuerung 22
-#define IRR_KoChBodenfeuchte 23
-#define IRR_KoChZonenStatus 24
+#define IRR_KoChNiederschlagsrate 0
+#define IRR_KoChSchwellwert 1
+#define IRR_KoChnFK 2
+#define IRR_KoChKc 3
+#define IRR_KoChZonenSperre 4
+#define IRR_KoChStatusMagnetventil 5
+#define IRR_KoChBedarf 7
+#define IRR_KoChFehlmenge 8
+#define IRR_KoChLaufzeit 9
+#define IRR_KoChWasserbilanzkonto 10
+#define IRR_KoChDiagnoseBewaesserunggesperrt 11
+#define IRR_KoChVentilansteuerung 12
+#define IRR_KoChBodenfeuchte 13
+#define IRR_KoChZonenStatus 14
 
 // Zone %C%: Niederschlagsrate[mm/h]
 #define KoIRR_ChNiederschlagsrate                 (knx.getGroupObject(IRR_KoCalcNumber(IRR_KoChNiederschlagsrate)))
