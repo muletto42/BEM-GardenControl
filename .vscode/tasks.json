@@ -119,6 +119,14 @@
             "group": "test"
         },
         {
+            "label": "Build-Dev",
+            "type": "shell",
+            "command": "scripts/Build-Release.ps1",
+            "args": ["Dev"],
+            "problemMatcher": [],
+            "group": "test"
+        },
+        {
             "label": "resolve platformio.ini",
             "type": "shell",
             "command": "~/.platformio/penv/Scripts/pio",

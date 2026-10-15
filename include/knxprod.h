@@ -20,10 +20,10 @@
 #define ETS_ModuleId_LOG 9
 #define ETS_ModuleId_DFA 10
 #define ETS_ModuleId_IRR 11
-#define MAIN_FirmwareName "GardenControl (Dev)"
+#define MAIN_FirmwareName "GardenControl"
 #define MAIN_OpenKnxId 0xAF
 #define MAIN_ApplicationNumber 16
-#define MAIN_ApplicationVersion 16
+#define MAIN_ApplicationVersion 19
 #define MAIN_ApplicationEncoding iso-8859-15
 #define MAIN_ParameterSize 16044
 #define MAIN_MaxKoNumber 939
@@ -7548,7 +7548,7 @@
 #define ParamIRR_ChSuspended                         ((bool)(knx.paramByte(IRR_ParamCalcIndex(IRR_ChSuspended)) & IRR_ChSuspendedMask))
 // über KO vorgeben?
 #define ParamIRR_CHNiederschlagsrateViaKO            ((bool)(knx.paramByte(IRR_ParamCalcIndex(IRR_CHNiederschlagsrateViaKO)) & IRR_CHNiederschlagsrateViaKOMask))
-// Schwellwert über KO vorgeben?
+// über KO vorgeben?
 #define ParamIRR_CHSchwellwertViaKO                  ((bool)(knx.paramByte(IRR_ParamCalcIndex(IRR_CHSchwellwertViaKO)) & IRR_CHSchwellwertViaKOMask))
 // über KO vorgeben?
 #define ParamIRR_CHnFKViaKO                          ((bool)(knx.paramByte(IRR_ParamCalcIndex(IRR_CHnFKViaKO)) & IRR_CHnFKViaKOMask))
