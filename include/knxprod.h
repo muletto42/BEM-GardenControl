@@ -20,10 +20,10 @@
 #define ETS_ModuleId_LOG 9
 #define ETS_ModuleId_DFA 10
 #define ETS_ModuleId_IRR 11
-#define MAIN_FirmwareName "GardenControl"
+#define MAIN_FirmwareName "GardenControl (Dev)"
 #define MAIN_OpenKnxId 0xAF
-#define MAIN_ApplicationNumber 16
-#define MAIN_ApplicationVersion 19
+#define MAIN_ApplicationNumber 17
+#define MAIN_ApplicationVersion 1
 #define MAIN_ApplicationEncoding iso-8859-15
 #define MAIN_ParameterSize 16044
 #define MAIN_MaxKoNumber 939
@@ -7325,10 +7325,8 @@
 #define IRR_KompatibelZone11Zone12              15966      // 1 Bit, Bit 6
 #define     IRR_KompatibelZone11Zone12Mask 0x40
 #define     IRR_KompatibelZone11Zone12Shift 6
-#define IRR_BewaesserungsstartStunde            15967      // uint8_t
-#define IRR_BewaesserungsstartMinute            15968      // uint8_t
-#define IRR_BewaesserungsendeStunde             15969      // uint8_t
-#define IRR_BewaesserungsendeMinute             15970      // uint8_t
+#define IRR_Bewaesserungsstart                  15967      // 16 Bits, Bit 15-0
+#define IRR_Bewaesserungsende                   15969      // 16 Bits, Bit 15-0
 #define IRR_RegenmengeDpt                       15971      // 4 Bits, Bit 7-4
 #define     IRR_RegenmengeDptMask 0xF0
 #define     IRR_RegenmengeDptShift 4
@@ -7465,14 +7463,10 @@
 #define ParamIRR_KompatibelZone10Zone12              ((bool)(knx.paramByte(IRR_KompatibelZone10Zone12) & IRR_KompatibelZone10Zone12Mask))
 // Zone 11 + Zone 12
 #define ParamIRR_KompatibelZone11Zone12              ((bool)(knx.paramByte(IRR_KompatibelZone11Zone12) & IRR_KompatibelZone11Zone12Mask))
-// Bewässerungsfenster: Startstunde
-#define ParamIRR_BewaesserungsstartStunde            (knx.paramByte(IRR_BewaesserungsstartStunde))
-// Bewässerungsfenster: Startminute
-#define ParamIRR_BewaesserungsstartMinute            (knx.paramByte(IRR_BewaesserungsstartMinute))
-// Bewässerungsfenster: Endstunde
-#define ParamIRR_BewaesserungsendeStunde             (knx.paramByte(IRR_BewaesserungsendeStunde))
-// Bewässerungsfenster: Endminute
-#define ParamIRR_BewaesserungsendeMinute             (knx.paramByte(IRR_BewaesserungsendeMinute))
+// Bewässerungsfenster: Start
+#define ParamIRR_Bewaesserungsstart                  (knx.paramWord(IRR_Bewaesserungsstart))
+// Bewässerungsfenster: Ende
+#define ParamIRR_Bewaesserungsende                   (knx.paramWord(IRR_Bewaesserungsende))
 // Datentyp Regenmenge
 #define ParamIRR_RegenmengeDpt                       (PT_RainDpt)((knx.paramByte(IRR_RegenmengeDpt) & IRR_RegenmengeDptMask) >> IRR_RegenmengeDptShift)
 
@@ -7572,7 +7566,7 @@
 
 // Communication objects per channel (multiple occurrence)
 #define IRR_KoBlockOffset 210
-#define IRR_KoBlockSize 15
+#define IRR_KoBlockSize 20
 
 #define IRR_KoCalcNumber(index) (index + IRR_KoBlockOffset + _channelIndex * IRR_KoBlockSize)
 #define IRR_KoCalcIndex(number) ((number >= IRR_KoCalcNumber(0) && number < IRR_KoCalcNumber(IRR_KoBlockSize)) ? (number - IRR_KoBlockOffset) % IRR_KoBlockSize : -1)
@@ -7582,16 +7576,16 @@
 #define IRR_KoChSchwellwert 1
 #define IRR_KoChnFK 2
 #define IRR_KoChKc 3
-#define IRR_KoChZonenSperre 4
-#define IRR_KoChStatusMagnetventil 5
-#define IRR_KoChBedarf 7
-#define IRR_KoChFehlmenge 8
-#define IRR_KoChLaufzeit 9
-#define IRR_KoChWasserbilanzkonto 10
-#define IRR_KoChDiagnoseBewaesserunggesperrt 11
-#define IRR_KoChVentilansteuerung 12
-#define IRR_KoChBodenfeuchte 13
-#define IRR_KoChZonenStatus 14
+#define IRR_KoChBodenfeuchte 4
+#define IRR_KoChZonenSperre 5
+#define IRR_KoChStatusMagnetventil 6
+#define IRR_KoChVentilansteuerung 7
+#define IRR_KoChBedarf 8
+#define IRR_KoChFehlmenge 9
+#define IRR_KoChLaufzeit 10
+#define IRR_KoChWasserbilanzkonto 11
+#define IRR_KoChZonenStatus 18
+#define IRR_KoChDiagnoseBewaesserunggesperrt 19
 
 // Zone %C%: Niederschlagsrate[mm/h]
 #define KoIRR_ChNiederschlagsrate                 (knx.getGroupObject(IRR_KoCalcNumber(IRR_KoChNiederschlagsrate)))
@@ -7601,10 +7595,14 @@
 #define KoIRR_ChnFK                               (knx.getGroupObject(IRR_KoCalcNumber(IRR_KoChnFK)))
 // Zone %C%: Kc
 #define KoIRR_ChKc                                (knx.getGroupObject(IRR_KoCalcNumber(IRR_KoChKc)))
+// Zone %C%: Bodenfeuchte
+#define KoIRR_ChBodenfeuchte                      (knx.getGroupObject(IRR_KoCalcNumber(IRR_KoChBodenfeuchte)))
 // Zone %C%: Sperre
 #define KoIRR_ChZonenSperre                       (knx.getGroupObject(IRR_KoCalcNumber(IRR_KoChZonenSperre)))
 // Zone %C%: Status Magnetventil
 #define KoIRR_ChStatusMagnetventil                (knx.getGroupObject(IRR_KoCalcNumber(IRR_KoChStatusMagnetventil)))
+// Zone %C%: Ventilansteuerung
+#define KoIRR_ChVentilansteuerung                 (knx.getGroupObject(IRR_KoCalcNumber(IRR_KoChVentilansteuerung)))
 // Zone %C%: Bewässerungsbedarf
 #define KoIRR_ChBedarf                            (knx.getGroupObject(IRR_KoCalcNumber(IRR_KoChBedarf)))
 // Zone %C%: Fehlmenge [mm]
@@ -7613,14 +7611,10 @@
 #define KoIRR_ChLaufzeit                          (knx.getGroupObject(IRR_KoCalcNumber(IRR_KoChLaufzeit)))
 // Zone %C%: Wasserbilanzkonto
 #define KoIRR_ChWasserbilanzkonto                 (knx.getGroupObject(IRR_KoCalcNumber(IRR_KoChWasserbilanzkonto)))
-// Zone %C%: Bewässerung gesperrt
-#define KoIRR_ChDiagnoseBewaesserunggesperrt      (knx.getGroupObject(IRR_KoCalcNumber(IRR_KoChDiagnoseBewaesserunggesperrt)))
-// Zone %C%: Ventilansteuerung
-#define KoIRR_ChVentilansteuerung                 (knx.getGroupObject(IRR_KoCalcNumber(IRR_KoChVentilansteuerung)))
-// Zone %C%: Bodenfeuchte
-#define KoIRR_ChBodenfeuchte                      (knx.getGroupObject(IRR_KoCalcNumber(IRR_KoChBodenfeuchte)))
 // Zone %C%: Zonenstatus
 #define KoIRR_ChZonenStatus                       (knx.getGroupObject(IRR_KoCalcNumber(IRR_KoChZonenStatus)))
+// Zone %C%: Bewässerung gesperrt
+#define KoIRR_ChDiagnoseBewaesserunggesperrt      (knx.getGroupObject(IRR_KoCalcNumber(IRR_KoChDiagnoseBewaesserunggesperrt)))
 
 
 // enumeration types

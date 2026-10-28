@@ -1,6 +1,6 @@
 #pragma once
 
-#define MAIN_Version "74b6318"
+#define MAIN_Version "5e67d75"
 #define KNX_Version "2.4.0+8e4c5bc"
 #define MODULE_Common_Version "1.9.1+66bc4af"
 #define MODULE_Common_Version_Major 1
@@ -22,12 +22,12 @@
 #define MODULE_BinaryInput_Version_Minor 4
 #define MODULE_BinaryInput_Version_Revision 0
 #define MODULE_BinaryInput_ETS 4
-#define MODULE_HardwareConfig_Version "1.0.0+51dc43e"
+#define MODULE_HardwareConfig_Version "1.0.0+0c5a94d"
 #define MODULE_HardwareConfig_Version_Major 1
 #define MODULE_HardwareConfig_Version_Minor 0
 #define MODULE_HardwareConfig_Version_Revision 0
 #define MODULE_HardwareConfig_ETS 16
-#define MODULE_Irrigation_Version "0.1.0+36d8691"
+#define MODULE_Irrigation_Version "0.1.0+604fcfa"
 #define MODULE_Irrigation_Version_Major 0
 #define MODULE_Irrigation_Version_Minor 1
 #define MODULE_Irrigation_Version_Revision 0
